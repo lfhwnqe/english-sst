@@ -1,4 +1,5 @@
-// 首先定义接口
+import { headers } from 'next/headers';
+
 interface UserData {
   name: string;
   id: string;
@@ -20,34 +21,65 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
 async function getData(): Promise<PageData> {
+  // 使用 headers() 获取当前请求的 host
+  const headersList = headers();
+  const host = headersList.get('host') || '';
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-  const host = process.env.NEXT_PUBLIC_VERCEL_URL || process.env.VERCEL_URL || 'localhost:3000';
-  const baseUrl = `${protocol}://${host}`;
+  
+  // 打印当前环境信息，帮助调试
+  console.log('Current environment:', {
+    host,
+    protocol,
+    nodeEnv: process.env.NODE_ENV,
+  });
 
-  const [userRes, productsRes] = await Promise.all([
-    fetch(`${baseUrl}/api/user`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }),
-    fetch(`${baseUrl}/api/products`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-  ]);
+  try {
+    const baseUrl = `${protocol}://${host}`;
+    console.log('Fetching from baseUrl:', baseUrl);
 
-  if (!userRes.ok || !productsRes.ok) {
-    throw new Error('Failed to fetch data');
+    const [userRes, productsRes] = await Promise.all([
+      fetch(`${baseUrl}/api/user`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }),
+      fetch(`${baseUrl}/api/products`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    ]);
+
+    if (!userRes.ok) {
+      throw new Error(`User API failed: ${userRes.status}`);
+    }
+    if (!productsRes.ok) {
+      throw new Error(`Products API failed: ${productsRes.status}`);
+    }
+
+    const userData = await userRes.json();
+    const productsData = await productsRes.json();
+
+    return {
+      user: userData,
+      products: productsData
+    };
+  } catch (error) {
+    console.error('Data fetching error:', error);
+    // 提供后备数据而不是抛出错误
+    return {
+      user: {
+        name: "默认用户",
+        id: "000",
+        role: "guest",
+        requestTime: new Date().toISOString()
+      },
+      products: {
+        products: ["加载失败，请刷新重试"],
+        requestTime: new Date().toISOString()
+      }
+    };
   }
-
-  const userData = await userRes.json();
-  const productsData = await productsRes.json();
-
-  return {
-    user: userData,
-    products: productsData
-  };
 }
 
 export default async function Home() {
