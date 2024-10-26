@@ -1,13 +1,40 @@
+// 首先定义接口
+interface UserData {
+  name: string;
+  id: string;
+  role: string;
+  requestTime: string;
+}
+
+interface ProductsData {
+  products: string[];
+  requestTime: string;
+}
+
+interface PageData {
+  user: UserData;
+  products: ProductsData;
+}
+
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
-import { getBaseUrl } from './config/urls';
 
-async function getData() {
-  const baseUrl = getBaseUrl();
-  
+async function getData(): Promise<PageData> {
+  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+  const host = process.env.NEXT_PUBLIC_VERCEL_URL || process.env.VERCEL_URL || 'localhost:3000';
+  const baseUrl = `${protocol}://${host}`;
+
   const [userRes, productsRes] = await Promise.all([
-    fetch(`${baseUrl}/api/user`),
-    fetch(`${baseUrl}/api/products`)
+    fetch(`${baseUrl}/api/user`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }),
+    fetch(`${baseUrl}/api/products`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
   ]);
 
   if (!userRes.ok || !productsRes.ok) {
@@ -52,7 +79,7 @@ export default async function Home() {
             <div className="p-4 bg-gray-50 rounded-md">
               <h2 className="text-lg font-medium text-gray-900 mb-2">产品列表</h2>
               <ul className="space-y-2">
-                {data.products.products.map((product) => (
+                {data.products.products.map((product: string) => (
                   <li
                     key={product}
                     className="px-4 py-2 bg-white border border-gray-200 rounded-md shadow-sm"

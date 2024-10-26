@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
+import type { ProductsData } from '@/types';
 
 export const runtime = 'edge';
 
-export async function GET() {
+export async function GET(): Promise<NextResponse<ProductsData>> {
   const timestamp = new Date().toISOString();
   
   return NextResponse.json({
