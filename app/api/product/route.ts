@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import type { ProductsData } from '@/types';
 
 export const runtime = 'edge';
 
