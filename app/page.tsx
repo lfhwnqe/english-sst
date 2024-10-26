@@ -1,40 +1,46 @@
-"use client";
-import { useState } from "react";
+import { getUser } from './actions/user';
+import { getProducts } from './actions/products';
 
-export default function Home() {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  const [userInfo, setUserInfo] = useState<string>("");
-  const [list, setList] = useState<string[]>([]);
-  const getUserInfo = () => {
-    fetch(`${apiBaseUrl}/api/user`)
-      .then((response) => response.json())
-      .then((data) => {
-        setUserInfo(data.name);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  };
-  const getProductsInfo = () => {
-    fetch(`${apiBaseUrl}/api/products`)
-      .then((response) => response.json())
-      .then((data) => {
-        const products = data.products;
-        setList(products);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  };
+export default async function Home() {
+  const userData = await getUser();
+  const productsData = await getProducts();
+
   return (
-    <div>
-      <button onClick={getUserInfo}>获取user数据</button>
-      <section>user数据区:{userInfo}</section>
-      <button onClick={getProductsInfo}>获取products数据</button>
-      <section>
-        products数据区:
-        <ul>
-          {list.map((i) => (
-            <li key={i}>{i}</li>
-          ))}
-        </ul>
-      </section>
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto space-y-8">
+        {/* User Section */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="space-y-4">
+            <div className="p-4 bg-gray-50 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-2">用户数据</h2>
+              <div className="text-gray-700">
+                <p>姓名: {userData.name}</p>
+                <p>ID: {userData.id}</p>
+                <p>角色: {userData.role}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Products Section */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="space-y-4">
+            <div className="p-4 bg-gray-50 rounded-md">
+              <h2 className="text-lg font-medium text-gray-900 mb-2">产品列表</h2>
+              <ul className="space-y-2">
+                {productsData.products.map((product) => (
+                  <li
+                    key={product}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-md shadow-sm"
+                  >
+                    {product}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
