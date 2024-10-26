@@ -5,7 +5,6 @@ export const runtime = 'edge';
 export async function GET() {
   try {
     const timestamp = new Date().toISOString();
-    
     return NextResponse.json({
       name: "张三",
       id: "001",
