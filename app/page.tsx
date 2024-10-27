@@ -18,7 +18,6 @@ interface PageData {
 }
 
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
 
 async function getData(): Promise<PageData> {
   // 使用 headers() 获取当前请求的 host
