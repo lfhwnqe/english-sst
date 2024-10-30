@@ -1,43 +1,55 @@
-'use client'
+"use client";
 import React, { useState, useRef } from "react";
 import { Upload, X, ImagePlus, Loader2 } from "lucide-react";
+import Image from "next/image";
+
+interface PreviewImage {
+  url: string;
+  file: File;
+}
 
 export default function ImageToGif() {
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [previewUrls, setPreviewUrls] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [gifUrl, setGifUrl] = useState("");
-  const fileInputRef = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<PreviewImage[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [gifUrl, setGifUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (event) => {
-    const files = Array.from(event.target.files);
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
     // Only accept image files
     const imageFiles = files.filter((file) => file.type.startsWith("image/"));
 
     setSelectedFiles((prev) => [...prev, ...imageFiles]);
 
     // Create preview URLs
-    const newPreviewUrls = imageFiles.map((file) => URL.createObjectURL(file));
-    setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+    const newPreviews = imageFiles.map((file) => ({
+      url: URL.createObjectURL(file),
+      file: file,
+    }));
+    setPreviewImages((prev) => [...prev, ...newPreviews]);
   };
 
-  const removeImage = (index) => {
+  const removeImage = (index: number) => {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
-    setPreviewUrls((prev) => {
-      URL.revokeObjectURL(prev[index]);
+    setPreviewImages((prev) => {
+      URL.revokeObjectURL(prev[index].url);
       return prev.filter((_, i) => i !== index);
     });
   };
 
-  const handleDrop = (event) => {
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const files = Array.from(event.dataTransfer.files);
     const imageFiles = files.filter((file) => file.type.startsWith("image/"));
 
     setSelectedFiles((prev) => [...prev, ...imageFiles]);
 
-    const newPreviewUrls = imageFiles.map((file) => URL.createObjectURL(file));
-    setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
+    const newPreviews = imageFiles.map((file) => ({
+      url: URL.createObjectURL(file),
+      file: file,
+    }));
+    setPreviewImages((prev) => [...prev, ...newPreviews]);
   };
 
   const handleCreateGif = async () => {
@@ -48,7 +60,7 @@ export default function ImageToGif() {
 
     setIsLoading(true);
     const formData = new FormData();
-    selectedFiles.forEach((file, index) => {
+    selectedFiles.forEach((file) => {
       formData.append("images", file);
     });
 
@@ -60,7 +72,7 @@ export default function ImageToGif() {
 
       if (!response.ok) throw new Error("Failed to create GIF");
 
-      const data = await response.json();
+      const data: { gifUrl: string } = await response.json();
       setGifUrl(data.gifUrl);
     } catch (error) {
       console.error("Error creating GIF:", error);
@@ -106,20 +118,22 @@ export default function ImageToGif() {
       </div>
 
       {/* Preview Area */}
-      {previewUrls.length > 0 && (
+      {previewImages.length > 0 && (
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-4">Selected Images</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {previewUrls.map((url, index) => (
-              <div key={index} className="relative">
-                <img
-                  src={url}
+            {previewImages.map((preview, index) => (
+              <div key={index} className="relative w-full h-32">
+                <Image
+                  src={preview.url}
                   alt={`Preview ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg"
+                  fill
+                  className="object-cover rounded-lg"
+                  sizes="(max-width: 768px) 50vw, 25vw"
                 />
                 <button
                   onClick={() => removeImage(index)}
-                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 z-10"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -153,11 +167,15 @@ export default function ImageToGif() {
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Your GIF</h2>
           <div className="border rounded-lg p-4">
-            <img
-              src={gifUrl}
-              alt="Generated GIF"
-              className="max-w-full mx-auto"
-            />
+            <div className="relative w-full h-[400px]">
+              <Image
+                src={gifUrl}
+                alt="Generated GIF"
+                fill
+                className="object-contain"
+                sizes="100vw"
+              />
+            </div>
             <a
               href={gifUrl}
               download="animated.gif"
