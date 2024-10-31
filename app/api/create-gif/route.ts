@@ -1,10 +1,8 @@
-import { createCanvas, createImageData } from "canvas";
 import { NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
 import path from "path";
-import GIFEncoder from "gifencoder";
-import sharp from "sharp";
 import fs from "fs";
+import Jimp from "jimp";
+import GIFEncoder from "gifencoder";
 
 function isFile(value: FormDataEntryValue): value is File {
   return value instanceof File;
@@ -25,57 +23,47 @@ export async function POST(request: Request) {
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await fs.promises.mkdir(uploadDir, { recursive: true });
 
-    const imagePaths = await Promise.all(
-      files.map(async (file, index) => {
+    const images = await Promise.all(
+      files.map(async (file) => {
         if (!isFile(file)) {
           throw new Error("All uploaded items must be files");
         }
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        const filename = `image-${Date.now()}-${index}.png`;
-        const filepath = path.join(uploadDir, filename);
-        await writeFile(filepath, buffer);
-        return filepath;
+        const image = await Jimp.read(buffer);
+
+        // 调整图像尺寸为 800x600，确保传递的参数类型正确
+        image.resize(Number(800), Number(600));
+        return image;
       })
     );
 
-    const encoder = new GIFEncoder(800, 600);
+    const width = 800;
+    const height = 600;
+    const encoder = new GIFEncoder(width, height);
+
     const gifPath = path.join(uploadDir, "output.gif");
     const gifStream = encoder
       .createReadStream()
       .pipe(fs.createWriteStream(gifPath));
 
     encoder.start();
-    encoder.setRepeat(0);
-    encoder.setDelay(500);
-    encoder.setQuality(10);
+    encoder.setRepeat(0); // 0 表示无限循环
+    encoder.setDelay(500); // 每帧延迟 500 毫秒
+    encoder.setQuality(10); // 图像质量
 
-    const canvas = createCanvas(800, 600);
-    const ctx = canvas.getContext("2d");
+    for (const image of images) {
+      // 获取图像的像素数据（RGBA 格式）
+      const imageData = image.bitmap.data;
 
-    for (const imagePath of imagePaths) {
-      const { data, info } = await sharp(imagePath)
-        .resize(800, 600, {
-          fit: "contain",
-          background: { r: 255, g: 255, b: 255, alpha: 1 },
-        })
-        .raw()
-        .toBuffer({ resolveWithObject: true });
-
-      const imageData = createImageData(
-        new Uint8ClampedArray(data),
-        info.width,
-        info.height
-      );
-      ctx.putImageData(imageData, 0, 0);
-      encoder.addFrame(ctx as unknown as CanvasRenderingContext2D);
-
-      await fs.promises.unlink(imagePath);
+      // 将像素数据传递给 encoder
+      encoder.addFrame(imageData as unknown as CanvasRenderingContext2D);
     }
 
     encoder.finish();
 
-    await new Promise((resolve) => gifStream.on("finish", resolve));
+    // 等待 GIF 文件写入完成
+    await new Promise<void>((resolve) => gifStream.on("finish", resolve));
 
     const gifUrl = "/uploads/output.gif";
     return NextResponse.json({ gifUrl });
