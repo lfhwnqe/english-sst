@@ -12,17 +12,15 @@ export default function ImageToGif() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<PreviewImage[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [gifUrl, setGifUrl] = useState<string>("");
+  const [gifData, setGifData] = useState<string>(""); // 改为存储 base64 数据
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    // Only accept image files
     const imageFiles = files.filter((file) => file.type.startsWith("image/"));
 
     setSelectedFiles((prev) => [...prev, ...imageFiles]);
 
-    // Create preview URLs
     const newPreviews = imageFiles.map((file) => ({
       url: URL.createObjectURL(file),
       file: file,
@@ -72,14 +70,26 @@ export default function ImageToGif() {
 
       if (!response.ok) throw new Error("Failed to create GIF");
 
-      const data: { gifUrl: string } = await response.json();
-      setGifUrl(data.gifUrl);
+      const data: { gifData: string } = await response.json();
+      setGifData(data.gifData);
     } catch (error) {
       console.error("Error creating GIF:", error);
       alert("Failed to create GIF. Please try again.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDownload = () => {
+    if (!gifData) return;
+    
+    // 创建一个下载链接
+    const link = document.createElement('a');
+    link.href = gifData;
+    link.download = 'animated.gif';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -163,26 +173,26 @@ export default function ImageToGif() {
       </button>
 
       {/* Result Area */}
-      {gifUrl && (
+      {gifData && (
         <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Your GIF</h2>
           <div className="border rounded-lg p-4">
             <div className="relative w-full h-[400px]">
               <Image
-                src={gifUrl}
+                src={gifData}
                 alt="Generated GIF"
                 fill
                 className="object-contain"
                 sizes="100vw"
+                unoptimized // 添加这个属性来防止 Next.js 优化 base64 图片
               />
             </div>
-            <a
-              href={gifUrl}
-              download="animated.gif"
-              className="block mt-4 text-center p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            <button
+              onClick={handleDownload}
+              className="block w-full mt-4 text-center p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Download GIF
-            </a>
+            </button>
           </div>
         </div>
       )}
