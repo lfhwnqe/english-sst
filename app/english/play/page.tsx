@@ -56,7 +56,8 @@ Rush through 匆忙完成
 4 专业术语（如发型相关）可根据对话对象调整使用程度`;
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <ScrollPlayer audioUrl="/audio/getup.wav" text={str} />
+      <ScrollPlayer audioUrl="https://nuo-english.s3.us-east-2.amazonaws.com/getup.wav" text={str} />
+      {/* <ScrollPlayer audioUrl="/audio/getup.wav" text={str} /> */}
     </div>
   );
 }
