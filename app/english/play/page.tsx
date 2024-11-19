@@ -1,5 +1,3 @@
-"use client";
-
 import ScrollPlayer from "@/app/components/common/scrollPlayer";
 
 export default function Play() {

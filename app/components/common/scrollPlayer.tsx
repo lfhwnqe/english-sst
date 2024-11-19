@@ -1,5 +1,4 @@
 "use client";
-
 import { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -58,17 +57,16 @@ export default function PagePlayer({ audioUrl, text }: Props) {
 
       <div
         ref={containerRef}
-        className="h-[calc(100vh-12rem)] bg-gray-900 p-6 rounded-lg text-white mb-4"
+        className="h-[calc(100vh-16rem)] bg-gray-900 p-6 rounded-lg text-white mb-4"
       >
         <pre className="whitespace-pre-wrap font-sans">
           {pages[currentPage]}
         </pre>
       </div>
 
-      {/* Hidden div for measuring text height */}
       <div
         ref={testDivRef}
-        className="absolute invisible h-[calc(100vh-12rem)] whitespace-pre-wrap font-sans p-6"
+        className="absolute invisible h-[calc(100vh-16rem)] whitespace-pre-wrap font-sans p-6"
       />
 
       <div className="flex justify-between items-center">
