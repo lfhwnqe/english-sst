@@ -57,7 +57,7 @@ export default function PagePlayer({ audioUrl, text }: Props) {
 
       <div
         ref={containerRef}
-        className="h-[calc(100vh-16rem)] bg-gray-900 p-6 rounded-lg text-white mb-4"
+        className="h-[calc(100vh-20rem)] bg-gray-900 p-6 rounded-lg text-white mb-4 overflow-hidden"
       >
         <pre className="whitespace-pre-wrap font-sans">
           {pages[currentPage]}
@@ -66,7 +66,7 @@ export default function PagePlayer({ audioUrl, text }: Props) {
 
       <div
         ref={testDivRef}
-        className="absolute invisible h-[calc(100vh-16rem)] whitespace-pre-wrap font-sans p-6"
+        className="absolute invisible h-[calc(100vh-20rem)] whitespace-pre-wrap font-sans p-6 overflow-hidden"
       />
 
       <div className="flex justify-between items-center">
