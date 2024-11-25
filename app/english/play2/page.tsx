@@ -66,6 +66,7 @@ export default function Play() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <ScrollPlayer
+        name="juki"
         audioUrl="https://nuo-english.s3.us-east-2.amazonaws.com/juki.wav"
         text={str}
       />
