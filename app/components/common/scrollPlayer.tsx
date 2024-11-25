@@ -3,6 +3,7 @@ import AudioPlayer from "./audioPlayer";
 interface Props {
   audioUrl: string;
   text: string;
+  name: string;
 }
 
 export default function PagePlayer({ audioUrl, text, name }: Props) {
