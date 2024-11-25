@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "howler": "^2.2.4",
     "aws-amplify": "^6.6.7",
     "graphql": "^16.9.0",
+    "howler": "^2.2.4",
     "immer": "^10.1.1",
     "jotai": "^2.10.1",
     "lucide-react": "^0.454.0",
@@ -24,6 +24,7 @@
     "@types/formidable": "^3.4.5",
     "@types/gif-encoder": "^0.7.4",
     "@types/gifencoder": "^2.0.3",
+    "@types/howler": "^2.2.12",
     "@types/node": "20.8.1",
     "@types/react": "18.2.12",
     "@types/react-dom": "18.2.0",
