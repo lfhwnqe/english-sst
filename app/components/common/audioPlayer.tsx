@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState, useEffect, useRef, MouseEvent } from "react";
 import { Howl } from "howler";
 
@@ -17,7 +17,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const newSound = new Howl({
+    const newSound: Howl = new Howl({
       src: [src],
       loop: isLooping,
       rate: speed,
