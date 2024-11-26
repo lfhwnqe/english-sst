@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, MouseEvent } from "react";
 import { Howl } from "howler";
+import { Play, Pause, RotateCcw, Repeat, Plus, Minus } from "lucide-react";
 
 interface AudioPlayerProps {
   src: string;
@@ -50,6 +51,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     }
   };
 
+  const resetAudio = () => {
+    if (sound) {
+      sound.seek(0);
+      setProgress(0);
+      if (isPlaying) {
+        sound.play();
+      }
+    }
+  };
+
   const toggleLoop = () => {
     setIsLooping(!isLooping);
     if (sound) {
@@ -63,9 +74,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       sound.rate(newSpeed);
     }
   };
+
   const addSpeed = () => {
     changeSpeed(speed + 0.05);
   };
+
   const minusSpeed = () => {
     changeSpeed(speed - 0.05);
   };
@@ -81,27 +94,37 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   };
 
   return (
-    <div className="p-4  shadow-md rounded-lg max-w-md mx-auto flex flex-col items-center gap-4">
+    <div className="p-4 shadow-md rounded-lg max-w-md mx-auto flex flex-col items-center gap-4">
       <div className="flex items-center justify-center gap-2">
         <button
           onClick={togglePlay}
-          className="p-2 rounded-full bg-blue-500 text-white w-12 h-12 flex items-center justify-center"
+          className="p-2 rounded-full bg-blue-500 text-white w-12 h-12 flex items-center justify-center hover:bg-blue-600 transition-colors"
         >
-          {isPlaying ? "⏸" : "▶️"}
+          {isPlaying ? (
+            <Pause className="w-6 h-6" />
+          ) : (
+            <Play className="w-6 h-6" />
+          )}
+        </button>
+        <button
+          onClick={resetAudio}
+          className="p-2 rounded-full bg-gray-300 text-white w-12 h-12 flex items-center justify-center hover:bg-gray-400 transition-colors"
+        >
+          <RotateCcw className="w-6 h-6" />
         </button>
         <button
           onClick={toggleLoop}
           className={`p-2 rounded-full ${
-            isLooping ? "bg-green-500" : "bg-gray-300"
-          } text-white w-12 h-12 flex items-center justify-center`}
+            isLooping ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400"
+          } text-white w-12 h-12 flex items-center justify-center transition-colors`}
         >
-          🔁
+          <Repeat className="w-6 h-6" />
         </button>
       </div>
       <div
         ref={progressRef}
         onClick={seek}
-        className="w-full h-2 bg-gray-300 rounded-md relative cursor-pointer"
+        className="w-full h-2 bg-gray-200 rounded-md relative cursor-pointer"
       >
         <div
           style={{ width: `${(progress / duration) * 100}%` }}
@@ -115,27 +138,18 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       <div className="flex gap-2 items-center">
         <button
           onClick={minusSpeed}
-          className={`px-4 py-2 rounded-md ${
-            speed === 0.5 ? "bg-blue-500 text-white" : "bg-gray-300 text-black"
-          }`}
+          className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
         >
-          -
+          <Minus className="w-4 h-4" />
         </button>
-        <button
-          onClick={() => changeSpeed(1)}
-          className={`px-4 py-2 rounded-md ${
-            speed === 1 ? "bg-blue-500 text-white" : "bg-gray-300 text-black"
-          }`}
-        >
-          {`${speed.toFixed(2)}`}
-        </button>
+        <span className="min-w-[60px] text-center">
+          {`${speed.toFixed(2)}x`}
+        </span>
         <button
           onClick={addSpeed}
-          className={`px-4 py-2 rounded-md ${
-            speed === 1.5 ? "bg-blue-500 text-white" : "bg-gray-300 text-black"
-          }`}
+          className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
         >
-          +
+          <Plus className="w-4 h-4" />
         </button>
       </div>
     </div>
