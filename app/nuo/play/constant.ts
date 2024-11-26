@@ -210,4 +210,81 @@ These meetings are wearing me out need some exercise to recharge
 Feeling energized after the workout ready to tackle afternoon tasks
 运动后感觉精力充沛 准备应对下午的任务`,
   },
+  3: {
+    name: "起床2",
+    url: "https://nuo-english.s3.us-east-2.amazonaws.com/getup_new.wav",
+    str: `Scene: Morning Routine
+Here we go again with that stupid alarm at 8:10
+又是该死的闹钟在8点10分响起
+Hit the snooze button for another 10 minutes
+按了贪睡按钮又睡了10分钟
+Drag myself out of bed eventually
+终于把自己从床上拖起来
+Time to step on the scale first thing
+先称个重
+Looks like the workouts are paying off
+看起来运动有点效果
+Got to keep at it to lose this belly fat and stay healthy
+得继续坚持减掉肚腩保持健康
+Grab my white tee and throw on some jeans
+拿件白T恤套上牛仔裤
+This will do for today
+今天就这身了
+Head to the bathroom and grab my electric toothbrush
+去卫生间拿我的电动牙刷
+Check out this handsome devil in the mirror
+照照镜子看看帅脸
+Too good looking to be working a regular job honestly
+这么帅的脸真不该打工
+Time to freshen up
+是时候洗漱了
+This stupid allergies make me gag every time I brush my tongue
+该死的过敏让我刷舌苔时都想干呕
+Wash my face and put on some moisturizer
+洗把脸涂上润肤霜
+Great my bedhead is a total mess again
+该死的又睡乱了发型
+Dampen the hair first then style it with the blow dryer
+先用水打湿头发再用吹风机造型
+Add a bit of pomade to keep it from falling flat
+抹点发蜡防止塌下来
+Finish with some hairspray to set everything in place
+最后喷点定型喷雾固定
+What a hassle for this retro pompadour
+麻烦的复古油头造型
+Wash my hands and time to head out
+洗个手准备出门
+Grab my keys ID phone and prayer beads from the desk
+从桌上拿上钥匙工卡手机和佛珠
+Lock up and double check it is secure
+锁好门再检查一遍
+All set another painful workday begins
+一切就绪又一个痛苦的工作日开始了
+Analysis:
+Key Expression Breakdown
+step on the scale vs check weight
+称重的表达
+step on the scale
+更自然的口语表达
+check weight
+更直接但不够生动
+keep at it vs continue
+坚持的表达
+keep at it
+更口语化更有动力感
+continue
+过于正式直接
+freshen up vs get ready
+整理打扮的表达
+freshen up
+更精炼优雅
+get ready
+较为平淡普通
+handsome devil vs good looking
+帅气的玩笑表达
+handsome devil
+带有自嘲幽默感
+good looking
+过于直白普通`,
+  },
 };
