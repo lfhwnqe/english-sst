@@ -31,6 +31,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         setIsLoading(false);
       },
       onloaderror: (_, error) => {
+        console.log('error:',error);
+        
         setLoadError("Failed to load audio");
         setIsLoading(false);
       },
