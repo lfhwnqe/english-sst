@@ -121,7 +121,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         <button
           onClick={toggleLoop}
           className={`p-2 rounded-full ${
-            isLooping ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400"
+            isLooping
+              ? "bg-green-500 hover:bg-green-600"
+              : "bg-gray-300 hover:bg-gray-400"
           } text-white w-12 h-12 flex items-center justify-center transition-colors`}
         >
           <Repeat className="w-6 h-6" />
@@ -144,17 +146,17 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       <div className="flex gap-2 items-center">
         <button
           onClick={minusSpeed}
-          className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
+          className="p-2 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors"
           disabled={speed <= 0.5}
         >
-          <Minus className="w-4 h-4" />
+          <Minus className="w-4 h-4 " />
         </button>
         <span className="min-w-[60px] text-center">
           {`${speed.toFixed(2)}x`}
         </span>
         <button
           onClick={addSpeed}
-          className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
+          className="p-2 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors"
           disabled={speed >= 2}
         >
           <Plus className="w-4 h-4" />
