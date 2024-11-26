@@ -17,11 +17,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   const progressRef = useRef<HTMLDivElement>(null);
 
-  // 主要的 Howl 实例创建
+  // 只在src改变时重新创建实例
   useEffect(() => {
     const newSound: Howl = new Howl({
       src: [src],
-      rate: speed,
+      rate: speed, // 设置初始速度
       onload: () => setDuration(newSound.duration()),
       onplay: () => {
         const updateProgress = () => {
@@ -41,7 +41,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     return () => {
       newSound.unload();
     };
-  }, [src, speed]); // 只在 src 或 speed 改变时重新创建实例
+  }, [src]); // 只在音频源改变时重新创建实例
 
   const togglePlay = () => {
     if (sound) {
@@ -73,18 +73,20 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   };
 
   const changeSpeed = (newSpeed: number) => {
-    setSpeed(newSpeed);
     if (sound) {
-      sound.rate(newSpeed);
+      sound.rate(newSpeed); // 直接在当前实例上修改速度
+      setSpeed(newSpeed);
     }
   };
 
   const addSpeed = () => {
-    changeSpeed(speed + 0.05);
+    const newSpeed = Math.min(speed + 0.05, 2); // 限制最大速度
+    changeSpeed(newSpeed);
   };
 
   const minusSpeed = () => {
-    changeSpeed(speed - 0.05);
+    const newSpeed = Math.max(speed - 0.05, 0.5); // 限制最小速度
+    changeSpeed(newSpeed);
   };
 
   const seek = (event: MouseEvent<HTMLDivElement>) => {
@@ -143,6 +145,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         <button
           onClick={minusSpeed}
           className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
+          disabled={speed <= 0.5}
         >
           <Minus className="w-4 h-4" />
         </button>
@@ -152,6 +155,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         <button
           onClick={addSpeed}
           className="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
+          disabled={speed >= 2}
         >
           <Plus className="w-4 h-4" />
         </button>
