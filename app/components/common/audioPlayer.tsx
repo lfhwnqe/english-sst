@@ -17,10 +17,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
   const progressRef = useRef<HTMLDivElement>(null);
 
+  // 主要的 Howl 实例创建
   useEffect(() => {
     const newSound: Howl = new Howl({
       src: [src],
-      loop: isLooping,
       rate: speed,
       onload: () => setDuration(newSound.duration()),
       onplay: () => {
@@ -33,12 +33,15 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         requestAnimationFrame(updateProgress);
       },
     });
+
+    // 设置初始循环状态
+    newSound.loop(isLooping);
     setSound(newSound);
 
     return () => {
       newSound.unload();
     };
-  }, [src, isLooping, speed]);
+  }, [src, speed]); // 只在 src 或 speed 改变时重新创建实例
 
   const togglePlay = () => {
     if (sound) {
@@ -62,9 +65,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   };
 
   const toggleLoop = () => {
-    setIsLooping(!isLooping);
     if (sound) {
-      sound.loop(!isLooping);
+      const newLoopState = !isLooping;
+      setIsLooping(newLoopState);
+      sound.loop(newLoopState);
     }
   };
 
