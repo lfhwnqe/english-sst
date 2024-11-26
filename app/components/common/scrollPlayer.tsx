@@ -9,18 +9,22 @@ interface Props {
 export default function PagePlayer({ audioUrl, text, name }: Props) {
   const lines = text.split("\n") || [];
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-1 overflow-auto p-4 text-xl">
-        <h1 className="text-lg mb-2 font-bold">{name}</h1>
-        {lines.map((i, index) => {
-          return (
-            <p key={index} className="mb-2">
-              {i}
-            </p>
-          );
-        })}
-      </div>
-      <div className=" ">
+    //  // 使用绝对定位避免body滚动
+    <div className="fixed inset-0 flex flex-col  overscroll-none">
+      {/* 内容区域 - 可滚动，但限制在容器内 */}
+      <main className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="p-4">
+          <h1 className="text-lg mb-2 font-bold">{name}</h1>
+          {lines.map((i, index) => {
+            return (
+              <p key={index} className="mb-2 text-lg">
+                {i}
+              </p>
+            );
+          })}
+        </div>
+      </main>
+      <div className="w-full  pb-safe">
         <AudioPlayer src={audioUrl} />
       </div>
     </div>

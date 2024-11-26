@@ -11,7 +11,7 @@ export default function Play() {
   const sectionContent = sectionId && sectionMap?.[sectionId];
   if (!sectionContent) return null;
   return (
-    <div className="">
+    <div>
       <ScrollPlayer
         audioUrl={sectionContent.url}
         name={sectionContent.name}
