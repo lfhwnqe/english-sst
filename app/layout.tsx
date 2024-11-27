@@ -19,6 +19,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
   title: "毛毛虫公司",
   description: "maomaocong",
 };
