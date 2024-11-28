@@ -107,8 +107,7 @@ Ready to tackle the day ahead
   },
   2: {
     name: "开始工作",
-    url: "/audio/workstart.wav",
-    // url: "https://nuo-english.s3.us-east-2.amazonaws.com/workstart.wav",
+    url: "https://nuo-english.s3.us-east-2.amazonaws.com/workstart.wav",
     str: `场景英语表达分析
 A Typical Work Morning and Lunch Break
 I arrive at the office and boot up my computer first thing in the morning
