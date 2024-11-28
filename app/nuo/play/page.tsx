@@ -1,8 +1,9 @@
 "use client";
 
-import ScrollPlayer from "@/app/components/common/scrollPlayer";
+// import ScrollPlayer from "@/app/components/common/scrollPlayer";
 import { useSearchParams } from "next/navigation";
 import { sectionMap } from "./constant";
+import ScrollPagedContent from "@/app/components/common/scrollPagedContent";
 
 export default function Play() {
   const searchParams = useSearchParams();
@@ -12,7 +13,7 @@ export default function Play() {
   if (!sectionContent) return null;
   return (
     <div>
-      <ScrollPlayer
+      <ScrollPagedContent
         audioUrl={sectionContent.url}
         name={sectionContent.name}
         text={sectionContent.str}
