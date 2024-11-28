@@ -107,7 +107,8 @@ Ready to tackle the day ahead
   },
   2: {
     name: "开始工作",
-    url: "https://nuo-english.s3.us-east-2.amazonaws.com/workstart.wav",
+    url: "/audio/workstart.wav",
+    // url: "https://nuo-english.s3.us-east-2.amazonaws.com/workstart.wav",
     str: `场景英语表达分析
 A Typical Work Morning and Lunch Break
 I arrive at the office and boot up my computer first thing in the morning
@@ -212,6 +213,7 @@ Feeling energized after the workout ready to tackle afternoon tasks
   },
   3: {
     name: "起床2",
+    // url: "/audio/getup_new.wav",
     url: "https://nuo-english.s3.us-east-2.amazonaws.com/getup_new.wav",
     str: `Scene: Morning Routine
 Here we go again with that stupid alarm at 8:10
