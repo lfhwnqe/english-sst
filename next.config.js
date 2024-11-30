@@ -3,6 +3,7 @@ const withPWA = require("next-pwa")({
   register: true,
   skipWaiting: true,
   runtimeCaching: require("./workbox-config.js"),
+  disable: process.env.NODE_ENV === "development",
 });
 
 /** @type {import('next').NextConfig} */
