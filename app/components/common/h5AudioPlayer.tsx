@@ -1,6 +1,14 @@
 "use client";
 import React, { useRef, useState, useEffect, MouseEvent } from "react";
-import { Play, Pause, Loader, Plus, Minus } from "lucide-react";
+import {
+  Play,
+  Pause,
+  Loader,
+  Plus,
+  Minus,
+  RotateCcw,
+  Repeat,
+} from "lucide-react";
 
 interface AudioPlayerProps {
   src: string;
@@ -20,6 +28,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [speed, setSpeed] = useState(1);
+  const [isLooping, setIsLooping] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -33,12 +42,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         setDuration(audio.duration);
       };
 
-      // 添加事件监听
       audio.addEventListener("timeupdate", handleTimeUpdate as EventListener);
       audio.addEventListener("durationchange", handleDurationChange);
       audio.playbackRate = speed;
+      audio.loop = isLooping;
 
-      // 清理函数
       return () => {
         audio.removeEventListener(
           "timeupdate",
@@ -47,7 +55,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         audio.removeEventListener("durationchange", handleDurationChange);
       };
     }
-  }, [speed]);
+  }, [speed, isLooping]);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -56,8 +64,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       } else {
         setError(null);
         audioRef.current.play().catch((err) => {
-          console.log("err",err);
-
           setError("Failed to play audio");
           setIsPlaying(false);
         });
@@ -84,6 +90,26 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     }
   };
 
+  const toggleLoop = () => {
+    if (audioRef.current) {
+      setIsLooping(!isLooping);
+      audioRef.current.loop = !isLooping;
+    }
+  };
+
+  const resetAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      setCurrentTime(0);
+      if (isPlaying) {
+        audioRef.current.play().catch((err) => {
+          setError("Failed to play audio");
+          setIsPlaying(false);
+        });
+      }
+    }
+  };
+
   const formatTime = (time: number): string => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -100,7 +126,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
           setError("Failed to load audio");
           setIsLoading(false);
         }}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => !isLooping && setIsPlaying(false)}
       />
 
       {error && (
@@ -109,9 +135,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         </div>
       )}
 
-      <div className="flex flex-col gap-4">
-        {/* 播放控制按钮 */}
-        <div className="flex justify-center">
+      <div className="flex flex-col gap-2">
+        {/* 控制按钮 */}
+        <div className="flex justify-center gap-2">
           <button
             onClick={togglePlay}
             disabled={isLoading}
@@ -125,6 +151,30 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
             ) : (
               <Play className="w-4 h-4" />
             )}
+          </button>
+
+          <button
+            onClick={resetAudio}
+            disabled={isLoading}
+            className={`p-2 rounded-full text-white w-8 h-8 flex items-center justify-center transition-colors
+              ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-gray-500 hover:bg-gray-600"}`}
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={toggleLoop}
+            disabled={isLoading}
+            className={`p-2 rounded-full text-white w-8 h-8 flex items-center justify-center transition-colors
+              ${
+                isLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : isLooping
+                    ? "bg-green-500 hover:bg-green-600"
+                    : "bg-gray-500 hover:bg-gray-600"
+              }`}
+          >
+            <Repeat className="w-4 h-4" />
           </button>
         </div>
 
