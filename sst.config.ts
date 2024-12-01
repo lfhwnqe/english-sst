@@ -17,7 +17,18 @@ export default $config({
       server: {
         edge: {
           viewerRequest: {
-            injection: "test",
+            injection: `
+              event.request.headers["x-custom-header"] = {
+                value: "custom-value"
+              };
+            `,
+          },
+          viewerResponse: {
+            injection: `
+              event.response.headers["x-response-header"] = {
+                value: "edge-processed"
+              };
+            `,
           },
         },
       },
