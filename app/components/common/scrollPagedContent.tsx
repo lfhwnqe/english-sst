@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
-import AudioPlayer from "./audioPlayer";
+import AudioPlayer from "./h5AudioPlayer";
+// import AudioPlayer from "./audioPlayer";
 
 interface Props {
   audioUrl: string;

@@ -1,4 +1,5 @@
-import AudioPlayer from "./audioPlayer";
+import AudioPlayer from "./h5AudioPlayer";
+// import AudioPlayer from "./audioPlayer";
 // import ScrollPagedContent from "./scrollPagedContent";
 
 interface Props {
