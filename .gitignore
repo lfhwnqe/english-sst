@@ -45,3 +45,5 @@ public/workbox-*.js
 
 # open-next
 .open-next
+
+cloudflare.js

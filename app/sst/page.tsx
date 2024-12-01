@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const command = new PutObjectCommand({
     Key: crypto.randomUUID(),
-    Bucket: Resource.MyBucket.name,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Bucket: (Resource as any).MyBucket.name,
   });
   const url = await getSignedUrl(new S3Client({}), command);
 

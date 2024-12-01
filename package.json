@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "npx sst dev",
+    "dev:sst": "sst dev --stage developent",
+    "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
     "publish:sit": "npx sst deploy --stage sit",
