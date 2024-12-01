@@ -1,5 +1,6 @@
 "use client";
-import React, { useRef, useState, useEffect, MouseEvent } from "react";
+
+import { memo, useRef, useState, useEffect, MouseEvent } from "react";
 import {
   Play,
   Pause,
@@ -9,19 +10,13 @@ import {
   RotateCcw,
   Repeat,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 
 interface AudioPlayerProps {
   src: string;
 }
 
-interface TimeUpdateEvent extends Event {
-  target: HTMLAudioElement;
-}
-
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
-
+const AudioPlayerComponent = ({ src }: AudioPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,51 +24,100 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   const [duration, setDuration] = useState(0);
   const [speed, setSpeed] = useState(1);
   const [isLooping, setIsLooping] = useState(false);
+  const [audioReady, setAudioReady] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  // 初始化音频元素
+  useEffect(() => {
+    setIsLoading(true);
+    setAudioReady(false);
+    setError(null);
+
+    if (audioRef.current) {
+      const audio = audioRef.current;
+
+      // 重置音频元素
+      audio.pause();
+      audio.currentTime = 0;
+      setIsPlaying(false);
+
+      // 显式加载
+      audio.load();
+    }
+  }, [src]);
 
   useEffect(() => {
     if (audioRef.current) {
       const audio = audioRef.current;
 
-      const handleTimeUpdate = (e: TimeUpdateEvent) => {
-        setCurrentTime(e.target.currentTime);
+      const handleTimeUpdate = () => {
+        setCurrentTime(audio.currentTime);
       };
 
       const handleDurationChange = () => {
-        setDuration(audio.duration);
+        if (audio.duration && !isNaN(audio.duration)) {
+          setDuration(audio.duration);
+        }
       };
 
-      audio.addEventListener("timeupdate", handleTimeUpdate as EventListener);
+      const handleLoadedMetadata = () => {
+        setIsLoading(false);
+        setAudioReady(true);
+        handleDurationChange();
+      };
+
+      const handleLoadStart = () => {
+        setIsLoading(true);
+        setAudioReady(false);
+      };
+
+      const handleCanPlay = () => {
+        setIsLoading(false);
+        setAudioReady(true);
+      };
+
+      audio.addEventListener("timeupdate", handleTimeUpdate);
       audio.addEventListener("durationchange", handleDurationChange);
+      audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.addEventListener("loadstart", handleLoadStart);
+      audio.addEventListener("canplay", handleCanPlay);
+
       audio.playbackRate = speed;
       audio.loop = isLooping;
 
       return () => {
-        audio.removeEventListener(
-          "timeupdate",
-          handleTimeUpdate as EventListener
-        );
+        audio.removeEventListener("timeupdate", handleTimeUpdate);
         audio.removeEventListener("durationchange", handleDurationChange);
+        audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+        audio.removeEventListener("loadstart", handleLoadStart);
+        audio.removeEventListener("canplay", handleCanPlay);
       };
     }
   }, [speed, isLooping]);
 
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        setError(null);
-        audioRef.current.play().catch((err) => {
-          setError("Failed to play audio");
+  const togglePlay = async () => {
+    if (audioRef.current && audioReady) {
+      try {
+        if (isPlaying) {
+          audioRef.current.pause();
           setIsPlaying(false);
-        });
+        } else {
+          setError(null);
+          await audioRef.current.play();
+          setIsPlaying(true);
+        }
+      } catch (err) {
+        console.error("Playback error:", err);
+        setError("Failed to play audio");
+        setIsPlaying(false);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
   const handleProgressClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (audioRef.current && progressRef.current && !isLoading) {
+    if (audioRef.current && progressRef.current && audioReady) {
       const rect = progressRef.current.getBoundingClientRect();
       const offsetX = event.clientX - rect.left;
       const newTime = (offsetX / rect.width) * duration;
@@ -83,7 +127,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   };
 
   const changeSpeed = (delta: number) => {
-    if (audioRef.current) {
+    if (audioRef.current && audioReady) {
       const newSpeed = Math.max(0.5, Math.min(2, speed + delta));
       setSpeed(newSpeed);
       audioRef.current.playbackRate = newSpeed;
@@ -91,21 +135,25 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
   };
 
   const toggleLoop = () => {
-    if (audioRef.current) {
+    if (audioRef.current && audioReady) {
       setIsLooping(!isLooping);
       audioRef.current.loop = !isLooping;
     }
   };
 
-  const resetAudio = () => {
-    if (audioRef.current) {
+  const resetAudio = async () => {
+    if (audioRef.current && audioReady) {
+      const wasPlaying = isPlaying;
       audioRef.current.currentTime = 0;
       setCurrentTime(0);
-      if (isPlaying) {
-        audioRef.current.play().catch((err) => {
+      if (wasPlaying) {
+        try {
+          await audioRef.current.play();
+        } catch (err) {
+          console.error("Playback error:", err);
           setError("Failed to play audio");
           setIsPlaying(false);
-        });
+        }
       }
     }
   };
@@ -121,10 +169,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
       <audio
         ref={audioRef}
         src={src}
-        onCanPlay={() => setIsLoading(false)}
-        onError={() => {
+        preload="auto"
+        onError={(e) => {
+          console.error("Audio error:", e);
           setError("Failed to load audio");
           setIsLoading(false);
+          setAudioReady(false);
         }}
         onEnded={() => !isLooping && setIsPlaying(false)}
       />
@@ -135,14 +185,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         </div>
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         {/* 控制按钮 */}
         <div className="flex justify-center gap-2">
           <button
             onClick={togglePlay}
-            disabled={isLoading}
+            disabled={isLoading || !audioReady}
             className={`p-2 rounded-full text-white w-8 h-8 flex items-center justify-center transition-colors
-              ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"}`}
+              ${isLoading || !audioReady ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"}`}
           >
             {isLoading ? (
               <Loader className="w-4 h-4 animate-spin" />
@@ -155,19 +205,19 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
 
           <button
             onClick={resetAudio}
-            disabled={isLoading}
+            disabled={isLoading || !audioReady}
             className={`p-2 rounded-full text-white w-8 h-8 flex items-center justify-center transition-colors
-              ${isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-gray-500 hover:bg-gray-600"}`}
+              ${isLoading || !audioReady ? "bg-gray-400 cursor-not-allowed" : "bg-gray-500 hover:bg-gray-600"}`}
           >
             <RotateCcw className="w-4 h-4" />
           </button>
 
           <button
             onClick={toggleLoop}
-            disabled={isLoading}
+            disabled={isLoading || !audioReady}
             className={`p-2 rounded-full text-white w-8 h-8 flex items-center justify-center transition-colors
               ${
-                isLoading
+                isLoading || !audioReady
                   ? "bg-gray-400 cursor-not-allowed"
                   : isLooping
                     ? "bg-green-500 hover:bg-green-600"
@@ -183,7 +233,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
           <div
             ref={progressRef}
             onClick={handleProgressClick}
-            className="w-full h-1 bg-gray-200 rounded-full cursor-pointer relative hover:h-2 transition-all"
+            className={`w-full h-1 bg-gray-200 rounded-full relative transition-all
+              ${audioReady ? "cursor-pointer hover:h-2" : "cursor-not-allowed"}`}
           >
             <div
               className="absolute top-0 left-0 h-full bg-blue-500 rounded-full"
@@ -199,10 +250,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
         {/* 速度控制 */}
         <div className="flex justify-center items-center gap-2">
           <button
-            onClick={() => changeSpeed(-0.05)}
-            disabled={speed <= 0.5 || isLoading}
+            onClick={() => changeSpeed(-0.25)}
+            disabled={speed <= 0.5 || isLoading || !audioReady}
             className={`p-1 rounded-md transition-colors
-              ${speed <= 0.5 || isLoading ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+              ${speed <= 0.5 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
           >
             <Minus className="w-4 h-4" />
           </button>
@@ -210,10 +261,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
             {speed.toFixed(2)}x
           </span>
           <button
-            onClick={() => changeSpeed(0.05)}
-            disabled={speed >= 2 || isLoading}
+            onClick={() => changeSpeed(0.25)}
+            disabled={speed >= 2 || isLoading || !audioReady}
             className={`p-1 rounded-md transition-colors
-              ${speed >= 2 || isLoading ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+              ${speed >= 2 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -222,5 +273,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src }) => {
     </div>
   );
 };
+
+const AudioPlayer = dynamic(() => Promise.resolve(memo(AudioPlayerComponent)), {
+  ssr: false,
+}) as typeof AudioPlayerComponent;
 
 export default AudioPlayer;
