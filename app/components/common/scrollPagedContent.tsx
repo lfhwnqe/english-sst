@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import AudioPlayer from "./h5AudioPlayer";
-// import AudioPlayer from "./audioPlayer";
 
 interface Props {
   audioUrl: string;
@@ -11,12 +10,26 @@ interface Props {
 
 const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const contentRef = useRef<HTMLDivElement>(null);
   const lines = text.split("\n");
 
   useEffect(() => {
     const container = contentRef.current;
     if (!container) return;
+
+    // Calculate total pages
+    const calculateTotalPages = () => {
+      const total = Math.ceil(container.scrollHeight / container.clientHeight);
+      setTotalPages(total);
+    };
+
+    // Initial calculation
+    calculateTotalPages();
+
+    // Recalculate on resize
+    const resizeObserver = new ResizeObserver(calculateTotalPages);
+    resizeObserver.observe(container);
 
     const handleScroll = () => {
       const currentScroll = container.scrollTop;
@@ -25,22 +38,46 @@ const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
     };
 
     container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      resizeObserver.disconnect();
+    };
   }, []);
 
   const scrollToPage = (direction: "up" | "down") => {
     const container = contentRef.current;
     if (!container) return;
 
-    const targetScroll =
-      direction === "up"
-        ? container.scrollTop - container.clientHeight
-        : container.scrollTop + container.clientHeight;
+    const isAtBottom = 
+      Math.ceil(container.scrollTop + container.clientHeight) >= container.scrollHeight;
+    const isAtTop = container.scrollTop === 0;
 
-    container.scrollTo({
-      top: targetScroll,
-      behavior: "smooth",
-    });
+    if (direction === "down" && isAtBottom) {
+      // At bottom, scroll to top
+      container.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      setCurrentPage(1);
+    } else if (direction === "up" && isAtTop) {
+      // At top, scroll to bottom
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: "smooth",
+      });
+      setCurrentPage(totalPages);
+    } else {
+      // Normal scroll up/down
+      const targetScroll =
+        direction === "up"
+          ? container.scrollTop - container.clientHeight
+          : container.scrollTop + container.clientHeight;
+
+      container.scrollTo({
+        top: targetScroll,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
@@ -63,7 +100,9 @@ const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
         <button onClick={() => scrollToPage("up")} className="p-2">
           <ChevronUp className="w-4 h-4" />
         </button>
-        <span className="text-sm">Page {currentPage}</span>
+        <span className="text-sm">
+          Page {currentPage} of {totalPages}
+        </span>
         <button onClick={() => scrollToPage("down")} className="p-2">
           <ChevronDown className="w-4 h-4" />
         </button>
