@@ -38,3 +38,10 @@ next-env.d.ts
 certificates
 public/sw.js
 public/workbox-*.js
+
+# sst
+.sst
+
+
+# open-next
+.open-next
