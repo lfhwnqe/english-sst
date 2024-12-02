@@ -250,7 +250,7 @@ const AudioPlayerComponent = ({ src }: AudioPlayerProps) => {
         {/* 速度控制 */}
         <div className="flex justify-center items-center gap-2">
           <button
-            onClick={() => changeSpeed(-0.25)}
+            onClick={() => changeSpeed(-0.05)}
             disabled={speed <= 0.5 || isLoading || !audioReady}
             className={`p-1 rounded-md transition-colors
               ${speed <= 0.5 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
@@ -261,7 +261,7 @@ const AudioPlayerComponent = ({ src }: AudioPlayerProps) => {
             {speed.toFixed(2)}x
           </span>
           <button
-            onClick={() => changeSpeed(0.25)}
+            onClick={() => changeSpeed(0.05)}
             disabled={speed >= 2 || isLoading || !audioReady}
             className={`p-1 rounded-md transition-colors
               ${speed >= 2 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
