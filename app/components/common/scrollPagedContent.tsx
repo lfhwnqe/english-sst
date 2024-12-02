@@ -48,8 +48,9 @@ const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
     const container = contentRef.current;
     if (!container) return;
 
-    const isAtBottom = 
-      Math.ceil(container.scrollTop + container.clientHeight) >= container.scrollHeight;
+    const isAtBottom =
+      Math.ceil(container.scrollTop + container.clientHeight) >=
+      container.scrollHeight;
     const isAtTop = container.scrollTop === 0;
 
     if (direction === "down" && isAtBottom) {
