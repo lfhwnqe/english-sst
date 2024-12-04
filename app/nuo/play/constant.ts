@@ -369,4 +369,169 @@ have to
 need to
 需要，中性表达`,
   },
+  5: {
+    name: "打工路上",
+    url: "https://nuo-english.s3.us-east-2.amazonaws.com/work-routing.wav",
+    str: `My body is still slowly waking up this morning
+身体还在早晨的缓慢恢复中
+
+Still in recovery mode, I head down seven floors to start my day
+保持着半清醒状态，我走下七楼开始新的一天
+
+I make my way toward the village entrance
+我朝着村口走去
+
+As I get closer to the village entrance, I notice more and more people gathering
+当我越接近村口，我注意到越来越多的人在聚集
+
+Looks like we are all ordinary workers heading to our jobs
+看来我们都是普通的上班族呢
+
+The breakfast vendors along the way are doing great business
+路边的早餐摊位生意很好
+
+Their food looks really tempting
+他们的食物看起来很诱人
+
+But unfortunately, I cannot buy breakfast here
+但可惜的是，我不能在这里买早餐
+
+I have to take the subway instead
+我得去坐地铁
+
+I arrive at the subway station and find my way to the starting platform
+我到达地铁站，找到始发站台
+
+I join the queue and wait patiently
+我开始排队耐心等待
+
+I usually manage to get a seat since this is the first station
+因为是始发站，我通常能找到座位
+
+That is exactly why I chose to rent an apartment here
+这正是我选择在这里租房的原因
+
+My past decision proves to be quite wise
+我当初的选择证明是明智的
+
+No need to squeeze onto crowded trains while standing
+不用站着挤地铁
+
+My body can gradually return to full alertness
+身体可以慢慢恢复到完全清醒的状态
+
+Though not fully awake, I listen to English audio lessons
+虽然还没有完全清醒，我还是在听英语课程
+
+Along with the rhythmic sounds of the subway, I close my eyes and focus on the English audio
+伴随着地铁的节奏声，我闭上眼专注听英语
+
+I believe my persistence will pay off eventually
+我相信我的坚持最终会有回报
+
+I transfer to Line 5 midway through my journey
+途中我转乘5号线
+
+Lucky me, I find a seat on this line too
+幸运的是，这条线我也找到了座位
+
+I can continue listening to my English lessons in comfort
+我可以继续舒适地听我的英语课程
+
+I am in such a good mood
+我心情特别好
+
+After 40 minutes, I arrive at my company station and exit
+40分钟后，我到达公司所在的地铁站并出站
+
+I check in for work
+我打卡上班
+
+I head to my usual breakfast vendor
+我走向常去的早餐摊位
+
+Same as always - eggs and steamed buns
+和往常一样 - 鸡蛋和包子
+
+My unchanging breakfast routine
+我雷打不动的早餐习惯
+
+I bring my breakfast to my desk
+我把早餐带到工位上
+
+After finishing breakfast
+吃完早餐后
+
+I drink the boxed milk from my desk
+我喝掉放在工位上的盒装牛奶
+
+Take some vitamins and lutein supplements
+吃一些维生素和叶黄素补充剂
+
+This truly is an authentic middle aged workers wellness routine
+这真是一个地道的中年打工人养生日常
+
+Once I finish eating and drinking, I tidy everything up
+当我吃喝完毕，我收拾好一切
+
+Time to start the actual work
+该开始真正的工作了
+
+Another painful workday officially begins
+又一个痛苦的工作日正式开始了
+
+Key Expression Analysis
+关键表达分析
+
+head down + direction vs make way toward
+表示向下移动 vs 表示朝某方向前进
+
+do great business vs be busy
+生意很好（强调结果）vs 很忙（强调状态）
+
+manage to + verb vs succeed in + verb
+设法做到（口语） vs 成功做到（较正式）
+
+Mood Variations
+情绪变体表达
+
+When Tired
+疲惫时
+
+I drag myself down the stairs
+我拖着疲惫的身体下楼
+
+When Energetic
+精力充沛时
+
+I stride down the stairs
+我大步流星地下楼
+
+When Rushed
+匆忙时
+
+I hurry down the stairs
+我匆忙下楼
+
+Practical Usage
+实用场景
+
+At the Platform
+在站台上
+
+The usual morning crowd is gathering
+常见的早高峰人群在聚集
+
+In the Train
+在车厢里
+
+I drift in and out of sleep
+我时睡时醒
+
+At Work
+在工作中
+
+Time to power up my computer
+是时候启动电脑了`,
+  },
 };
