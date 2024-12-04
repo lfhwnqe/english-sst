@@ -288,4 +288,85 @@ handsome devil
 good looking
 过于直白普通`,
   },
+  4: {
+    name: "午休",
+    // url: "/audio/getup_new.wav",
+    url: "https://nuo-english.s3.us-east-2.amazonaws.com/lunch.wav",
+    str: `Scene: Lunch Break Workout and Study Session
+First thing I need to do is grab my lunch from the break room
+第一件事就是得从茶水间拿午餐
+Looks like it's already 11:45
+看起来已经11点45了
+I have to wolf this down in 3 minutes
+我不得不在3分钟内把午饭消灭掉
+Time to clean up and get moving
+是时候收拾收拾动起来了
+Got to catch the elevator first
+得先坐电梯
+This gym location makes things tricky
+健身房的位置让事情有点麻烦
+Need to go to the 5th floor, then drag myself up the stairs to the 6th
+需要先去5楼，然后把自己拖到6楼
+First thing at the gym is scanning my phone
+进健身房第一件事是扫码签到
+Time to set up the treadmill
+是时候设置跑步机了
+This will do - 3km/h speed and level 6 incline
+这样就行了 - 时速3公里，坡度6级
+Keep at tracking with my Garmin watch
+继续用佳明手表记录
+Looks like it's going to be a light session today
+看来今天是个轻松的运动日
+Got to prop my phone up here
+得把手机支在这里
+Time to learn while walking
+是时候边走边学了
+My memory is too slow to learn quickly
+我的记忆力太慢了，学不快
+But I've got to keep at my studies
+但我必须坚持学习
+Eventually I'll become fluent
+最终我会说得流利的
+Trying to keep at being a healthy office worker
+努力坚持做个健康的上班族
+What a nice view from these windows
+窗外的景色真好
+Looks like perfect weather with blue skies
+看起来是个蓝天白云的好天气
+This will do - 55 minutes of workout done
+这样就行了 - 55分钟运动完成
+Time to wipe off and head back up
+是时候擦干汗回楼上了
+Need to rest up before another work session
+需要休息一下再开始下午的工作
+Analysis of Grammar Patterns Used:
+时序表达模式
+First thing
+第一要务，强调优先性
+Time to
+是时候做某事，表示时机恰当
+Eventually
+最终，表达长期目标
+动作描述模式
+grab
+抓取，暗含匆忙
+drag oneself
+拖着自己，暗含不情愿
+keep at
+坚持做某事，强调持续性
+状态评价模式
+looks like
+看起来像
+this will do
+这样就行了
+what a
+感叹语气
+情态表达模式
+got to (gotta)
+必须要，口语化表达
+have to
+不得不，较正式表达
+need to
+需要，中性表达`,
+  },
 };
