@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { sectionMap } from "./nuo/play/constant";
+import ResponsiveAppBar from "@/app/components/common/appHeader";
 
 export default function SectionList() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function SectionList() {
 
   return (
     <div className="p-4">
+      <ResponsiveAppBar></ResponsiveAppBar>
       <h1 className="text-xl font-bold mb-4">场景列表</h1>
 
       <div className="space-y-3">
