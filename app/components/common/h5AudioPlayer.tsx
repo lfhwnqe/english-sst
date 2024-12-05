@@ -243,31 +243,29 @@ const AudioPlayerComponent = ({ src }: AudioPlayerProps) => {
           </div>
           <div className="flex justify-between text-sm text-gray-500">
             <span>{formatTime(currentTime)}</span>
+            <div className="flex justify-center items-center gap-2">
+              <button
+                onClick={() => changeSpeed(-0.05)}
+                disabled={speed <= 0.5 || isLoading || !audioReady}
+                className={`p-1 rounded-md transition-colors
+              ${speed <= 0.5 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+              <span className="text-sm min-w-[60px] text-center">
+                {speed.toFixed(2)}x
+              </span>
+              <button
+                onClick={() => changeSpeed(0.05)}
+                disabled={speed >= 2 || isLoading || !audioReady}
+                className={`p-1 rounded-md transition-colors
+              ${speed >= 2 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
             <span>{formatTime(duration)}</span>
           </div>
-        </div>
-
-        {/* 速度控制 */}
-        <div className="flex justify-center items-center gap-2">
-          <button
-            onClick={() => changeSpeed(-0.05)}
-            disabled={speed <= 0.5 || isLoading || !audioReady}
-            className={`p-1 rounded-md transition-colors
-              ${speed <= 0.5 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-          <span className="text-sm min-w-[60px] text-center">
-            {speed.toFixed(2)}x
-          </span>
-          <button
-            onClick={() => changeSpeed(0.05)}
-            disabled={speed >= 2 || isLoading || !audioReady}
-            className={`p-1 rounded-md transition-colors
-              ${speed >= 2 || isLoading || !audioReady ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
-          >
-            <Plus className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </div>
