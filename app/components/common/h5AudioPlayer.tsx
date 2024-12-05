@@ -241,7 +241,7 @@ const AudioPlayerComponent = ({ src }: AudioPlayerProps) => {
               style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
             />
           </div>
-          <div className="flex justify-between text-sm text-gray-500">
+          <div className="flex justify-between text-sm text-gray-500 pl-2 pr-2">
             <span>{formatTime(currentTime)}</span>
             <div className="flex justify-center items-center gap-2">
               <button
