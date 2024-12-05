@@ -165,7 +165,7 @@ const AudioPlayerComponent = ({ src }: AudioPlayerProps) => {
   };
 
   return (
-    <div className="p-4 shadow-md rounded-lg max-w-md mx-auto">
+    <div className="pl-2 pr-2 pt-0 pb-2 shadow-md rounded-lg max-w-md mx-auto">
       <audio
         ref={audioRef}
         src={src}

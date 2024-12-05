@@ -98,7 +98,7 @@ const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
         </div>
       </main>
 
-      <div className="flex justify-between items-center p-2">
+      <div className="flex justify-between items-center p-1">
         <button onClick={() => scrollToPage("up")} className="p-2">
           <ChevronUp className="w-4 h-4" />
         </button>
