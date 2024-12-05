@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import AudioPlayer from "./h5AudioPlayer";
-import ResponsiveAppBar from './appHeader'
+import ResponsiveAppBar from "./appHeader";
 interface Props {
   audioUrl: string;
   text: string;
@@ -71,8 +71,8 @@ const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
       // Normal scroll up/down
       const targetScroll =
         direction === "up"
-          ? container.scrollTop - container.clientHeight
-          : container.scrollTop + container.clientHeight;
+          ? container.scrollTop - container.clientHeight - 120
+          : container.scrollTop + container.clientHeight - 120;
 
       container.scrollTo({
         top: targetScroll,
