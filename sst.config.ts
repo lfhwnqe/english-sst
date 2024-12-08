@@ -15,15 +15,33 @@ export default $config({
     };
   },
   async run() {
+    const cognitoRegion = aws.getRegionOutput().name || "";
+    console.log("region:", cognitoRegion);
+
+    // 增加用户池
+    // const userPool = new sst.aws.CognitoUserPool("MyUserPool");
+    // new sst.aws.CognitoUserPool("MyUserPool", {
+    //   usernames: ["email"],
+    // });
+    // userPool.addClient("MyWeb");
+    const userPool = new sst.aws.CognitoUserPool("MyUserPool", {
+      usernames: ["email"],
+    });
+
+    const client = userPool.addClient("MyUserClient");
+
     const bucket = new sst.aws.Bucket("MyBucket", {
       access: "public",
     });
     new sst.aws.Nextjs("MyWeb", {
+      environment: {
+        COGNITO_REGION: cognitoRegion,
+      },
       domain: {
         name: "mn.maomaocong.site",
         dns: sst.cloudflare.dns(),
       },
-      link: [bucket],
+      link: [bucket, userPool, client],
       server: {
         edge: {
           viewerRequest: {
