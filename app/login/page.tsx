@@ -75,6 +75,18 @@ export default function Login() {
         </div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
       </form>
+      
+      <div className="mt-4 text-center">
+        <p className="text-gray-600">
+          还没有账号？{" "}
+          <button
+            onClick={() => router.push("/signup")}
+            className="text-blue-500 hover:text-blue-600"
+          >
+            立即注册
+          </button>
+        </p>
+      </div>
     </div>
   );
 }
