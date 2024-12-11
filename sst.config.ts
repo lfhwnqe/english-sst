@@ -28,7 +28,13 @@ export default $config({
       usernames: ["email"],
     });
 
-    const client = userPool.addClient("MyUserClient");
+    const client = userPool.addClient("MyUserClient", {
+      transform: {
+        client: {
+          explicitAuthFlows: ["USER_PASSWORD_AUTH"]
+        }
+      }
+    });
 
     const bucket = new sst.aws.Bucket("MyBucket", {
       access: "public",

@@ -32,7 +32,7 @@ export default function Login() {
       localStorage.setItem("idToken", data.idToken);
 
       // Redirect to dashboard or home page
-      router.push("/dashboard");
+      router.push("/");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
