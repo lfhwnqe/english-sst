@@ -33,17 +33,44 @@ export async function POST(req: Request) {
 
   try {
     const response = await client.send(command);
-    return NextResponse.json({
+    
+    // 获取认证结果
+    const authResult = response.AuthenticationResult;
+    
+    // 创建响应
+    const jsonResponse = NextResponse.json({
       success: true,
-      accessToken: response.AuthenticationResult?.AccessToken,
-      refreshToken: response.AuthenticationResult?.RefreshToken,
-      idToken: response.AuthenticationResult?.IdToken,
-      expiresIn: response.AuthenticationResult?.ExpiresIn,
+      accessToken: authResult?.AccessToken,
+      refreshToken: authResult?.RefreshToken,
+      idToken: authResult?.IdToken,
+      expiresIn: authResult?.ExpiresIn,
     });
+
+    // 计算过期时间 (expiresIn 是秒，需要转换为毫秒)
+    const expiresIn = authResult?.ExpiresIn || 3600; // 默认1小时
+    const expirationDate = new Date(Date.now() + expiresIn * 1000);
+
+    // 设置 cookies
+    jsonResponse.cookies.set('idToken', authResult?.IdToken || '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      expires: expirationDate
+    });
+
+    jsonResponse.cookies.set('refreshToken', authResult?.RefreshToken || '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      // refreshToken 可以设置更长的过期时间
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+    });
+
+    return jsonResponse;
+    
   } catch (error) {
     console.log("Login error:", error);
     
-    // 更详细的错误处理
     if (error instanceof Error) {
       return NextResponse.json(
         { error: error.message },
