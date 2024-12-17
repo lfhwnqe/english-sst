@@ -1,10 +1,8 @@
-import {
-  CognitoIdentityProviderClient,
-  ConfirmSignUpCommand,
-  ConfirmSignUpCommandInput,
-} from "@aws-sdk/client-cognito-identity-provider";
 import { NextResponse } from "next/server";
-import { Resource } from "sst";
+
+const getBaseUrl = () => {
+  return process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+};
 
 export async function POST(req: Request) {
   try {
@@ -18,51 +16,31 @@ export async function POST(req: Request) {
       );
     }
 
-    const client = new CognitoIdentityProviderClient({
-      region: process.env.COGNITO_REGION,
+    // 转发请求到后端服务
+    const response = await fetch(`${getBaseUrl()}/auth/confirm`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, code }),
     });
 
-    const params: ConfirmSignUpCommandInput = {
-      ClientId: Resource.MyUserClient.id,
-      Username: email,
-      ConfirmationCode: code,
-    };
+    const data = await response.json();
 
-    const command = new ConfirmSignUpCommand(params);
-    const response = await client.send(command);
-
-    console.log("response", response);
-    return NextResponse.json({
-      success: true,
-      message: "Email verified successfully",
-    });
-  } catch (error) {
-    if (!(error instanceof Error)) {
+    // 如果后端返回错误
+    if (!response.ok) {
       return NextResponse.json(
-        { error: "An unknown error occurred" },
-        { status: 500 }
+        { error: data.error || "Verification failed" },
+        { status: response.status }
       );
     }
 
+    return NextResponse.json(data);
+  } catch (error) {
     console.error("Verification error:", error);
-
-    // Handle specific Cognito errors
-    switch (error.name) {
-      case "CodeMismatchException":
-        return NextResponse.json(
-          { error: "Invalid verification code" },
-          { status: 400 }
-        );
-      case "ExpiredCodeException":
-        return NextResponse.json(
-          { error: "Verification code has expired" },
-          { status: 400 }
-        );
-      default:
-        return NextResponse.json(
-          { error: "Failed to verify email" },
-          { status: 500 }
-        );
-    }
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
