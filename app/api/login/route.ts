@@ -35,6 +35,31 @@ export async function POST(req: Request) {
       );
     }
 
+    // 登录成功，设置 cookies
+    if (data.success) {
+      const jsonResponse = NextResponse.json(data);
+      
+      // 设置 cookies
+      const expiresIn = 3600; // 1小时
+      const expirationDate = new Date(Date.now() + expiresIn * 1000);
+
+      jsonResponse.cookies.set('accessToken', data.data.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        expires: expirationDate
+      });
+
+      jsonResponse.cookies.set('refreshToken', data.data.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+      });
+
+      return jsonResponse;
+    }
+
     return NextResponse.json(data);
   } catch (error) {
     console.error("Login error:", error);
