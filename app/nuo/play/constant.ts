@@ -534,4 +534,294 @@ At Work
 Time to power up my computer
 是时候启动电脑了`,
   },
+  6: {
+    name: "晚餐",
+    url: "https://nuo-english.s3.us-east-2.amazonaws.com/dinner.wav",
+    str: `场景英语表达分析
+完整场景描述：
+I tend to get hungry around 6 PM
+我通常在下午6点左右会感到饿
+First thing I notice is that I am in no shape to keep working
+首先我注意到自己已经没有状态继续工作了
+Might as well head down for dinner now
+不妨现在就下楼吃晚饭
+More often than not I avoid ordering takeout to the office
+我多数情况下都避免在办公室点外卖
+I feel like going to Mr Rice where I can choose considerably spicy dishes
+我想去大米先生那里，在那里我可以选择相当辣的菜品
+Being from Chongqing I cannot help but love spicy food
+作为重庆人我情不自禁地喜欢吃辣
+The elevator is slightly less crowded than lunch time
+电梯比午餐时间稍微不那么拥挤
+Let us just take a five minute walk to the restaurant
+我们就花5分钟走到餐厅吧
+On second thought I should grab my earphones for some English practice
+转念一想我该拿上耳机练习下英语
+End up checking the overtime meal allowance app while walking
+最后边走边查看加班餐补的app
+I feel up to hitting the gym after dinner
+我感觉晚饭后可以去健身房
+The elliptical machine tends to be perfect for post meal workouts
+椭圆机往往是餐后运动的完美选择
+Every now and then I scan my membership QR code and get started
+时不时地我扫描会员二维码就开始运动了
+To the point of feeling energetic after 40 minutes
+40分钟后达到了充满能量的状态
+Change of plan I will do another 20 minutes at higher intensity
+计划改变，我要以更高强度再做20分钟
+Why not push slightly harder when feeling good
+感觉不错的时候为什么不稍微加大运动强度呢
+Eventually I am in no mood for more exercise
+最终我已经没心情继续运动了
+Time to head back upstairs for overtime work
+是时候回楼上加班了
+分析模块：
+程度表达应用：
+slightly vs considerably
+稍微/轻微 vs 相当/颇为
+to the point of + 动名词
+达到某种程度
+计划类表达：
+might as well
+不妨/索性
+end up + 动名词
+最终/结果
+change of plan
+计划改变
+即时决策表达：
+why not + 动词
+为什么不...
+let us just
+我们就...吧
+on second thought
+转念一想
+习惯频率表达：
+tend to
+往往/倾向于
+more often than not
+通常情况下
+every now and then
+时不时地
+情绪状态表达：
+feel like + 动名词
+想要做某事
+cannot help but
+情不自禁
+be in no mood for
+没心情做某事
+身体状态表达：
+feel up to + 动名词
+感觉能够做某事
+be in no shape to
+状态不适合做某事
+实用表达变体：
+积极状态版：
+Feel like pushing myself a bit harder today
+今天想要把自己推得更用力一点
+疲惫状态版：
+End up doing just a light workout
+最终只做了轻度运动
+临时变化版：
+On second thought I might skip the workout
+转念一想我可能跳过这次运动
+实践建议：
+强度调整：
+Why not adjust the intensity based on your energy level
+为什么不根据自己的能量水平调整强度呢
+时间管理：
+Tend to combine exercise with language learning
+往往把运动和语言学习结合起来
+习惯养成：
+More often than not stick to your routine
+通常情况下坚持你的日常习惯`,
+  },
+  7: {
+    name: "网络架构",
+    url: "https://nuo-english.s3.us-east-2.amazonaws.com/network-architecture.wav",
+    str: `Let me walk you through the access architecture of our portal application
+让我为你介绍我们门户应用的访问架构
+When a client initiates a request through our domain name
+当客户端通过我们的域名发起请求时
+Through DNS resolution, the request reaches our public CLB server
+通过DNS解析，请求到达我们的公网CLB服务器
+The CLB server then forwards the request to our frontend gateway
+CLB服务器随后将请求转发到我们的前端网关
+At this point, the gateway middleware checks something crucial
+这时，网关中间件会检查一个关键的事项
+It determines if the requested path falls within the gray release scope
+它会判断请求的路径是否属于灰度发布范围
+Based on the gray release status, we attach a special tag to the request header
+根据灰度状态，我们会在请求头上附加一个特殊标记
+The request then makes its way to the frontend application gateway
+请求随后被转发到前端应用网关
+This gateway uses content path matching to handle the request
+这个网关使用内容路径匹配来处理请求
+From there, it forwards to the corresponding gateway application
+从那里，它会转发到对应的网关应用
+The application then needs to make an important decision
+应用接下来需要做一个重要的决定
+It determines the appropriate environment based on the gray release tag
+它根据灰度标记决定合适的环境
+This environment configuration exists as a Kubernetes ingress
+这个环境配置以Kubernetes ingress的形式存在
+All requests eventually reach an Nginx server through this ingress
+所有请求最终通过这个ingress到达Nginx服务器
+Now, we have two distinct types of applications to consider
+现在，我们有两种不同类型的应用需要考虑
+The first type is directly deployed on Nginx servers
+第一种是直接部署在Nginx服务器上的
+The second type exists as OSS resources
+第二种是以OSS资源形式存在的
+For the first type, the request journey ends at the Nginx server
+对于第一种类型，请求旅程在Nginx服务器就结束了
+For the second type, we need an additional step
+对于第二种类型，我们需要一个额外的步骤
+The request must be forwarded to the appropriate OSS bucket based on its path
+请求必须根据其路径被转发到适当的OSS存储桶
+As for backend API requests, they follow a slightly different path
+至于后端API请求，它们遵循略微不同的路径
+These requests are forwarded to the backend gateway at the Nginx level
+这些请求在Nginx层级被转发到后端网关
+关键表达解析：
+walk through vs guide through
+walk through
+更详细地解释，逐步带领理解
+guide through
+简要引导，概括性介绍
+forward vs redirect
+forward
+在系统内部转发，保持原始请求信息
+redirect
+重定向到新地址，产生新的请求
+fall within vs belong to
+fall within
+表示在范围之内，更正式的表达
+belong to
+表示归属关系，更通用的表达
+场景变体：
+技术讨论场合：
+Let me explain the technical architecture of our system
+让我解释一下我们系统的技术架构
+团队会议场合：
+Here's how our application handles user requests
+这是我们应用处理用户请求的方式
+向新员工介绍：
+Let me show you the basic flow of our system
+让我向你展示我们系统的基本流程
+实践建议：
+简短版本：
+The request goes through CLB, gateway, and reaches either Nginx or OSS
+请求经过CLB、网关，最终到达Nginx或OSS
+详细版本：
+Each request undergoes multiple routing stages before reaching its final destination
+每个请求在到达最终目的地之前都要经过多个路由阶段
+讨论优化时：
+We might need to optimize the routing logic at the gateway level
+我们可能需要优化网关层面的路由逻辑`,
+  },
+  8: {
+    name: "门户登录流程",
+    url: "https://nuo-english.s3.us-east-2.amazonaws.com/login-flow.wav",
+    str: `The Portal Authentication Flow
+门户认证流程
+
+The web portal makes its way to checking the user's status when someone visits it.
+当有人访问时，门户网站开始检查用户状态
+
+First thing, upon loading, the portal forwards a request to fetch user information, with all requests being wrapped to carry specific cookies that help determine if the user is logged in or their session has expired.
+首先，在加载时，门户转发请求来获取用户信息，所有请求都被封装以携带特定的cookie，这些cookie用于判断用户是否登录或会话是否过期
+
+When this request successfully returns data, it means the user has already logged in and their session remains valid.
+当这个请求成功返回数据时，意味着用户已经登录且会话仍然有效
+
+In this case, the portal proceeds to request relevant business logic interfaces.
+在这种情况下，门户继续请求相关的业务逻辑接口
+
+However, if the user info request returns a 401 status, it indicates the user hasn't logged in.
+然而，如果用户信息请求返回401状态码，这表明用户尚未登录
+
+At this point, the portal redirects them to a dedicated authentication platform, forwarding specific URL parameters along the way.
+这时，门户将用户重定向到专门的认证平台，同时转发特定的URL参数
+
+This specialized platform exists as a standalone system for handling user authentication.
+这个专门的平台作为独立系统存在，用于处理用户认证
+
+Users can either scan a WeChat QR code or use a dynamic verification code to log in.
+用户可以通过扫描微信二维码或使用动态验证码来登录
+
+However, this requires their WeChat account to be linked to their platform account first.
+但这需要他们的微信账号首先与平台账号建立关联
+
+The system provides guidance for this linking process.
+系统为这个关联过程提供指引
+
+Once the account linking is complete, users can authenticate through WeChat scanning.
+一旦账号关联完成，用户可以通过微信扫码进行认证
+
+Upon successful authorization, WeChat's OAuth system automatically forwards a token back to the current login page.
+授权成功后，微信的OAuth系统自动将令牌转发回当前登录页面
+
+The login page, having obtained this token, proceeds to interact with the backend to acquire the actual authentication token.
+登录页面获得这个令牌后，继续与后端交互以获取实际的认证令牌
+
+Finally, it makes its way back to the portal page, carrying this token along.
+最后，它带着这个令牌返回到门户页面
+
+The portal page then re-renders itself.
+然后门户页面重新渲染
+
+It retrieves the token passed from the login page and forwards another request to fetch user information.
+它获取从登录页面传递的令牌，并转发另一个请求来获取用户信息
+
+Once this request succeeds, users can finally access the system normally.
+一旦这个请求成功，用户就可以正常访问系统了
+
+Analysis of Key Expressions:
+关键表达分析：
+
+make its way to
+开始进行，展开（某个过程）
+
+forward a request
+转发请求
+
+determine if
+判断是否
+
+proceed to
+继续进行
+
+redirect to
+重定向到
+
+exist as
+作为...而存在
+
+obtain the token
+获取令牌
+
+retrieve the token
+取回令牌
+
+Technical Context Variations:
+技术场景变体：
+
+When debugging:
+调试时：
+
+Looks like the auth flow is breaking at the token exchange step
+看起来认证流程在令牌交换步骤出现问题
+
+During deployment:
+部署时：
+
+We need to verify the auth flow in the staging environment first
+我们需要先在预发环境验证认证流程
+
+In team discussion:
+团队讨论时：
+
+The auth flow could use some optimization around the token handling
+认证流程在令牌处理方面可以优化`,
+  },
 };
