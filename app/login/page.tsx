@@ -30,9 +30,9 @@ export default function Login() {
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("idToken", data.idToken);
-
+      onLoginSuccess();
       // Redirect to dashboard or home page
-      router.push("/");
+      // router.push("/");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -41,6 +41,17 @@ export default function Login() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onLoginSuccess = () => {
+    const redirectPath = window.localStorage.getItem("redirectAfterLogin");
+    window.localStorage.removeItem("redirectAfterLogin"); // 清除存储的路径
+
+    if (redirectPath) {
+      window.location.href = redirectPath;
+    } else {
+      window.location.href = "/"; // 默认重定向到首页
     }
   };
 
@@ -75,7 +86,7 @@ export default function Login() {
         </div>
         {error && <p className="mt-4 text-red-500">{error}</p>}
       </form>
-      
+
       <div className="mt-4 text-center">
         <p className="text-gray-600">
           还没有账号？{" "}
