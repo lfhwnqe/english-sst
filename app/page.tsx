@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { sectionMap } from "./nuo/play/constant";
 import ResponsiveAppBar from "@/app/components/common/appHeader";
-import { useUser } from '@/contexts/UserContext';
+import { useUser } from "@/contexts/UserContext";
+import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
 export default function SectionList() {
   const router = useRouter();
@@ -14,11 +15,18 @@ export default function SectionList() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen ">
+        <div className="p-8  rounded-lg shadow-md">
+          <h2 className="text-red-500 text-xl font-semibold mb-2">出错了</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
