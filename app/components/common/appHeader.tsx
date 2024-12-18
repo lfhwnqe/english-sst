@@ -10,6 +10,7 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import AdbIcon from "@mui/icons-material/Adb";
 import React from "react";
+import LogoutButton from "./logoutButton";
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -79,7 +80,7 @@ function ResponsiveAppBar() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 0, color: "black", display: "block" }}
               >
-                logout
+                <LogoutButton />
               </Button>
               <Button
                 variant="text"
