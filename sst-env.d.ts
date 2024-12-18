@@ -10,15 +10,6 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Bucket"
     }
-    "MyUserClient": {
-      "id": string
-      "secret": string
-      "type": "sst.aws.CognitoUserPoolClient"
-    }
-    "MyUserPool": {
-      "id": string
-      "type": "sst.aws.CognitoUserPool"
-    }
     "MyWeb": {
       "type": "sst.aws.Nextjs"
       "url": string
