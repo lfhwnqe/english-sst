@@ -23,6 +23,19 @@ export async function fetchApi(endpoint: string, options: FetchOptions = {}) {
   const response = await fetch(`${BASE_URL}${endpoint}`, defaultOptions);
 
   if (!response.ok) {
+    // 处理 401 未授权错误
+    if (response.status === 401) {
+      // 如果在客户端环境
+      if (typeof window !== 'undefined') {
+        // 保存当前URL，以便登录后返回
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/login') {
+          window.localStorage.setItem('redirectAfterLogin', currentPath);
+          window.location.href = '/login';
+        }
+      }
+    }
+
     const error = await response.json().catch(() => ({}));
     throw new Error(error.message || 'An error occurred');
   }
