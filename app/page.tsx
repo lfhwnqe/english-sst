@@ -3,13 +3,23 @@
 import { useRouter } from "next/navigation";
 import { sectionMap } from "./nuo/play/constant";
 import ResponsiveAppBar from "@/app/components/common/appHeader";
+import { useUser } from '@/contexts/UserContext';
 
 export default function SectionList() {
   const router = useRouter();
+  const { user, loading, error } = useUser();
 
   const handleSelectSection = (sectionId: string) => {
     router.push(`/nuo/play?sectionId=${sectionId}`);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="p-4">

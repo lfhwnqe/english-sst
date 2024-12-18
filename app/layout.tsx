@@ -6,6 +6,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import ThemeWrapper from "@/app/components/common/themeWrapper";
+import { UserProvider } from '@/contexts/UserContext';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,7 +36,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeWrapper>
-          {children}
+          <UserProvider>
+            {children}
+          </UserProvider>
         </ThemeWrapper>
       </body>
     </html>
