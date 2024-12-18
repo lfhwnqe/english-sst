@@ -1,10 +1,8 @@
-import {
-  CognitoIdentityProviderClient,
-  ResendConfirmationCodeCommand,
-  ResendConfirmationCodeCommandInput,
-} from "@aws-sdk/client-cognito-identity-provider";
 import { NextResponse } from "next/server";
-import { Resource } from "sst";
+
+const getBaseUrl = () => {
+  return process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+};
 
 export async function POST(req: Request) {
   try {
@@ -18,42 +16,31 @@ export async function POST(req: Request) {
       );
     }
 
-    const client = new CognitoIdentityProviderClient({
-      region: process.env.COGNITO_REGION,
+    // 转发请求到后端服务
+    const response = await fetch(`${getBaseUrl()}/auth/resend-code`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
     });
 
-    const params: ResendConfirmationCodeCommandInput = {
-      ClientId: Resource.MyUserClient.id,
-      Username: email,
-    };
+    const data = await response.json();
 
-    const command = new ResendConfirmationCodeCommand(params);
-    await client.send(command);
-
-    return NextResponse.json({
-      success: true,
-      message: "Verification code resent successfully"
-    });
-
-  } catch (error: unknown) {
-    console.error("Resend code error:", error);
-    
-    switch((error as { name?: string }).name) {
-      case "UserNotFoundException":
-        return NextResponse.json(
-          { error: "Account not found" },
-          { status: 404 }
-        );
-      case "LimitExceededException":
-        return NextResponse.json(
-          { error: "Too many attempts. Please try again later" },
-          { status: 429 }
-        );
-      default:
-        return NextResponse.json(
-          { error: "Failed to resend verification code" },
-          { status: 500 }
-        );
+    // 如果后端返回错误
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error || "Failed to resend code" },
+        { status: response.status }
+      );
     }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Resend code error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
