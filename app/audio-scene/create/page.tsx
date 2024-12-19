@@ -60,7 +60,7 @@ export default function CreateAudioScene() {
       const audioKey = await uploadFile(file);
 
       // 2. 保存场景数据
-      const response = await fetchApi('/audio-scene', {
+      await fetchApi('/audio-scene', {
         method: 'POST',
         body: JSON.stringify({
           content: sceneData.content,

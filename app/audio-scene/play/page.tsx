@@ -17,16 +17,10 @@ interface AudioScene {
   updatedAt?: string;
 }
 
-interface ApiResponse<T> {
-  success: boolean;
-  message?: string;
-  data: T;
-}
-
 export default function PlayScene() {
   const searchParams = useSearchParams();
   const sceneId = searchParams.get("sceneId");
-  
+
   const [scene, setScene] = useState<AudioScene | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,17 +28,19 @@ export default function PlayScene() {
   useEffect(() => {
     const fetchScene = async () => {
       if (!sceneId) {
-        setError('场景ID不能为空');
+        setError("场景ID不能为空");
         setLoading(false);
         return;
       }
 
       try {
         // 1. 获取场景信息
-        const response = await fetchApi<ApiResponse<AudioScene>>(`/audio-scene/${sceneId}`);
+        const response = await fetchApi(`/audio-scene/${sceneId}`);
         if (response.success) {
           // 2. 获取音频 URL
-          const audioResponse = await fetchApi<ApiResponse<{ url: string }>>(`/audio/url/${encodeURIComponent(response.data.audioUrl)}`);
+          const audioResponse = await fetchApi(
+            `/audio/url/${encodeURIComponent(response.data.audioUrl)}`
+          );
           if (audioResponse.success) {
             setScene({
               ...response.data,
@@ -52,13 +48,13 @@ export default function PlayScene() {
             });
             setError(null);
           } else {
-            setError('获取音频失败');
+            setError("获取音频失败");
           }
         } else {
-          setError(response.message || '加载场景失败');
+          setError(response.message || "加载场景失败");
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : '加载场景失败');
+        setError(err instanceof Error ? err.message : "加载场景失败");
       } finally {
         setLoading(false);
       }
@@ -74,7 +70,7 @@ export default function PlayScene() {
   if (error || !scene) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-red-500 text-xl">{error || '场景不存在'}</div>
+        <div className="text-red-500 text-xl">{error || "场景不存在"}</div>
       </div>
     );
   }
@@ -88,4 +84,4 @@ export default function PlayScene() {
       />
     </div>
   );
-} 
+}

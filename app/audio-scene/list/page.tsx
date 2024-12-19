@@ -1,32 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { fetchApi } from '@/utils/fetch';
-import LoadingSpinner from '@/app/components/common/LoadingSpinner';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-
-interface ApiResponse<T> {
-  success: boolean;
-  message?: string;
-  data: T;
-}
+import { useState, useEffect } from "react";
+import { fetchApi } from "@/utils/fetch";
+import LoadingSpinner from "@/app/components/common/LoadingSpinner";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 interface AudioSceneListItem {
   sceneId: string;
   userId: string;
   sceneName: string;
+  content: string;
   audioUrl: string;
   status?: string;
   createdAt: string;
   updatedAt?: string;
-}
-
-interface PaginatedResponse {
-  items: AudioSceneListItem[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
 }
 
 export default function AudioSceneList() {
@@ -42,20 +35,19 @@ export default function AudioSceneList() {
   const fetchScenes = async (page: number) => {
     try {
       setLoading(true);
-      const response = await fetchApi<{
-        success: boolean;
-        data: PaginatedResponse;
-      }>(`/audio-scene?page=${page}&pageSize=${pageSize}`);
+      const response = await fetchApi(
+        `/audio-scene?page=${page}&pageSize=${pageSize}`
+      );
 
       if (response.success) {
         setScenes(response.data.items);
         setTotalPages(response.data.totalPages);
         setError(null);
       } else {
-        setError(response.message || '加载失败');
+        setError(response.message || "加载失败");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '加载失败');
+      setError(err instanceof Error ? err.message : "加载失败");
     } finally {
       setLoading(false);
     }
@@ -71,24 +63,22 @@ export default function AudioSceneList() {
 
   const handleDelete = async (id: string) => {
     try {
-      console.log('List Page - Delete Request:', id);
-      const response = await fetchApi<ApiResponse<any>>(`/audio-scene/${id}`, {
-        method: 'DELETE',
+      console.log("List Page - Delete Request:", id);
+      const response = await fetchApi(`/audio-scene/${id}`, {
+        method: "DELETE",
       });
-      console.log('List Page - Delete Response:', response);
-      
+      console.log("List Page - Delete Response:", response);
+
       if (response.success) {
-        // 删除成功后刷新列表
-        const newList = scenes.filter(item => item.sceneId !== id);
+        const newList = scenes.filter((item) => item.sceneId !== id);
         setScenes(newList);
-        // 关闭对话框
         setOpenDialog(false);
         setSceneToDelete(null);
       } else {
-        throw new Error(response.message || '删除失败');
+        throw new Error(response.message || "删除失败");
       }
     } catch (error) {
-      console.error('删除失败:', error);
+      console.error("删除失败:", error);
     }
   };
 
@@ -102,7 +92,7 @@ export default function AudioSceneList() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">我的场景</h1>
           <button
-            onClick={() => window.location.href = '/audio-scene/create'}
+            onClick={() => (window.location.href = "/audio-scene/create")}
             className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
           >
             创建新场景
@@ -124,7 +114,9 @@ export default function AudioSceneList() {
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">{scene.sceneName}</h3>
+                    <h3 className="text-xl font-semibold mb-2">
+                      {scene.sceneName}
+                    </h3>
                     <p className="text-gray-400 mb-2">{scene.content}</p>
                     <div className="text-sm text-gray-500">
                       创建时间: {new Date(scene.createdAt).toLocaleString()}
@@ -132,7 +124,9 @@ export default function AudioSceneList() {
                   </div>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => window.location.href = `/audio-scene/play?sceneId=${scene.sceneId}`}
+                      onClick={() =>
+                        (window.location.href = `/audio-scene/play?sceneId=${scene.sceneId}`)
+                      }
                       className="px-3 py-1 bg-green-600 rounded hover:bg-green-700"
                     >
                       播放
@@ -158,8 +152,8 @@ export default function AudioSceneList() {
                 disabled={currentPage === 1}
                 className={`px-4 py-2 rounded ${
                   currentPage === 1
-                    ? 'bg-gray-600 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    ? "bg-gray-600 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
                 }`}
               >
                 上一页
@@ -172,8 +166,8 @@ export default function AudioSceneList() {
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 rounded ${
                   currentPage === totalPages
-                    ? 'bg-gray-600 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    ? "bg-gray-600 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
                 }`}
               >
                 下一页
@@ -184,17 +178,12 @@ export default function AudioSceneList() {
       </div>
 
       {/* 删除确认对话框 */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-      >
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>确认删除</DialogTitle>
-        <DialogContent>
-          确定要删除这个场景吗？
-        </DialogContent>
+        <DialogContent>确定要删除这个场景吗？</DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>取消</Button>
-          <Button 
+          <Button
             onClick={() => sceneToDelete && handleDelete(sceneToDelete)}
             color="error"
           >
@@ -204,4 +193,4 @@ export default function AudioSceneList() {
       </Dialog>
     </div>
   );
-} 
+}

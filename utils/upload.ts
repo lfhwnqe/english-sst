@@ -1,13 +1,13 @@
 import { fetchApi } from './fetch';
 
-const ALLOWED_AUDIO_TYPES = [
+const ALLOWED_AUDIO_TYPES: string[] = [
   'audio/mpeg',
   'audio/wav',
   'audio/ogg',
   'audio/aac',
   'audio/m4a',
   'audio/webm',
-] as const;
+];
 
 export async function getUploadUrl(fileName: string, fileType: string) {
   if (!ALLOWED_AUDIO_TYPES.includes(fileType)) {
