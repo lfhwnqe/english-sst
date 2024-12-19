@@ -7,6 +7,9 @@ interface FetchOptions extends RequestInit {
 export async function fetchApi(endpoint: string, options: FetchOptions = {}) {
   const { needAuth = true, ...fetchOptions } = options;
   
+  // 确保所有请求都通过 Next.js API 路由
+  const apiEndpoint = endpoint.startsWith('/api/') ? endpoint : `/api${endpoint}`;
+  
   const defaultOptions: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
@@ -15,19 +18,15 @@ export async function fetchApi(endpoint: string, options: FetchOptions = {}) {
     ...fetchOptions,
   };
 
-  // 如果需要认证，添加 credentials
   if (needAuth) {
     defaultOptions.credentials = 'include';
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, defaultOptions);
+  const response = await fetch(apiEndpoint, defaultOptions);
 
   if (!response.ok) {
-    // 处理 401 未授权错误
     if (response.status === 401) {
-      // 如果在客户端环境
       if (typeof window !== 'undefined') {
-        // 保存当前URL，以便登录后返回
         const currentPath = window.location.pathname;
         if (currentPath !== '/login') {
           window.localStorage.setItem('redirectAfterLogin', currentPath);

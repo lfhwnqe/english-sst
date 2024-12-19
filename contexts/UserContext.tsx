@@ -24,7 +24,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUserInfo = async () => {
     try {
-      const response = await fetchApi('/auth/user-info');
+      const response = await fetchApi('/auth/user-info', { needAuth: true });
       setUser(response.data);
       setError(null);
     } catch (err) {

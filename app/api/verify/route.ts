@@ -16,7 +16,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // 转发请求到后端服务
     const response = await fetch(`${getBaseUrl()}/auth/confirm`, {
       method: 'POST',
       headers: {
@@ -27,7 +26,6 @@ export async function POST(req: Request) {
 
     const data = await response.json();
 
-    // 如果后端返回错误
     if (!response.ok) {
       return NextResponse.json(
         { error: data.error || "Verification failed" },

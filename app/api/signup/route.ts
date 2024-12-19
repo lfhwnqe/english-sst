@@ -27,7 +27,6 @@ export async function POST(req: Request) {
 
     const data = await response.json();
 
-    // 如果后端返回错误
     if (!response.ok) {
       return NextResponse.json(
         { error: data.error || "Registration failed" },
