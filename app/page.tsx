@@ -8,7 +8,7 @@ import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
 export default function SectionList() {
   const router = useRouter();
-  const { user, loading, error } = useUser();
+  const { loading, error } = useUser();
 
   const handleSelectSection = (sectionId: string) => {
     router.push(`/nuo/play?sectionId=${sectionId}`);
