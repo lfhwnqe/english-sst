@@ -1,5 +1,3 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
-
 interface FetchOptions extends RequestInit {
   needAuth?: boolean;
 }
@@ -15,12 +13,14 @@ export async function fetchApi(endpoint: string, options: FetchOptions = {}) {
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    credentials: 'include',
     ...fetchOptions,
   };
 
-  if (needAuth) {
-    defaultOptions.credentials = 'include';
-  }
+  console.log('Client fetch request:', {
+    url: apiEndpoint,
+    method: defaultOptions.method || 'GET'
+  });
 
   const response = await fetch(apiEndpoint, defaultOptions);
 

@@ -25,7 +25,7 @@ export default $config({
         STAGE: $app.stage, // 将 stage 传递给 Next.js 应用
       },
       domain: {
-        name: "mn.maomaocong.site",
+        name: "en.maomaocong.site",
         dns: sst.cloudflare.dns(),
       },
       link: [bucket],

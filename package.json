@@ -5,7 +5,6 @@
   "scripts": {
     "build": "next build",
     "dev:sst": "sst dev --stage developent",
-    "prod:sst": "sst dev --stage production",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
