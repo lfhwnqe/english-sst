@@ -55,9 +55,11 @@ export default function AdminPage() {
     message: "",
     onConfirm: () => {},
   });
+  const [registrationEnabled, setRegistrationEnabled] = useState(false);
 
   useEffect(() => {
     checkAdminAndFetchUsers();
+    fetchRegistrationSetting();
   }, []);
 
   const checkAdminAndFetchUsers = async () => {
@@ -151,6 +153,43 @@ export default function AdminPage() {
     });
   };
 
+  const fetchRegistrationSetting = async () => {
+    try {
+      const response = await fetchApi("/auth/registration-setting");
+      if (response.success) {
+        setRegistrationEnabled(response.data.enabled);
+      }
+    } catch (error) {
+      alert("获取注册设置失败");
+    }
+  };
+
+  const handleToggleRegistration = async () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: registrationEnabled ? "关闭注册" : "开启注册",
+      message: `确定要${registrationEnabled ? '关闭' : '开启'}用户注册功能吗？`,
+      onConfirm: async () => {
+        try {
+          const response = await fetchApi("/auth/registration-setting", {
+            method: "POST",
+            body: JSON.stringify({ enabled: !registrationEnabled }),
+          });
+
+          if (response.success) {
+            setRegistrationEnabled(!registrationEnabled);
+            alert(response.message);
+          } else {
+            alert("更新注册设置失败");
+          }
+        } catch (error) {
+          alert("操作失败");
+        }
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+      },
+    });
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">管理员控制台</h1>
@@ -214,6 +253,23 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="rounded-lg shadow p-4 mb-4">
+        <h2 className="text-lg font-semibold mb-2">系统设置</h2>
+        <div className="flex items-center justify-between">
+          <span>允许用户注册</span>
+          <button
+            onClick={handleToggleRegistration}
+            className={`px-4 py-2 rounded ${
+              registrationEnabled 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-green-500 hover:bg-green-600'
+            } text-white`}
+          >
+            {registrationEnabled ? '关闭注册' : '开启注册'}
+          </button>
+        </div>
       </div>
 
       <ConfirmDialog

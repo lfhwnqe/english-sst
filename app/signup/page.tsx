@@ -23,9 +23,8 @@ export default function SignUp() {
     e.preventDefault();
     setError("");
 
-    // Password validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError("密码不匹配");
       return;
     }
 
@@ -41,18 +40,17 @@ export default function SignUp() {
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Signup failed");
+      if (!data.success) {
+        throw new Error(data.message || "注册失败");
       }
 
-      // Move to verification step
+      alert(data.message);
       setStep("verify");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unknown error occurred");
+        setError("发生未知错误");
       }
     } finally {
       setLoading(false);
@@ -76,17 +74,17 @@ export default function SignUp() {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Verification failed");
+      if (!data.success) {
+        throw new Error(data.message || "验证失败");
       }
 
-      // Redirect to login page
+      alert(data.message);
       router.push("/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unknown error occurred");
+        setError("发生未知错误");
       }
     } finally {
       setLoading(false);
@@ -108,16 +106,16 @@ export default function SignUp() {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to resend code");
+      if (!data.success) {
+        throw new Error(data.message || "重发验证码失败");
       }
 
-      alert("Verification code has been resent to your email");
+      alert(data.message);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unknown error occurred");
+        setError("发生未知错误");
       }
     } finally {
       setLoading(false);
