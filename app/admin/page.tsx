@@ -17,7 +17,13 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-function ConfirmDialog({ isOpen, title, message, onConfirm, onCancel }: ConfirmDialogProps) {
+function ConfirmDialog({
+  isOpen,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+}: ConfirmDialogProps) {
   if (!isOpen) return null;
 
   return (
@@ -72,7 +78,7 @@ export default function AdminPage() {
       }
       fetchUsers();
     } catch (error) {
-      alert("权限验证失败");
+      console.error("权限验证失败", error);
       router.push("/");
     }
   };
@@ -87,7 +93,7 @@ export default function AdminPage() {
         alert("获取用户列表失败");
       }
     } catch (error) {
-      alert("获取用户列表失败");
+      console.error("获取用户列表失败", error);
     } finally {
       setLoading(false);
     }
@@ -107,7 +113,7 @@ export default function AdminPage() {
         alert("设置管理员失败");
       }
     } catch (error) {
-      alert("操作失败");
+      console.error("设置管理员失败", error);
     }
   };
 
@@ -125,7 +131,7 @@ export default function AdminPage() {
         alert("移除管理员失败");
       }
     } catch (error) {
-      alert("操作失败");
+      console.error("移除管理员失败", error);
     }
   };
 
@@ -136,7 +142,7 @@ export default function AdminPage() {
       message: `确定要将 ${email} 设置为管理员吗？`,
       onConfirm: () => {
         handleSetAdmin(email);
-        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
       },
     });
   };
@@ -148,7 +154,7 @@ export default function AdminPage() {
       message: `确定要移除 ${email} 的管理员权限吗？`,
       onConfirm: () => {
         handleRemoveAdmin(email);
-        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
       },
     });
   };
@@ -160,7 +166,7 @@ export default function AdminPage() {
         setRegistrationEnabled(response.data.enabled);
       }
     } catch (error) {
-      alert("获取注册设置失败");
+      console.error("获取注册设置失败", error);
     }
   };
 
@@ -168,7 +174,7 @@ export default function AdminPage() {
     setConfirmDialog({
       isOpen: true,
       title: registrationEnabled ? "关闭注册" : "开启注册",
-      message: `确定要${registrationEnabled ? '关闭' : '开启'}用户注册功能吗？`,
+      message: `确定要${registrationEnabled ? "关闭" : "开启"}用户注册功能吗？`,
       onConfirm: async () => {
         try {
           const response = await fetchApi("/auth/registration-setting", {
@@ -183,9 +189,9 @@ export default function AdminPage() {
             alert("更新注册设置失败");
           }
         } catch (error) {
-          alert("操作失败");
+          console.error("更新注册设置失败", error);
         }
-        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
       },
     });
   };
@@ -262,12 +268,12 @@ export default function AdminPage() {
           <button
             onClick={handleToggleRegistration}
             className={`px-4 py-2 rounded ${
-              registrationEnabled 
-                ? 'bg-red-500 hover:bg-red-600' 
-                : 'bg-green-500 hover:bg-green-600'
+              registrationEnabled
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-green-500 hover:bg-green-600"
             } text-white`}
           >
-            {registrationEnabled ? '关闭注册' : '开启注册'}
+            {registrationEnabled ? "关闭注册" : "开启注册"}
           </button>
         </div>
       </div>
@@ -277,7 +283,9 @@ export default function AdminPage() {
         title={confirmDialog.title}
         message={confirmDialog.message}
         onConfirm={confirmDialog.onConfirm}
-        onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+        onCancel={() =>
+          setConfirmDialog((prev) => ({ ...prev, isOpen: false }))
+        }
       />
     </div>
   );
