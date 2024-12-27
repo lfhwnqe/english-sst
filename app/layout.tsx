@@ -5,8 +5,8 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import ThemeWrapper from "@/app/components/common/themeWrapper";
-// import { UserProvider } from '@/contexts/UserContext';
+import { Providers } from './providers';
+import AppHeader from './components/common/appHeader';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,19 +27,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeWrapper>
-          {/* <UserProvider> */}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}>
+        <Providers>
+          <AppHeader />
+          <main className="pt-16">
             {children}
-          {/* </UserProvider> */}
-        </ThemeWrapper>
+          </main>
+        </Providers>
       </body>
     </html>
   );
