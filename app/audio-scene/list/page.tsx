@@ -120,7 +120,11 @@ export default function AudioSceneList() {
             }`}
           >
             <Settings
-              className={`w-5 h-5 ${isEditMode ? "text-white" : "text-gray-600 dark:text-gray-300"}`}
+              className={`w-5 h-5 ${
+                isEditMode
+                  ? "text-white"
+                  : "text-gray-800 dark:text-gray-200"
+              }`}
             />
           </button>
         </div>
@@ -148,9 +152,15 @@ export default function AudioSceneList() {
                       setSceneToDelete(scene.sceneId);
                       setOpenDialog(true);
                     }}
-                    className="absolute top-4 right-4 p-2 bg-gradient-to-r from-red-500 to-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20 hover:scale-105"
+                    className="absolute top-2 right-2 p-2 
+                    bg-gradient-to-r from-red-500 to-red-600 
+                    text-white rounded-lg 
+                    transition-all duration-300 
+                    hover:shadow-lg hover:shadow-red-500/20 
+                    hover:scale-105 z-20
+                    opacity-100 md:opacity-0 md:group-hover:opacity-100"
                   >
-                    <Minus className="w-5 h-5 text-white" />
+                    <Minus className="w-5 h-5" />
                   </button>
                 )}
 
@@ -159,7 +169,7 @@ export default function AudioSceneList() {
                     !isEditMode &&
                     (window.location.href = `/audio-scene/play?sceneId=${scene.sceneId}`)
                   }
-                  className={`relative ${!isEditMode ? "cursor-pointer" : ""}`}
+                  className={`relative z-10 ${!isEditMode ? "cursor-pointer" : ""}`}
                 >
                   <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">
                     {scene.sceneName}
@@ -178,9 +188,9 @@ export default function AudioSceneList() {
             {isEditMode && (
               <Link
                 href="/audio-scene/create"
-                className="fixed bottom-8 right-8 p-3.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl hover:shadow-xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300"
+                className="fixed bottom-8 right-8 p-3.5 bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 text-white rounded-xl hover:shadow-xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300"
               >
-                <Plus className="w-6 h-6 text-white" />
+                <Plus className="w-6 h-6" />
               </Link>
             )}
 
