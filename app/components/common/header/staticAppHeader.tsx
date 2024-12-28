@@ -1,4 +1,3 @@
-"use client";
 import BaseHeader from "./baseHeader";
 
 export default function StaticAppHeader() {
@@ -12,4 +11,4 @@ export default function StaticAppHeader() {
       </div>
     </>
   );
-} 
+}

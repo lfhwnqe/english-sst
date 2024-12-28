@@ -51,7 +51,10 @@ function BaseHeader() {
               <GradientButton href="/login">登录</GradientButton>
               <GradientButton
                 href="/signup"
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-md"
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 
+                text-white hover:text-white dark:hover:text-white font-semibold 
+                shadow-lg hover:shadow-xl hover:shadow-blue-500/20
+                border-none ring-0"
               >
                 注册
               </GradientButton>
