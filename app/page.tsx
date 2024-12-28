@@ -1,8 +1,10 @@
-import GradientButton from "./components/common/GradientButton";
+import GradientButton from "@/app/components/common/GradientButton";
+import StaticAppHeader from "@/app/components/common/header/staticAppHeader";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 text-foreground p-8">
+      <StaticAppHeader />
       {/* Hero Section */}
       <section className="px-4 py-20 sm:py-32">
         <div className="max-w-4xl mx-auto text-center">
@@ -17,8 +19,8 @@ export default function Home() {
             使用先进的 AI 技术，轻松创建逼真的音频场景。让您的创作更加生动。
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
-            <GradientButton 
-              href="/audio-scene/create" 
+            <GradientButton
+              href="/audio-scene/create"
               className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 
               text-white hover:text-white dark:hover:text-white font-semibold 
               shadow-lg hover:shadow-xl hover:shadow-blue-500/20
@@ -26,8 +28,8 @@ export default function Home() {
             >
               开始创作
             </GradientButton>
-            <GradientButton 
-              href="/audio-scene/list" 
+            <GradientButton
+              href="/audio-scene/list"
               className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-gray-800 font-semibold
               border border-gray-200 dark:border-gray-700
               hover:border-blue-500/50 dark:hover:border-blue-400/50

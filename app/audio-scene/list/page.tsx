@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import Link from "next/link";
+import StaticAppHeader from "@/app/components/common/header/staticAppHeader";
 
 interface AudioSceneListItem {
   sceneId: string;
@@ -38,18 +39,18 @@ export default function AudioSceneList() {
   const fetchScenes = async (page: number) => {
     try {
       setLoading(true);
-      console.log('Fetching scenes:', {
+      console.log("Fetching scenes:", {
         url: `/audio-scene?page=${page}&pageSize=${pageSize}`,
         page,
-        pageSize
+        pageSize,
       });
-      
+
       const response = await fetchApi(
         `/audio-scene?page=${page}&pageSize=${pageSize}`
       );
-      
-      console.log('Fetch scenes response:', response);
-      
+
+      console.log("Fetch scenes response:", response);
+
       if (response.success) {
         setScenes(response.data.items);
         setTotalPages(response.data.totalPages);
@@ -58,9 +59,9 @@ export default function AudioSceneList() {
         setError(response.message || "加载失败");
       }
     } catch (err) {
-      console.error('Fetch scenes error:', {
+      console.error("Fetch scenes error:", {
         error: err,
-        message: err instanceof Error ? err.message : '未知错误'
+        message: err instanceof Error ? err.message : "未知错误",
       });
       setError(err instanceof Error ? err.message : "加载失败");
     } finally {
@@ -103,6 +104,7 @@ export default function AudioSceneList() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 text-foreground p-8">
+      <StaticAppHeader />
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8 relative">
           <div className="absolute -left-4 -top-4 w-24 h-24 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-2xl" />
@@ -112,17 +114,21 @@ export default function AudioSceneList() {
           <button
             onClick={() => setIsEditMode(!isEditMode)}
             className={`relative p-2.5 rounded-xl transition-all duration-300 ${
-              isEditMode 
-                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20' 
-                : 'bg-white dark:bg-gray-800 hover:shadow-md hover:scale-105 border border-gray-200 dark:border-gray-700'
+              isEditMode
+                ? "bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 shadow-lg shadow-blue-500/25 dark:shadow-blue-500/20"
+                : "bg-white dark:bg-gray-800 hover:shadow-md hover:scale-105 border border-gray-200 dark:border-gray-700"
             }`}
           >
-            <Settings className={`w-5 h-5 ${isEditMode ? 'text-white' : 'text-gray-600 dark:text-gray-300'}`} />
+            <Settings
+              className={`w-5 h-5 ${isEditMode ? "text-white" : "text-gray-600 dark:text-gray-300"}`}
+            />
           </button>
         </div>
 
         {error ? (
-          <div className="text-red-500 text-center py-4 bg-red-500/10 rounded-lg backdrop-blur-sm">{error}</div>
+          <div className="text-red-500 text-center py-4 bg-red-500/10 rounded-lg backdrop-blur-sm">
+            {error}
+          </div>
         ) : scenes.length === 0 ? (
           <div className="text-foreground/60 text-center py-12 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
             暂无场景，点击右下角添加新场景
@@ -149,13 +155,18 @@ export default function AudioSceneList() {
                 )}
 
                 <div
-                  onClick={() => !isEditMode && (window.location.href = `/audio-scene/play?sceneId=${scene.sceneId}`)}
-                  className={`relative ${!isEditMode ? 'cursor-pointer' : ''}`}
+                  onClick={() =>
+                    !isEditMode &&
+                    (window.location.href = `/audio-scene/play?sceneId=${scene.sceneId}`)
+                  }
+                  className={`relative ${!isEditMode ? "cursor-pointer" : ""}`}
                 >
                   <h3 className="text-xl font-semibold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300">
                     {scene.sceneName}
                   </h3>
-                  <p className="text-foreground/70 mb-3 line-clamp-2">{scene.content}</p>
+                  <p className="text-foreground/70 mb-3 line-clamp-2">
+                    {scene.content}
+                  </p>
                   <div className="text-sm text-foreground/50 flex items-center">
                     <div className="w-2 h-2 rounded-full bg-blue-500/50 mr-2" />
                     创建时间: {new Date(scene.createdAt).toLocaleString()}

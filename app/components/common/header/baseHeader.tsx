@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Menu as MenuIcon, Sun, Moon } from "lucide-react";
-import GradientButton from './GradientButton';
+import GradientButton from "../GradientButton";
 
-function AppHeader() {
+function BaseHeader() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -19,7 +19,7 @@ function AppHeader() {
   ];
 
   return (
-    <header className="fixed w-full top-0 z-50">
+    <>
       <div className="bg-gradient-to-r from-white via-white to-white/95 dark:from-gray-900/95 dark:via-gray-900/95 dark:to-gray-900/90 backdrop-blur-sm shadow-[0_1px_3px_0_rgb(0,0,0,0.05)] dark:shadow-none bg-[length:200%_200%] animate-gradient">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex items-center justify-between h-16">
@@ -33,10 +33,7 @@ function AppHeader() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-4">
               {navigation.map((item) => (
-                <GradientButton
-                  key={item.name}
-                  href={item.href}
-                >
+                <GradientButton key={item.name} href={item.href}>
                   {item.name}
                 </GradientButton>
               ))}
@@ -46,13 +43,12 @@ function AppHeader() {
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="p-2 rounded-lg"
               >
-                {mounted && (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
+                {mounted &&
+                  (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
               </GradientButton>
 
               {/* Auth Buttons */}
-              <GradientButton href="/login">
-                登录
-              </GradientButton>
+              <GradientButton href="/login">登录</GradientButton>
               <GradientButton
                 href="/signup"
                 className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-md"
@@ -67,19 +63,23 @@ function AppHeader() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="p-2 rounded-lg"
               >
-                <MenuIcon size={24} className={`transform transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''}`} />
+                <MenuIcon
+                  size={24}
+                  className={`transform transition-transform duration-300 ${isMenuOpen ? "rotate-180" : ""}`}
+                />
               </GradientButton>
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          <div 
+          <div
             className={`
               absolute left-0 right-0 top-full md:hidden 
               transform transition-all duration-300 ease-in-out origin-top
-              ${isMenuOpen 
-                ? 'opacity-100 scale-y-100 translate-y-0' 
-                : 'opacity-0 scale-y-0 -translate-y-4 pointer-events-none'
+              ${
+                isMenuOpen
+                  ? "opacity-100 scale-y-100 translate-y-0"
+                  : "opacity-0 scale-y-0 -translate-y-4 pointer-events-none"
               }
             `}
           >
@@ -99,12 +99,11 @@ function AppHeader() {
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                   className="p-2 rounded-lg"
                 >
-                  {mounted && (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
+                  {mounted &&
+                    (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
                 </GradientButton>
                 <div className="space-x-2">
-                  <GradientButton href="/login">
-                    登录
-                  </GradientButton>
+                  <GradientButton href="/login">登录</GradientButton>
                   <GradientButton
                     href="/signup"
                     className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-md"
@@ -117,8 +116,7 @@ function AppHeader() {
           </div>
         </nav>
       </div>
-    </header>
+    </>
   );
 }
-
-export default AppHeader;
+export default BaseHeader;

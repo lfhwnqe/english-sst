@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import AudioPlayer from "./h5AudioPlayer";
-import ResponsiveAppBar from "./appHeader";
+import RelativeAppHeader from "./header/relativeAppHeader";
 interface Props {
   audioUrl: string;
   text: string;
@@ -83,7 +83,7 @@ const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
 
   return (
     <div className="fixed inset-0 flex flex-col overscroll-none">
-      <ResponsiveAppBar></ResponsiveAppBar>
+      <RelativeAppHeader />
       <main
         ref={contentRef}
         className="flex-1 overflow-y-auto snap-y snap-mandatory"
