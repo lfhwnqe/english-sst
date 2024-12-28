@@ -90,7 +90,7 @@ export default function CreateAudioScene() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-background text-foreground p-8">
       <StaticAppHeader />
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">创建新场景</h1>
@@ -105,7 +105,10 @@ export default function CreateAudioScene() {
                 name="sceneName"
                 value={sceneData.sceneName}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-2 bg-white/50 dark:bg-gray-800/50 rounded 
+                border border-gray-200 dark:border-gray-700 
+                focus:border-blue-500 focus:ring-1 focus:ring-blue-500
+                text-foreground placeholder-gray-500"
                 placeholder="输入场景名称"
               />
             </div>
@@ -116,7 +119,10 @@ export default function CreateAudioScene() {
                 name="content"
                 value={sceneData.content}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 bg-gray-800 rounded border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-4 py-2 bg-white/50 dark:bg-gray-800/50 rounded 
+                border border-gray-200 dark:border-gray-700
+                focus:border-blue-500 focus:ring-1 focus:ring-blue-500
+                text-foreground placeholder-gray-500"
                 rows={4}
                 placeholder="输入场景描述"
               />
@@ -124,7 +130,7 @@ export default function CreateAudioScene() {
           </div>
 
           {/* 音频上传 */}
-          <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
+          <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
             <input
               type="file"
               accept="audio/*"
@@ -134,7 +140,7 @@ export default function CreateAudioScene() {
             />
             <label
               htmlFor="audio-upload"
-              className="cursor-pointer block text-gray-300 hover:text-white"
+              className="cursor-pointer block text-foreground/70 hover:text-foreground transition-colors"
             >
               {file ? file.name : "点击选择音频文件"}
             </label>
@@ -143,20 +149,17 @@ export default function CreateAudioScene() {
           <button
             type="submit"
             disabled={loading || !file || !sceneData.sceneName}
-            className={`w-full py-2 px-4 rounded ${
+            className={`w-full py-2 px-4 rounded transition-colors ${
               loading || !file || !sceneData.sceneName
-                ? "bg-gray-600 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/20"
             }`}
           >
             {loading ? "创建中..." : "创建场景"}
           </button>
 
           {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-
-          {success && (
-            <div className="text-green-500 text-sm mt-2">{success}</div>
-          )}
+          {success && <div className="text-green-500 text-sm mt-2">{success}</div>}
         </form>
       </div>
 
