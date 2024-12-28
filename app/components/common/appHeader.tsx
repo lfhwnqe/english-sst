@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Menu as MenuIcon, Sun, Moon } from "lucide-react";
+import GradientButton from './GradientButton';
 
 function AppHeader() {
   const [mounted, setMounted] = useState(false);
@@ -32,69 +33,50 @@ function AppHeader() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-4">
               {navigation.map((item) => (
-                <Link
+                <GradientButton
                   key={item.name}
                   href={item.href}
-                  className="relative px-3 py-2 text-gray-600 dark:text-gray-300 transition-all duration-300 group hover:text-blue-500 dark:hover:text-blue-400"
                 >
-                  <span className="relative z-10">{item.name}</span>
-                  <div 
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-blue-500/10 to-indigo-500/5 
-                    dark:from-blue-400/5 dark:via-blue-400/10 dark:to-indigo-400/5 
-                    opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-lg 
-                    scale-90 group-hover:scale-100"
-                  />
-                </Link>
+                  {item.name}
+                </GradientButton>
               ))}
 
               {/* Theme Toggle */}
-              <button
+              <GradientButton
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 rounded-lg bg-gray-100/80 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200/80 dark:hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-lg"
               >
-                {mounted &&
-                  (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
-              </button>
+                {mounted && (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
+              </GradientButton>
 
               {/* Auth Buttons */}
-              <Link
-                href="/login"
-                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-              >
+              <GradientButton href="/login">
                 登录
-              </Link>
-              <Link
+              </GradientButton>
+              <GradientButton
                 href="/signup"
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm transition-all hover:shadow-md"
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-md"
               >
                 注册
-              </Link>
+              </GradientButton>
             </div>
 
             {/* Mobile menu button */}
             <div className="md:hidden">
-              <button
+              <GradientButton
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-lg"
               >
                 <MenuIcon size={24} className={`transform transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
+              </GradientButton>
             </div>
           </div>
 
-          {/* Mobile Navigation - 修改定位和层级 */}
+          {/* Mobile Navigation */}
           <div 
             className={`
-              absolute 
-              left-0 
-              right-0 
-              top-full 
-              md:hidden 
-              transform 
-              transition-all 
-              duration-300 
-              ease-in-out 
-              origin-top
+              absolute left-0 right-0 top-full md:hidden 
+              transform transition-all duration-300 ease-in-out origin-top
               ${isMenuOpen 
                 ? 'opacity-100 scale-y-100 translate-y-0' 
                 : 'opacity-0 scale-y-0 -translate-y-4 pointer-events-none'
@@ -103,35 +85,32 @@ function AppHeader() {
           >
             <div className="py-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 rounded-b-lg shadow-lg">
               {navigation.map((item) => (
-                <Link
+                <GradientButton
                   key={item.name}
                   href={item.href}
-                  className="block px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-800 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
+                  className="w-full text-left"
                 >
                   {item.name}
-                </Link>
+                </GradientButton>
               ))}
               <div className="px-4 py-3 flex items-center justify-between border-t border-gray-100 dark:border-gray-800">
-                <button
+                <GradientButton
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="p-2 rounded-lg bg-gray-100/80 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200/80 dark:hover:bg-gray-700 transition-colors"
+                  className="p-2 rounded-lg"
                 >
                   {mounted && (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
-                </button>
+                </GradientButton>
                 <div className="space-x-2">
-                  <Link
-                    href="/login"
-                    className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400"
-                  >
+                  <GradientButton href="/login">
                     登录
-                  </Link>
-                  <Link
+                  </GradientButton>
+                  <GradientButton
                     href="/signup"
-                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm transition-all hover:shadow-md"
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm hover:shadow-md"
                   >
                     注册
-                  </Link>
+                  </GradientButton>
                 </div>
               </div>
             </div>
