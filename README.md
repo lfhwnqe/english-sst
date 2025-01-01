@@ -2,6 +2,11 @@
 
 使用aws进行部署，cloudflared进行cdn
 
+## todo
+- 增加自动prettier
+- 升级nextjs15
+- 修改为Lambda@Edge
+
 ## Getting Started
 设置cloudflare的api token
 

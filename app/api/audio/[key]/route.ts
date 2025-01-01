@@ -4,10 +4,8 @@ const getBaseUrl = () => {
   return process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
 };
 
-export async function GET(
-  req: Request,
-  { params }: { params: { key: string } }
-) {
+export async function GET(req: Request, props: { params: Promise<{ key: string }> }) {
+  const params = await props.params;
   try {
     const { key } = params;
 

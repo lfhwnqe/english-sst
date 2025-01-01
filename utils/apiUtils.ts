@@ -11,7 +11,7 @@ interface ServerFetchOptions {
 
 export async function apiRequest(endpoint: string, options: ServerFetchOptions = {}) {
   const { method = 'GET', body, searchParams } = options;
-  const headersList = headers();
+  const headersList = await headers();
   const cookie = headersList.get('cookie') || '';
 
   // 构建 URL
