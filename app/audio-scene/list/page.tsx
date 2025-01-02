@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/utils/fetch";
-import LoadingSpinner from "@/app/components/common/LoadingSpinner";
+import ListSkeleton from "./components/ListSkeleton";
 import { Plus, Minus, Settings } from "lucide-react";
 import {
   Button,
@@ -98,10 +98,6 @@ export default function AudioSceneList() {
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 text-foreground p-8">
       <StaticAppHeader />
@@ -121,9 +117,7 @@ export default function AudioSceneList() {
           >
             <Settings
               className={`w-5 h-5 ${
-                isEditMode
-                  ? "text-white"
-                  : "text-gray-800 dark:text-gray-200"
+                isEditMode ? "text-white" : "text-gray-800 dark:text-gray-200"
               }`}
             />
           </button>
@@ -133,6 +127,8 @@ export default function AudioSceneList() {
           <div className="text-red-500 text-center py-4 bg-red-500/10 rounded-lg backdrop-blur-sm">
             {error}
           </div>
+        ) : loading ? (
+          <ListSkeleton />
         ) : scenes.length === 0 ? (
           <div className="text-foreground/60 text-center py-12 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
             暂无场景，点击右下角添加新场景
