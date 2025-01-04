@@ -13,6 +13,7 @@ specifiers:
   '@types/gif-encoder': ^0.7.4
   '@types/gifencoder': ^2.0.3
   '@types/howler': ^2.2.12
+  '@types/js-cookie': ^3.0.6
   '@types/node': 20.8.1
   '@types/react': 18.2.12
   '@types/react-dom': 18.2.0
@@ -24,6 +25,7 @@ specifiers:
   howler: ^2.2.4
   immer: ^10.1.1
   jotai: ^2.10.1
+  js-cookie: ^3.0.5
   lucide-react: ^0.454.0
   next: 14.2.15
   next-pwa: ^5.6.0
@@ -52,6 +54,7 @@ dependencies:
   howler: 2.2.4
   immer: 10.1.1
   jotai: 2.10.3_amj33xoxfucvzb42rb6rqg7bp4
+  js-cookie: 3.0.5
   lucide-react: 0.454.0_react@18.2.0
   next: 14.2.15_biqbaboplfbrettd7655fr4n2y
   next-pwa: 5.6.0_next@14.2.15
@@ -67,6 +70,7 @@ devDependencies:
   '@types/gif-encoder': 0.7.4
   '@types/gifencoder': 2.0.3
   '@types/howler': 2.2.12
+  '@types/js-cookie': 3.0.6
   '@types/node': 20.8.1
   '@types/react': 18.2.12
   '@types/react-dom': 18.2.0
@@ -3735,6 +3739,10 @@ packages:
 
   /@types/howler/2.2.12:
     resolution: {integrity: sha512-hy769UICzOSdK0Kn1FBk4gN+lswcj1EKRkmiDtMkUGvFfYJzgaDXmVXkSShS2m89ERAatGIPnTUlp2HhfkVo5g==}
+    dev: true
+
+  /@types/js-cookie/3.0.6:
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
     dev: true
 
   /@types/json-schema/7.0.15:

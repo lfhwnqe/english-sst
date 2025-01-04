@@ -79,7 +79,7 @@ export default function SignUp() {
       }
 
       alert(data.message);
-      router.push("/login");
+      router.push("/auth/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

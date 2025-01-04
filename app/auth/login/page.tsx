@@ -91,7 +91,7 @@ export default function Login() {
         <p className="text-gray-600">
           还没有账号？{" "}
           <button
-            onClick={() => router.push("/signup")}
+            onClick={() => router.push("/auth/signup")}
             className="text-blue-500 hover:text-blue-600"
           >
             立即注册

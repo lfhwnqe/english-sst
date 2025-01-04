@@ -20,7 +20,7 @@ export default function LogoutButton() {
       localStorage.removeItem('redirectAfterLogin');
       
       // 重定向到登录页
-      router.push('/login');
+      router.push('/auth/login');
     } catch (error) {
       console.error('Logout error:', error);
     }

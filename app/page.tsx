@@ -103,7 +103,7 @@ export default function Home() {
             立即加入我们，探索 AI 音频场景的无限可能。
           </p>
           <GradientButton
-            href="/signup"
+            href="/auth/signup"
             className="px-8 py-4 bg-white dark:bg-gray-800 text-blue-500 dark:text-blue-400 rounded-lg font-semibold hover:bg-blue-50 dark:hover:bg-gray-700 shadow-lg hover:shadow-xl"
           >
             免费注册

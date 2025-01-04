@@ -28,9 +28,9 @@ export async function fetchApi(endpoint: string, options: FetchOptions = {}) {
     if (response.status === 401) {
       if (typeof window !== 'undefined') {
         const currentPath = window.location.pathname;
-        if (currentPath !== '/login') {
+        if (currentPath !== '/auth/login') {
           window.localStorage.setItem('redirectAfterLogin', currentPath);
-          window.location.href = '/login';
+          window.location.href = '/auth/login';
         }
       }
     }
