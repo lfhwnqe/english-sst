@@ -21,6 +21,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
             <GradientButton
               href="/audio-scene/create"
+              prefetch={true}
               className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 
               text-white hover:text-white dark:hover:text-white font-semibold 
               shadow-lg hover:shadow-xl hover:shadow-blue-500/20
@@ -30,6 +31,7 @@ export default function Home() {
             </GradientButton>
             <GradientButton
               href="/audio-scene/list"
+              prefetch={true}
               className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-gray-800 font-semibold
               border border-gray-200 dark:border-gray-700
               hover:border-blue-500/50 dark:hover:border-blue-400/50

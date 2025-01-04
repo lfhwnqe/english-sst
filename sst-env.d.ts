@@ -6,11 +6,7 @@ import "sst"
 export {}
 declare module "sst" {
   export interface Resource {
-    "MyBucket": {
-      "name": string
-      "type": "sst.aws.Bucket"
-    }
-    "MyWeb": {
+    "mmc-frontend": {
       "type": "sst.aws.Nextjs"
       "url": string
     }
