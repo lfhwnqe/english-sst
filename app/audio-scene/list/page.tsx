@@ -28,7 +28,7 @@ interface AudioSceneListItem {
 export default function AudioSceneList() {
   const [scenes, setScenes] = useState<AudioSceneListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize] = useState(10);
@@ -123,11 +123,7 @@ export default function AudioSceneList() {
           </button>
         </div>
 
-        {error ? (
-          <div className="text-red-500 text-center py-4 bg-red-500/10 rounded-lg backdrop-blur-sm">
-            {error}
-          </div>
-        ) : loading ? (
+        {loading ? (
           <ListSkeleton />
         ) : scenes.length === 0 ? (
           <div className="text-foreground/60 text-center py-12 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
