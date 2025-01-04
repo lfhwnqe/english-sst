@@ -6,7 +6,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import ThemeProvider from "@/app/components/common/providers/themeProvider";
-import { getAuth } from "./lib/auth";
+import { getAuthAndThemeFromCookie } from "./lib/auth";
 import AuthProvider from "@/app/components/common/providers/AuthProvider";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,12 +30,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const hasToken = await getAuth();
-
+  const { hasToken, theme } = await getAuthAndThemeFromCookie();
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}>
-        <ThemeProvider>
+        <ThemeProvider theme={theme}>
           <AuthProvider hasToken={hasToken}>
             <main className="pt-16">{children}</main>
           </AuthProvider>

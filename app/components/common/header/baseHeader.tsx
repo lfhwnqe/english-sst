@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Menu as MenuIcon, Sun, Moon, User } from "lucide-react";
@@ -7,16 +7,19 @@ import GradientButton from "../GradientButton";
 import { useHydrateAtoms } from "jotai/utils";
 import { hasTokenAtom } from "@/app/stores/cookie";
 import { useAtom } from "jotai";
+import { themeAtom, setThemeAtom } from "@/app/stores/theme";
 
 function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
-  const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
   useHydrateAtoms([[hasTokenAtom, hasTokenServer]]);
   const [hasToken] = useAtom(hasTokenAtom);
-
-  useEffect(() => setMounted(true), []);
-
+  const [theme] = useAtom(themeAtom);
+  const [, setThemeInAtom] = useAtom(setThemeAtom);
+  const { _, setTheme: setThemeNext } = useTheme();
+  const setTheme = (newTheme: "light" | "dark") => {
+    setThemeNext(newTheme);
+    setThemeInAtom(newTheme);
+  };
   const navigation = [
     { name: "创作中心", href: "/audio-scene/create" },
     { name: "我的作品", href: "/audio-scene/list" },
@@ -25,9 +28,9 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   // 认证相关按钮组件
   const AuthButtons = () => (
     <>
-      <GradientButton href="/login">登录</GradientButton>
+      <GradientButton href="/auth/login">登录</GradientButton>
       <GradientButton
-        href="/signup"
+        href="/auth/signup"
         className="bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 
         text-white hover:text-white dark:hover:text-white font-semibold 
         shadow-lg hover:shadow-xl hover:shadow-blue-500/20
@@ -40,7 +43,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
 
   // 用户信息组件
   const UserInfo = () => (
-    <GradientButton href="/profile" className="p-2 rounded-full">
+    <GradientButton href="/audio-scene/list" className="p-2 rounded-full">
       <User size={20} />
     </GradientButton>
   );
@@ -69,7 +72,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2 rounded-lg"
             >
-              {mounted && (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
+              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
             </GradientButton>
 
             {/* Auth Section */}
@@ -118,7 +121,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="p-2 rounded-lg"
               >
-                {mounted && (theme === "dark" ? <Sun size={20} /> : <Moon size={20} />)}
+                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
               </GradientButton>
               <div className="space-x-2">
                 {hasToken ? <UserInfo /> : <AuthButtons />}
