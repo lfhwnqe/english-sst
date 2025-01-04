@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Menu as MenuIcon, Sun, Moon, User } from "lucide-react";
+import { Menu as MenuIcon, Sun, Moon, User, LogOut } from "lucide-react";
 import GradientButton from "../GradientButton";
 import { useHydrateAtoms } from "jotai/utils";
 import { hasTokenAtom } from "@/app/stores/cookie";
@@ -15,11 +15,38 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   const [hasToken] = useAtom(hasTokenAtom);
   const [theme] = useAtom(themeAtom);
   const [, setThemeInAtom] = useAtom(setThemeAtom);
-  const { _, setTheme: setThemeNext } = useTheme();
+  const { setTheme: setThemeNext } = useTheme();
+  
   const setTheme = (newTheme: "light" | "dark") => {
     setThemeNext(newTheme);
     setThemeInAtom(newTheme);
   };
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('登出失败');
+      }
+
+      // 清除本地存储
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("idToken");
+
+      // 刷新页面以重置所有状态
+      window.location.href = "/";
+    } catch (error) {
+      console.error('Logout error:', error);
+      // 可以添加错误提示
+      alert('登出失败，请重试');
+    }
+  };
+
   const navigation = [
     { name: "创作中心", href: "/audio-scene/create" },
     { name: "我的作品", href: "/audio-scene/list" },
@@ -27,7 +54,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
 
   // 认证相关按钮组件
   const AuthButtons = () => (
-    <>
+    <div className="flex items-center space-x-2">
       <GradientButton href="/auth/login">登录</GradientButton>
       <GradientButton
         href="/auth/signup"
@@ -38,14 +65,22 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
       >
         注册
       </GradientButton>
-    </>
+    </div>
   );
 
   // 用户信息组件
   const UserInfo = () => (
-    <GradientButton href="/audio-scene/list" className="p-2 rounded-full">
-      <User size={20} />
-    </GradientButton>
+    <div className="flex items-center space-x-2">
+      <GradientButton href="/audio-scene/list" className="p-2 rounded-full">
+        <User size={20} />
+      </GradientButton>
+      <GradientButton
+        onClick={handleLogout}
+        className="p-2 rounded-full text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+      >
+        <LogOut size={20} />
+      </GradientButton>
+    </div>
   );
 
   return (
@@ -53,7 +88,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex-shrink-0">
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-400 dark:to-indigo-400">
               MMC Audio
             </span>
@@ -96,34 +131,42 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
         {/* Mobile Navigation */}
         <div
           className={`
-            absolute left-0 right-0 top-full md:hidden 
+            fixed inset-x-0 top-[64px] md:hidden 
             transform transition-all duration-300 ease-in-out origin-top
             ${
               isMenuOpen
-                ? "opacity-100 scale-y-100 translate-y-0"
-                : "opacity-0 scale-y-0 -translate-y-4 pointer-events-none"
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 -translate-y-4 pointer-events-none"
             }
           `}
         >
-          <div className="py-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 rounded-b-lg shadow-lg">
-            {navigation.map((item) => (
-              <GradientButton
-                key={item.name}
-                href={item.href}
-                onClick={() => setIsMenuOpen(false)}
-                className="w-full text-left"
-              >
-                {item.name}
-              </GradientButton>
-            ))}
-            <div className="px-4 py-3 flex items-center justify-between border-t border-gray-100 dark:border-gray-800">
-              <GradientButton
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 rounded-lg"
-              >
-                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              </GradientButton>
-              <div className="space-x-2">
+          <div className="mx-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg shadow-lg divide-y divide-gray-100 dark:divide-gray-800">
+            {/* Navigation Links */}
+            <div className="py-2">
+              {navigation.map((item) => (
+                <GradientButton
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800"
+                >
+                  {item.name}
+                </GradientButton>
+              ))}
+            </div>
+
+            {/* Theme and Auth */}
+            <div className="p-4 flex flex-col space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">主题切换</span>
+                <GradientButton
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="p-2 rounded-lg"
+                >
+                  {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                </GradientButton>
+              </div>
+              <div className="flex justify-end">
                 {hasToken ? <UserInfo /> : <AuthButtons />}
               </div>
             </div>
