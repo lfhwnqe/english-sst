@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Mail, Lock, KeyRound, Loader2 } from "lucide-react";
 
 export default function SignUp() {
   const router = useRouter();
@@ -123,122 +124,194 @@ export default function SignUp() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      {step === "signup" ? (
-        <form onSubmit={handleSignup} className="space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">Sign Up</h2>
-
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your email"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Create a password"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Confirm your password"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {loading ? "Signing up..." : "Sign Up"}
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleVerification} className="space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">Verify Email</h2>
-          <p className="text-sm text-gray-600">
-            We have sent a verification code to your email. Please enter it below.
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        {/* Title Section */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-400 dark:to-indigo-400">
+            {step === "signup" ? "创建账号" : "验证邮箱"}
+          </h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            {step === "signup" 
+              ? "注册一个新账号开始使用" 
+              : "我们已发送验证码到您的邮箱"}
           </p>
+        </div>
 
-          <div>
-            <label
-              htmlFor="verificationCode"
-              className="block text-sm font-medium text-gray-700"
+        {/* Form Section */}
+        {step === "signup" ? (
+          <form onSubmit={handleSignup} className="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+            <div className="space-y-4">
+              {/* Email Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  邮箱地址
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                      bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
+                      placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    placeholder="请输入邮箱"
+                  />
+                </div>
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  密码
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                      bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
+                      placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    placeholder="请设置密码"
+                  />
+                </div>
+              </div>
+
+              {/* Confirm Password Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  确认密码
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                      bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
+                      placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    placeholder="请确认密码"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400 p-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center items-center py-3 px-4 
+                bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600
+                dark:from-blue-600 dark:to-indigo-600 dark:hover:from-blue-700 dark:hover:to-indigo-700
+                text-white font-semibold rounded-lg shadow-lg hover:shadow-xl
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                disabled:opacity-50 disabled:cursor-not-allowed
+                transition-all duration-300"
             >
-              Verification Code
-            </label>
-            <input
-              id="verificationCode"
-              name="verificationCode"
-              type="text"
-              required
-              value={formData.verificationCode}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter verification code"
-            />
-          </div>
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "注 册"}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerification} className="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
+            <div className="space-y-4">
+              {/* Verification Code Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  验证码
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <KeyRound className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    name="verificationCode"
+                    type="text"
+                    required
+                    value={formData.verificationCode}
+                    onChange={handleChange}
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                      bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
+                      placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    placeholder="请输入验证码"
+                  />
+                </div>
+              </div>
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {loading ? "Verifying..." : "Verify Email"}
-          </button>
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400 p-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
 
-          <button
-            type="button"
-            onClick={handleResendCode}
-            disabled={loading}
-            className="w-full py-2 px-4 text-sm text-blue-600 hover:text-blue-500 focus:outline-none disabled:opacity-50"
-          >
-            Resend verification code
-          </button>
-        </form>
-      )}
+            <div className="space-y-3">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center items-center py-3 px-4 
+                  bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600
+                  dark:from-blue-600 dark:to-indigo-600 dark:hover:from-blue-700 dark:hover:to-indigo-700
+                  text-white font-semibold rounded-lg shadow-lg hover:shadow-xl
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                  transition-all duration-300"
+              >
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "验证邮箱"}
+              </button>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={loading}
+                className="w-full text-sm text-blue-500 hover:text-blue-600 dark:text-blue-400 
+                  dark:hover:text-blue-300 focus:outline-none focus:underline 
+                  transition-colors duration-300 disabled:opacity-50"
+              >
+                重新发送验证码
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Login Link */}
+        <div className="text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            已有账号？{" "}
+            <button
+              onClick={() => router.push("/auth/login")}
+              className="font-medium text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300
+                focus:outline-none focus:underline transition-colors duration-300"
+            >
+              立即登录
+            </button>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
