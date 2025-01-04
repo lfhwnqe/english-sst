@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchApi } from "@/utils/fetch";
 import ScrollPagedContent from "@/app/components/common/scrollPagedContent";
-import LoadingSpinner from "@/app/components/common/LoadingSpinner";
 
 interface AudioScene {
   sceneId: string;
@@ -21,15 +20,20 @@ export default function PlayScene() {
   const searchParams = useSearchParams();
   const sceneId = searchParams.get("sceneId");
 
-  const [scene, setScene] = useState<AudioScene | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [scene, setScene] = useState<AudioScene>({
+    sceneId: "",
+    userId: "",
+    content: "",
+    audioUrl: "",
+    sceneName: "加载中...",
+    status: "",
+    createdAt: "",
+    updatedAt: "",
+  });
 
   useEffect(() => {
     const fetchScene = async () => {
       if (!sceneId) {
-        setError("场景ID不能为空");
-        setLoading(false);
         return;
       }
 
@@ -46,34 +50,15 @@ export default function PlayScene() {
               ...response.data,
               audioUrl: audioResponse.data.url, // 使用预签名 URL
             });
-            setError(null);
-          } else {
-            setError("获取音频失败");
           }
-        } else {
-          setError(response.message || "加载场景失败");
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "加载场景失败");
-      } finally {
-        setLoading(false);
+        console.error("Error fetching scene:", err);
       }
     };
 
     fetchScene();
   }, [sceneId]);
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error || !scene) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-red-500 text-xl">{error || "场景不存在"}</div>
-      </div>
-    );
-  }
 
   return (
     <div>
