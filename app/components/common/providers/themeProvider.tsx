@@ -2,7 +2,6 @@
 import { themeAtom } from "@/app/stores/theme";
 import { useHydrateAtoms } from "jotai/utils";
 import { ThemeProvider } from "next-themes";
-import { useEffect } from "react";
 
 export default function Themerovider({
   children,
