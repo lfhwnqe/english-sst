@@ -1,17 +1,31 @@
 const runtimeCaching = [
   {
-    urlPattern: /^https:\/\/nuo-english\.s3\.us-east-2\.amazonaws\.com\/.*/,
+    urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
     handler: "CacheFirst",
     options: {
-      cacheName: "audio-cache",
+      cacheName: "image-cache",
       expiration: {
-        maxEntries: 50,
-        maxAgeSeconds: 30 * 24 * 60 * 60,
+        maxEntries: 100,
+        maxAgeSeconds: 7 * 24 * 60 * 60,
       },
       cacheableResponse: {
         statuses: [0, 200],
       },
-      rangeRequests: true,
+    },
+  },
+  {
+    urlPattern:
+      /^https:\/\/[^/]+\.(?:cloudfront\.net|amazonaws\.com)\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+    handler: "CacheFirst",
+    options: {
+      cacheName: "cdn-image-cache",
+      expiration: {
+        maxEntries: 100,
+        maxAgeSeconds: 7 * 24 * 60 * 60,
+      },
+      cacheableResponse: {
+        statuses: [0, 200],
+      },
     },
   },
 ];
