@@ -2,11 +2,27 @@ import React, { useState, useRef, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import AudioPlayer from "./h5AudioPlayer";
 import RelativeAppHeader from "./header/relativeAppHeader";
+
 interface Props {
   audioUrl: string;
   text: string;
   name: string;
 }
+
+const AudioPlayerSkeleton = () => (
+  <div className="h-16 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-700/50">
+    <div className="flex items-center justify-between px-4 h-full">
+      <div className="flex items-center space-x-4">
+        <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        <div className="space-y-2">
+          <div className="w-32 h-2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        </div>
+      </div>
+      <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+    </div>
+  </div>
+);
 
 const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -110,7 +126,7 @@ const ScrollPagedContent: React.FC<Props> = ({ audioUrl, text, name }) => {
         </button>
       </div>
       <div className="w-full pb-safe">
-        <AudioPlayer src={audioUrl} />
+        {audioUrl ? <AudioPlayer src={audioUrl} /> : <AudioPlayerSkeleton />}
       </div>
     </div>
   );
