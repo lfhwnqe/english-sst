@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Menu as MenuIcon, Sun, Moon, User } from "lucide-react";
