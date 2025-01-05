@@ -2,6 +2,13 @@
 
 使用aws进行部署，cloudflared进行cdn
 
+改为amplify
+
+## 开发
+```shell
+yarn dev
+```
+
 ## Getting Started
 设置cloudflare的api token
 

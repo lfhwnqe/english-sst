@@ -11,9 +11,6 @@
     "publish:prod": "npx sst deploy --stage production"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
-    "@aws-sdk/client-s3": "^3.701.0",
-    "@aws-sdk/s3-request-presigner": "^3.701.0",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@fontsource/roboto": "^5.1.0",
