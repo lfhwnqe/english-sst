@@ -49,3 +49,5 @@ public/workbox-*.js
 .open-next
 
 cloudflare.js
+public/sw.js.map
+public/workbox-*.js.map
