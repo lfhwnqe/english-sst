@@ -4,11 +4,9 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev:sst": "sst dev --stage dev",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start",
-    "publish:prod": "npx sst deploy --stage production"
+    "start": "next start"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -17,6 +15,7 @@
     "@fontsource/roboto": "^5.1.0",
     "@mui/icons-material": "^6.1.10",
     "@mui/material": "^6.1.10",
+    "@tanstack/react-query": "^5.62.16",
     "aws-amplify": "^6.6.7",
     "graphql": "^16.9.0",
     "howler": "^2.2.4",
@@ -29,7 +28,9 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^5.3.0",
-    "recharts": "^2.14.1"
+    "recharts": "^2.14.1",
+    "viem": "2.x",
+    "wagmi": "^2.14.6"
   },
   "devDependencies": {
     "@types/formidable": "^3.4.5",
@@ -43,6 +44,7 @@
     "autoprefixer": "10.4.16",
     "eslint": "8.56.0",
     "eslint-config-next": "14.2.15",
+    "ethers": "^6.13.5",
     "postcss": "8.4.31",
     "prettier": "^3.4.1",
     "tailwindcss": "3.4.1",

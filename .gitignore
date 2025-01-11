@@ -41,8 +41,6 @@ certificates
 public/sw.js
 public/workbox-*.js
 
-# sst
-.sst
 
 
 # open-next

@@ -8,6 +8,7 @@ import "@fontsource/roboto/700.css";
 import ThemeProvider from "@/app/components/common/providers/themeProvider";
 import { getAuthAndThemeFromCookie } from "./lib/auth";
 import AuthProvider from "@/app/components/common/providers/AuthProvider";
+import Web3Provider from "@/app/components/common/providers/wagmiProvider";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -33,10 +34,14 @@ export default async function RootLayout({
   const { hasToken, theme } = await getAuthAndThemeFromCookie();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+      >
         <ThemeProvider theme={theme}>
           <AuthProvider hasToken={hasToken}>
-            <main className="pt-16">{children}</main>
+            <Web3Provider>
+              <main className="pt-16">{children}</main>
+            </Web3Provider>
           </AuthProvider>
         </ThemeProvider>
       </body>

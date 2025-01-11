@@ -19,7 +19,9 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/components/*": ["./app/components/*"]
+      "@/components/*": ["./app/components/*"],
+      "@/stores/*": ["./app/stores/*"],
+      "@/utils/*": ["./utils/*"]
     },
     "typeRoots": ["./types", "./node_modules/@types"]
   },
