@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAccount, useWriteContract, useTransaction } from "wagmi";
+import { useState } from "react";
+import {
+  useAccount,
+  useWriteContract,
+  useTransaction,
+} from "wagmi";
 import { CourseMarket__factory } from "@/abi/typechain-types";
 import {
   Button,
@@ -11,33 +15,29 @@ import {
   Alert,
   Snackbar,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 import { courseMarketAddressAtom } from "@/app/stores/web3";
 import { useAtomValue } from "jotai";
-import { parseEther } from "viem";
+import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
 
 // 课程表单类型
 interface CourseForm {
-  title: string;
-  description: string;
+  web2CourseId: string; // 修改为合约需要的字段
+  name: string;
   price: string;
-  duration: string;
 }
 
 export default function AddCoursePage() {
   const courseMarketAddress = useAtomValue(courseMarketAddressAtom);
-  useEffect(() => {
-    console.log("🌹courseMarket", courseMarketAddress);
-  }, [courseMarketAddress]);
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { writeContract, isPending: isWritePending } = useWriteContract();
   const [formData, setFormData] = useState<CourseForm>({
-    title: "",
-    description: "",
+    web2CourseId: "",
+    name: "",
     price: "",
-    duration: "",
   });
-  const [hash, setHash] = useState<string>();
+  const [hash] = useState<string>();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
@@ -45,7 +45,7 @@ export default function AddCoursePage() {
   );
 
   // 等待交易确认
-  const { isLoading: isConfirming, isSuccess } = useTransaction({
+  const { isLoading: isConfirming } = useTransaction({
     hash: hash as `0x${string}` | undefined,
   });
 
@@ -73,138 +73,106 @@ export default function AddCoursePage() {
         showMessage("请输入有效的价格", "error");
         return;
       }
-      const data = {
+      await writeContract({
         address: courseMarketAddress as `0x${string}`,
         abi: CourseMarket__factory.abi,
         functionName: "addCourse",
-        args: [
-          formData.title,
-          formData.description,
-          parseEther(price.toString()),
-        ],
-      };
-      console.log("🌹data:", data);
-      writeContract(data);
-
+        args: [formData.web2CourseId, formData.name, BigInt(price)],
+      });
       showMessage("交易已发送", "success");
     } catch (error) {
-      showMessage("添加课程失败", "error");
+      const errorMessage = (error as Error).message;
+      if (errorMessage.includes("Course already exists")) {
+        showMessage("课程 ID 已存在，请使用其他 ID", "error");
+      } else {
+        showMessage("添加课程失败: " + errorMessage, "error");
+      }
       console.error("添加课程错误:", error);
     }
   };
 
-  // 交易成功后重置表单
-  useEffect(() => {
-    if (isSuccess) {
-      setFormData({
-        title: "",
-        description: "",
-        price: "",
-        duration: "",
-      });
-      showMessage("课程添加成功！", "success");
-    }
-  }, [isSuccess]);
-
   const isLoading = isWritePending || isConfirming;
 
   return (
-    <Box className="max-w-2xl mx-auto p-6">
-      <Typography variant="h4" className="mb-6 font-bold">
-        添加新课程
-      </Typography>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <TextField
-          fullWidth
-          label="课程标题"
-          name="title"
-          value={formData.title}
-          onChange={handleInputChange}
-          required
-          variant="outlined"
-          className="bg-white"
-          disabled={isLoading}
-        />
-
-        <TextField
-          fullWidth
-          label="课程描述"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          required
-          multiline
-          rows={4}
-          variant="outlined"
-          className="bg-white"
-          disabled={isLoading}
-        />
-
-        <TextField
-          fullWidth
-          label="课程价格 (MMC)"
-          name="price"
-          type="number"
-          value={formData.price}
-          onChange={handleInputChange}
-          required
-          inputProps={{ min: 0, step: 0.1 }}
-          variant="outlined"
-          className="bg-white"
-          disabled={isLoading}
-        />
-
-        <TextField
-          fullWidth
-          label="课程时长 (分钟)"
-          name="duration"
-          type="number"
-          value={formData.duration}
-          onChange={handleInputChange}
-          required
-          inputProps={{ min: 1 }}
-          variant="outlined"
-          className="bg-white"
-          disabled={isLoading}
-        />
-
-        <Button
-          type="submit"
-          variant="contained"
-          fullWidth
-          disabled={isLoading}
-          className="h-12 bg-blue-600 hover:bg-blue-700"
-        >
-          {isLoading ? (
-            <CircularProgress size={24} className="text-white" />
-          ) : (
-            "添加课程"
-          )}
-        </Button>
-      </form>
-
-      {isSuccess && hash && (
-        <Alert severity="success" className="mt-6">
-          <Typography variant="body1">课程添加成功！</Typography>
-          <Typography variant="body2" className="break-all">
-            交易哈希: {hash}
+    <Box className="min-h-screen bg-gray-50">
+      <StaticAppHeader />
+      <Box className="max-w-2xl mx-auto p-6">
+        <Paper elevation={3} className="p-6 bg-white rounded-lg">
+          <Typography variant="h4" className="mb-6 font-bold text-blue-600">
+            添加新课程
           </Typography>
-        </Alert>
-      )}
 
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-      >
-        <Alert
-          severity={snackbarSeverity}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <TextField
+              fullWidth
+              label="Web2 课程 ID"
+              name="web2CourseId"
+              value={formData.web2CourseId}
+              onChange={handleInputChange}
+              required
+              variant="outlined"
+              className="bg-white"
+              disabled={isLoading}
+              placeholder="请输入 Web2 平台的课程 ID"
+            />
+
+            <TextField
+              fullWidth
+              label="课程名称"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+              variant="outlined"
+              className="bg-white"
+              disabled={isLoading}
+              placeholder="请输入课程名称"
+            />
+
+            <TextField
+              fullWidth
+              label="课程价格 (MMC)"
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleInputChange}
+              required
+              inputProps={{ min: 0, step: 0.1 }}
+              variant="outlined"
+              className="bg-white"
+              disabled={isLoading}
+              placeholder="请输入课程价格"
+            />
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              disabled={isLoading}
+              className="h-12 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+            >
+              {isLoading ? (
+                <CircularProgress size={24} className="text-white" />
+              ) : (
+                "添加课程"
+              )}
+            </Button>
+          </form>
+        </Paper>
+
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
           onClose={() => setOpenSnackbar(false)}
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+          <Alert
+            severity={snackbarSeverity}
+            onClose={() => setOpenSnackbar(false)}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
     </Box>
   );
 }

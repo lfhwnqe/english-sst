@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { courseMarketAddressAtom } from "@/app/stores/web3";
 import { useAtomValue } from "jotai";
-import { formatEther } from "viem";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
 
 interface Course {
@@ -29,25 +28,25 @@ export default function CourseListPage() {
   const courseMarketAddress = useAtomValue(courseMarketAddressAtom);
   const { address } = useAccount();
 
-  const courseMarketContract = {
-    address: courseMarketAddress as `0x${string}`,
-    abi: CourseMarket__factory.abi,
-  } as const;
-
+  // 读取课程列表
   const { data, isLoading } = useReadContracts({
     contracts: [
       {
-        ...courseMarketContract,
-        functionName: "getCoursesByPage",
-        args: [BigInt(0), BigInt(10)],
+        address: courseMarketAddress as `0x${string}`,
+        abi: CourseMarket__factory.abi,
+        functionName: "getUserPurchasedCourses",
+        args: [address as `0x${string}`],
       },
     ],
   });
+
   const { courseCount, courses } = useMemo(() => {
+    const [, courseDetails] =
+      data?.[0]?.status === "success" ? data[0].result : [];
     if (data?.[0]?.status === "success") {
       return {
-        courseCount: data?.[0]?.result[1],
-        courses: data?.[0]?.result[0],
+        courseCount: courseDetails?.length || 0,
+        courses: courseDetails || [],
       };
     }
     return {
@@ -66,7 +65,7 @@ export default function CourseListPage() {
       ) : (
         <>
           <Typography variant="h4" className="mb-6 font-bold">
-            课程列表
+            我的课程
           </Typography>
 
           <Typography variant="subtitle1" className="mb-4">
@@ -74,7 +73,7 @@ export default function CourseListPage() {
           </Typography>
 
           <Grid container spacing={3}>
-            {(courses as Course[])?.map((course, index) => (
+            {(courses as Course[])?.map((course) => (
               <Grid item xs={12} sm={6} md={4} key={course.web2CourseId}>
                 <Card className="h-full">
                   <CardContent>
@@ -91,39 +90,20 @@ export default function CourseListPage() {
                     </Typography>
 
                     <Typography variant="h6" color="primary" className="mb-2">
-                      {formatEther(course.price)} MMC
+                      {Number(course.price).toString()} MMC
                     </Typography>
 
                     <Box className="flex gap-2 mt-4">
-                      <Chip
-                        label={course.isActive ? "可购买" : "已下架"}
-                        color={course.isActive ? "success" : "default"}
-                      />
+                      <Chip label={"已购买"} color="success" />
                       {course.creator === address && (
                         <Chip label="我创建的" color="primary" />
                       )}
                     </Box>
-
-                    <Typography
-                      variant="caption"
-                      display="block"
-                      className="mt-2"
-                    >
-                      创建者: {course.creator}
-                    </Typography>
                   </CardContent>
                 </Card>
               </Grid>
             ))}
           </Grid>
-
-          {(!courses || (courses as Course[]).length === 0) && (
-            <Box className="text-center py-8">
-              <Typography variant="h6" color="text.secondary">
-                暂无课程
-              </Typography>
-            </Box>
-          )}
         </>
       )}
     </Box>

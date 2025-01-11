@@ -7,6 +7,7 @@
 // });
 const isProduction = process.env.NODE_ENV === "production";
 console.log("🌹isProduction", isProduction);
+console.log("🌹isProduction:", isProduction);
 const path = require("path");
 const withPWA = isProduction
   ? require("@ducanh2912/next-pwa").default({

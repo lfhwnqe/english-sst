@@ -24,6 +24,31 @@ import type {
 } from "../common";
 
 export declare namespace CourseMarket {
+  export type CourseViewStruct = {
+    web2CourseId: string;
+    name: string;
+    price: BigNumberish;
+    isActive: boolean;
+    creator: AddressLike;
+    purchased: boolean;
+  };
+
+  export type CourseViewStructOutput = [
+    web2CourseId: string,
+    name: string,
+    price: bigint,
+    isActive: boolean,
+    creator: string,
+    purchased: boolean
+  ] & {
+    web2CourseId: string;
+    name: string;
+    price: bigint;
+    isActive: boolean;
+    creator: string;
+    purchased: boolean;
+  };
+
   export type CourseStruct = {
     web2CourseId: string;
     name: string;
@@ -85,7 +110,7 @@ export interface CourseMarketInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCoursesByPage",
-    values: [BigNumberish, BigNumberish]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getUserPurchasedCourses",
@@ -274,8 +299,8 @@ export interface CourseMarket extends BaseContract {
   >;
 
   getCoursesByPage: TypedContractMethod<
-    [page: BigNumberish, pageSize: BigNumberish],
-    [[CourseMarket.CourseStructOutput[], bigint]],
+    [user: AddressLike, page: BigNumberish, pageSize: BigNumberish],
+    [[CourseMarket.CourseViewStructOutput[], bigint]],
     "view"
   >;
 
@@ -366,8 +391,8 @@ export interface CourseMarket extends BaseContract {
   getFunction(
     nameOrSignature: "getCoursesByPage"
   ): TypedContractMethod<
-    [page: BigNumberish, pageSize: BigNumberish],
-    [[CourseMarket.CourseStructOutput[], bigint]],
+    [user: AddressLike, page: BigNumberish, pageSize: BigNumberish],
+    [[CourseMarket.CourseViewStructOutput[], bigint]],
     "view"
   >;
   getFunction(
