@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAccount, useReadContracts, useWriteContract } from "wagmi";
 import {
   CourseMarket__factory,
@@ -101,10 +101,43 @@ export default function CourseListPage() {
     };
   }, [data]);
 
+  const [courseMetadata, setCourseMetadata] = useState<{ [key: string]: any }>(
+    {}
+  );
+
+  useEffect(() => {
+    const fetchAllMetadata = async () => {
+      const metadata: { [key: string]: any } = {};
+
+      await Promise.all(
+        courses.map(async (course) => {
+          try {
+            const response = await fetch(course.metadataURI);
+            const data = await response.json();
+            metadata[course.web2CourseId] = data;
+          } catch (error) {
+            console.error(`获取课程 ${course.web2CourseId} 元数据失败:`, error);
+          }
+        })
+      );
+
+      setCourseMetadata(metadata);
+    };
+
+    if (courses.length > 0) {
+      fetchAllMetadata();
+    }
+  }, [courses]);
+  useEffect(() => {
+    console.log("courseMetadata:", courseMetadata);
+  }, [courseMetadata]);
+
   const { balance, allowance } = useMemo(
     () => ({
-      balance: tokenData?.[0]?.status === "success" ? tokenData[0].result : BigInt(0),
-      allowance: tokenData?.[1]?.status === "success" ? tokenData[1].result : BigInt(0),
+      balance:
+        tokenData?.[0]?.status === "success" ? tokenData[0].result : BigInt(0),
+      allowance:
+        tokenData?.[1]?.status === "success" ? tokenData[1].result : BigInt(0),
     }),
     [tokenData]
   );
@@ -175,62 +208,98 @@ export default function CourseListPage() {
           <Grid container spacing={3}>
             {(courses as Course[])?.map((course) => (
               <Grid item xs={12} sm={6} md={4} key={course.web2CourseId}>
-                <Card className="h-full">
-                  <CardContent>
-                    <Typography variant="h6" className="mb-2">
+                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
+                  <Box
+                    sx={{ width: "100%", height: "240px", overflow: "hidden" }}
+                  >
+                    <img
+                      src={
+                        courseMetadata[course.web2CourseId]?.image ||
+                        "/icon-512x512.png"
+                      }
+                      alt={course.name}
+                      style={{
+                        width: "100%",
+                        height: "240px",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                      }}
+                    />
+                  </Box>
+                  <CardContent className="p-3">
+                    <Typography
+                      variant="h6"
+                      className="text-base font-bold mb-1 line-clamp-1"
+                    >
                       {course.name}
                     </Typography>
 
                     <Typography
                       variant="body2"
-                      color="text.secondary"
-                      className="mb-2"
+                      className="text-xs text-gray-500 mb-1"
                     >
-                      课程ID: {course.web2CourseId}
+                      ID: {course.web2CourseId}
                     </Typography>
 
-                    <Typography variant="h6" color="primary" className="mb-2">
+                    <Typography
+                      variant="h6"
+                      color="primary"
+                      className="text-sm font-bold mb-2"
+                    >
                       {Number(course.price).toString()} MMC
                     </Typography>
 
-                    <Box className="flex gap-2 mt-4">
+                    <Box className="flex flex-wrap gap-1 mb-2">
                       <Chip
                         label={course.isActive ? "可购买" : "已下架"}
                         color={course.isActive ? "success" : "default"}
+                        size="small"
+                        className="text-xs"
                       />
                       {course.creator === address && (
-                        <Chip label="我创建的" color="primary" />
+                        <Chip
+                          label="我创建的"
+                          color="primary"
+                          size="small"
+                          className="text-xs"
+                        />
                       )}
-                      {course.purchased && <Chip label="已购买" color="info" />}
+                      {course.purchased && (
+                        <Chip
+                          label="已购买"
+                          color="info"
+                          size="small"
+                          className="text-xs"
+                        />
+                      )}
                     </Box>
 
                     {course.isActive &&
                       course.creator !== address &&
                       !course.purchased && (
-                        <Box className="mt-4">
-                          <Button
-                            variant="contained"
-                            fullWidth
-                            onClick={() =>
-                              handlePurchase(course.web2CourseId, course.price)
-                            }
-                            disabled={isPurchasing || balance < course.price}
-                            className="bg-blue-600 hover:bg-blue-700"
-                          >
-                            {isPurchasing ? (
-                              <CircularProgress
-                                size={24}
-                                className="text-white"
-                              />
-                            ) : balance < course.price ? (
-                              "余额不足"
-                            ) : allowance < course.price ? (
-                              "需要授权"
-                            ) : (
-                              `购买课程 (${Number(course.price).toString()} MMC)`
-                            )}
-                          </Button>
-                        </Box>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          onClick={() =>
+                            handlePurchase(course.web2CourseId, course.price)
+                          }
+                          disabled={isPurchasing || balance < course.price}
+                          className="bg-blue-600 hover:bg-blue-700 mt-1 text-xs py-1"
+                          size="small"
+                        >
+                          {isPurchasing ? (
+                            <CircularProgress
+                              size={16}
+                              className="text-white"
+                            />
+                          ) : balance < course.price ? (
+                            "余额不足"
+                          ) : allowance < course.price ? (
+                            "需要授权"
+                          ) : (
+                            `购买课程 (${Number(course.price).toString()} MMC)`
+                          )}
+                        </Button>
                       )}
                   </CardContent>
                 </Card>
