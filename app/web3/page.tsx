@@ -34,6 +34,13 @@ interface Course {
   purchased: boolean;
 }
 
+// 定义元数据接口
+interface CourseMetadata {
+  name: string;
+  description: string;
+  image: string;
+}
+
 export default function CourseListPage() {
   const courseMarketAddress = useAtomValue(courseMarketAddressAtom);
   const mmcTokenAddress = useAtomValue(mmcTokenAddressAtom);
@@ -101,26 +108,24 @@ export default function CourseListPage() {
     };
   }, [data]);
 
-  const [courseMetadata, setCourseMetadata] = useState<{ [key: string]: any }>(
-    {}
-  );
+  const [courseMetadata, setCourseMetadata] = useState<{[key: string]: CourseMetadata}>({});
 
   useEffect(() => {
     const fetchAllMetadata = async () => {
-      const metadata: { [key: string]: any } = {};
-
+      const metadata: {[key: string]: CourseMetadata} = {};
+      
       await Promise.all(
         courses.map(async (course) => {
           try {
             const response = await fetch(course.metadataURI);
-            const data = await response.json();
+            const data: CourseMetadata = await response.json();
             metadata[course.web2CourseId] = data;
           } catch (error) {
             console.error(`获取课程 ${course.web2CourseId} 元数据失败:`, error);
           }
         })
       );
-
+      
       setCourseMetadata(metadata);
     };
 
