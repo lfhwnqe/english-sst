@@ -31,6 +31,7 @@ export declare namespace CourseMarket {
     isActive: boolean;
     creator: AddressLike;
     purchased: boolean;
+    metadataURI: string;
   };
 
   export type CourseViewStructOutput = [
@@ -39,7 +40,8 @@ export declare namespace CourseMarket {
     price: bigint,
     isActive: boolean,
     creator: string,
-    purchased: boolean
+    purchased: boolean,
+    metadataURI: string
   ] & {
     web2CourseId: string;
     name: string;
@@ -47,6 +49,7 @@ export declare namespace CourseMarket {
     isActive: boolean;
     creator: string;
     purchased: boolean;
+    metadataURI: string;
   };
 
   export type CourseStruct = {
@@ -55,6 +58,7 @@ export declare namespace CourseMarket {
     price: BigNumberish;
     isActive: boolean;
     creator: AddressLike;
+    metadataURI: string;
   };
 
   export type CourseStructOutput = [
@@ -62,13 +66,15 @@ export declare namespace CourseMarket {
     name: string,
     price: bigint,
     isActive: boolean,
-    creator: string
+    creator: string,
+    metadataURI: string
   ] & {
     web2CourseId: string;
     name: string;
     price: bigint;
     isActive: boolean;
     creator: string;
+    metadataURI: string;
   };
 }
 
@@ -76,15 +82,19 @@ export interface CourseMarketInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "addCourse"
+      | "completeCourse"
       | "courseCount"
       | "courses"
       | "getCoursesByPage"
       | "getUserPurchasedCourses"
       | "hasCourse"
+      | "mmcNFT"
       | "mmcToken"
+      | "oracle"
       | "owner"
       | "purchaseCourse"
       | "renounceOwnership"
+      | "setOracle"
       | "transferOwnership"
       | "updateCoursePrice"
       | "updateCourseStatus"
@@ -93,12 +103,19 @@ export interface CourseMarketInterface extends Interface {
   ): FunctionFragment;
 
   getEvent(
-    nameOrSignatureOrTopic: "CoursePurchased" | "OwnershipTransferred"
+    nameOrSignatureOrTopic:
+      | "CourseCompleted"
+      | "CoursePurchased"
+      | "OwnershipTransferred"
   ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "addCourse",
-    values: [string, string, BigNumberish]
+    values: [string, string, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "completeCourse",
+    values: [AddressLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "courseCount",
@@ -120,7 +137,9 @@ export interface CourseMarketInterface extends Interface {
     functionFragment: "hasCourse",
     values: [AddressLike, string]
   ): string;
+  encodeFunctionData(functionFragment: "mmcNFT", values?: undefined): string;
   encodeFunctionData(functionFragment: "mmcToken", values?: undefined): string;
+  encodeFunctionData(functionFragment: "oracle", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "purchaseCourse",
@@ -129,6 +148,10 @@ export interface CourseMarketInterface extends Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOracle",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -153,6 +176,10 @@ export interface CourseMarketInterface extends Interface {
 
   decodeFunctionResult(functionFragment: "addCourse", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "completeCourse",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "courseCount",
     data: BytesLike
   ): Result;
@@ -166,7 +193,9 @@ export interface CourseMarketInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "hasCourse", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mmcNFT", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mmcToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "oracle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "purchaseCourse",
@@ -176,6 +205,7 @@ export interface CourseMarketInterface extends Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setOracle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -196,6 +226,31 @@ export interface CourseMarketInterface extends Interface {
     functionFragment: "web2ToCourseId",
     data: BytesLike
   ): Result;
+}
+
+export namespace CourseCompletedEvent {
+  export type InputTuple = [
+    student: AddressLike,
+    courseId: BigNumberish,
+    web2CourseId: string,
+    nftTokenId: BigNumberish
+  ];
+  export type OutputTuple = [
+    student: string,
+    courseId: bigint,
+    web2CourseId: string,
+    nftTokenId: bigint
+  ];
+  export interface OutputObject {
+    student: string;
+    courseId: bigint;
+    web2CourseId: string;
+    nftTokenId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace CoursePurchasedEvent {
@@ -277,7 +332,18 @@ export interface CourseMarket extends BaseContract {
   ): Promise<this>;
 
   addCourse: TypedContractMethod<
-    [web2CourseId: string, name: string, price: BigNumberish],
+    [
+      web2CourseId: string,
+      name: string,
+      price: BigNumberish,
+      metadataURI: string
+    ],
+    [void],
+    "nonpayable"
+  >;
+
+  completeCourse: TypedContractMethod<
+    [student: AddressLike, web2CourseId: string],
     [void],
     "nonpayable"
   >;
@@ -287,12 +353,13 @@ export interface CourseMarket extends BaseContract {
   courses: TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [string, string, bigint, boolean, string] & {
+      [string, string, bigint, boolean, string, string] & {
         web2CourseId: string;
         name: string;
         price: bigint;
         isActive: boolean;
         creator: string;
+        metadataURI: string;
       }
     ],
     "view"
@@ -321,7 +388,11 @@ export interface CourseMarket extends BaseContract {
     "view"
   >;
 
+  mmcNFT: TypedContractMethod<[], [string], "view">;
+
   mmcToken: TypedContractMethod<[], [string], "view">;
+
+  oracle: TypedContractMethod<[], [string], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -332,6 +403,8 @@ export interface CourseMarket extends BaseContract {
   >;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+
+  setOracle: TypedContractMethod<[_oracle: AddressLike], [void], "nonpayable">;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -366,7 +439,19 @@ export interface CourseMarket extends BaseContract {
   getFunction(
     nameOrSignature: "addCourse"
   ): TypedContractMethod<
-    [web2CourseId: string, name: string, price: BigNumberish],
+    [
+      web2CourseId: string,
+      name: string,
+      price: BigNumberish,
+      metadataURI: string
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "completeCourse"
+  ): TypedContractMethod<
+    [student: AddressLike, web2CourseId: string],
     [void],
     "nonpayable"
   >;
@@ -378,12 +463,13 @@ export interface CourseMarket extends BaseContract {
   ): TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [string, string, bigint, boolean, string] & {
+      [string, string, bigint, boolean, string, string] & {
         web2CourseId: string;
         name: string;
         price: bigint;
         isActive: boolean;
         creator: string;
+        metadataURI: string;
       }
     ],
     "view"
@@ -415,7 +501,13 @@ export interface CourseMarket extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "mmcNFT"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "mmcToken"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "oracle"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "owner"
@@ -426,6 +518,9 @@ export interface CourseMarket extends BaseContract {
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setOracle"
+  ): TypedContractMethod<[_oracle: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
@@ -455,6 +550,13 @@ export interface CourseMarket extends BaseContract {
   ): TypedContractMethod<[arg0: string], [bigint], "view">;
 
   getEvent(
+    key: "CourseCompleted"
+  ): TypedContractEvent<
+    CourseCompletedEvent.InputTuple,
+    CourseCompletedEvent.OutputTuple,
+    CourseCompletedEvent.OutputObject
+  >;
+  getEvent(
     key: "CoursePurchased"
   ): TypedContractEvent<
     CoursePurchasedEvent.InputTuple,
@@ -470,6 +572,17 @@ export interface CourseMarket extends BaseContract {
   >;
 
   filters: {
+    "CourseCompleted(address,uint256,string,uint256)": TypedContractEvent<
+      CourseCompletedEvent.InputTuple,
+      CourseCompletedEvent.OutputTuple,
+      CourseCompletedEvent.OutputObject
+    >;
+    CourseCompleted: TypedContractEvent<
+      CourseCompletedEvent.InputTuple,
+      CourseCompletedEvent.OutputTuple,
+      CourseCompletedEvent.OutputObject
+    >;
+
     "CoursePurchased(address,uint256,string)": TypedContractEvent<
       CoursePurchasedEvent.InputTuple,
       CoursePurchasedEvent.OutputTuple,

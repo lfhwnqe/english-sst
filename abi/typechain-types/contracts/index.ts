@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { CourseMarket } from "./CourseMarket";
+export type { MMCERC721Coin } from "./MMCERC721Coin";
 export type { MMCToken } from "./MMCToken";
