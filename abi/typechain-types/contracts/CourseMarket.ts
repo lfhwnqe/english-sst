@@ -32,6 +32,7 @@ export declare namespace CourseMarket {
     creator: AddressLike;
     purchased: boolean;
     metadataURI: string;
+    videoURI: string;
   };
 
   export type CourseViewStructOutput = [
@@ -41,7 +42,8 @@ export declare namespace CourseMarket {
     isActive: boolean,
     creator: string,
     purchased: boolean,
-    metadataURI: string
+    metadataURI: string,
+    videoURI: string
   ] & {
     web2CourseId: string;
     name: string;
@@ -50,6 +52,7 @@ export declare namespace CourseMarket {
     creator: string;
     purchased: boolean;
     metadataURI: string;
+    videoURI: string;
   };
 
   export type CourseStruct = {
@@ -59,6 +62,7 @@ export declare namespace CourseMarket {
     isActive: boolean;
     creator: AddressLike;
     metadataURI: string;
+    videoURI: string;
   };
 
   export type CourseStructOutput = [
@@ -67,7 +71,8 @@ export declare namespace CourseMarket {
     price: bigint,
     isActive: boolean,
     creator: string,
-    metadataURI: string
+    metadataURI: string,
+    videoURI: string
   ] & {
     web2CourseId: string;
     name: string;
@@ -75,6 +80,7 @@ export declare namespace CourseMarket {
     isActive: boolean;
     creator: string;
     metadataURI: string;
+    videoURI: string;
   };
 }
 
@@ -111,7 +117,7 @@ export interface CourseMarketInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "addCourse",
-    values: [string, string, BigNumberish, string]
+    values: [string, string, BigNumberish, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "completeCourse",
@@ -336,7 +342,8 @@ export interface CourseMarket extends BaseContract {
       web2CourseId: string,
       name: string,
       price: BigNumberish,
-      metadataURI: string
+      metadataURI: string,
+      videoURI: string
     ],
     [void],
     "nonpayable"
@@ -353,13 +360,14 @@ export interface CourseMarket extends BaseContract {
   courses: TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [string, string, bigint, boolean, string, string] & {
+      [string, string, bigint, boolean, string, string, string] & {
         web2CourseId: string;
         name: string;
         price: bigint;
         isActive: boolean;
         creator: string;
         metadataURI: string;
+        videoURI: string;
       }
     ],
     "view"
@@ -443,7 +451,8 @@ export interface CourseMarket extends BaseContract {
       web2CourseId: string,
       name: string,
       price: BigNumberish,
-      metadataURI: string
+      metadataURI: string,
+      videoURI: string
     ],
     [void],
     "nonpayable"
@@ -463,13 +472,14 @@ export interface CourseMarket extends BaseContract {
   ): TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [string, string, bigint, boolean, string, string] & {
+      [string, string, bigint, boolean, string, string, string] & {
         web2CourseId: string;
         name: string;
         price: bigint;
         isActive: boolean;
         creator: string;
         metadataURI: string;
+        videoURI: string;
       }
     ],
     "view"
