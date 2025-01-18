@@ -1,20 +1,29 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { Box } from "@mui/material";
-import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
-import GradientButton from "@/app/components/common/GradientButton";
-import { useParams } from "next/navigation";
-import AnimatedBackground from "@/app/components/web3/ParticleBackground";
 import { useEffect, useRef } from "react";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import { useTranslations } from "next-intl";
+import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
+import AnimatedBackground from "@/app/components/web3/ParticleBackground";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-export default function Web3HomePage() {
+gsap.registerPlugin(ScrollTrigger);
+
+export default function Web3Page() {
   const t = useTranslations("HomePage");
+  const router = useRouter();
   const params = useParams();
-  const locale = (params.locale as string) || "zh-cn";
+  const locale = params.locale as string;
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 确保页面初始位置在顶部
+    window.scrollTo(0, 0);
+
+    // 背景视差效果
     const handleScroll = () => {
       if (!containerRef.current) return;
       const scrolled = window.scrollY;
@@ -22,12 +31,99 @@ export default function Web3HomePage() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    // 创建动画
+    const context = gsap.context(() => {
+      // 设置初始状态
+      gsap.set(".hero-content", {
+        opacity: 0,
+        y: 50
+      });
+
+      gsap.set(".feature-item", {
+        opacity: 0,
+        y: 100,
+        scale: 0.8
+      });
+
+      gsap.set(".step-item", {
+        opacity: 0,
+        y: 100,
+        rotateX: 45
+      });
+
+      gsap.set(".cta-section", {
+        opacity: 0,
+        y: 100,
+        scale: 0.9
+      });
+
+      // Hero 区域动画
+      gsap.to(".hero-content", {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
+        ease: "power2.out",
+        delay: 0.2
+      });
+
+      // Features 区域动画
+      gsap.to(".feature-item", {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 1.5,
+        stagger: 0.3,
+        scrollTrigger: {
+          trigger: ".features-section",
+          start: "top 90%",
+          end: "top 40%",
+          scrub: 1.5,
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // How it works 区域动画
+      gsap.to(".step-item", {
+        y: 0,
+        opacity: 1,
+        rotateX: 0,
+        duration: 1.5,
+        stagger: 0.4,
+        scrollTrigger: {
+          trigger: ".steps-section",
+          start: "top 90%",
+          end: "top 40%",
+          scrub: 1.5,
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // CTA 区域动画
+      gsap.to(".cta-section", {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 1.5,
+        scrollTrigger: {
+          trigger: ".cta-section",
+          start: "top 90%",
+          end: "top 40%",
+          scrub: 1.5,
+          toggleActions: "play none none reverse"
+        }
+      });
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      context.revert();
+    };
   }, []);
 
   return (
-    <Box className="relative">
-      {/* 动态背景 */}
+    <Box className="relative min-h-screen overflow-x-hidden">
+      {/* 背景 */}
       <div className="fixed inset-0 bg-gradient-to-b from-black via-gray-900 to-blue-900">
         <div ref={containerRef} className="w-full h-full">
           <AnimatedBackground />
@@ -39,145 +135,150 @@ export default function Web3HomePage() {
         <StaticAppHeader />
 
         {/* Hero Section */}
-        <Box className="min-h-screen flex items-center justify-center relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black" />
-          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="text-center">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
-                MMC Audio Web3
-              </h1>
-              <p className="text-xl md:text-2xl mb-10 text-gray-300 max-w-2xl mx-auto">
-                {t("description")}
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <GradientButton
-                  href={`/${locale}/web3/course`}
-                  className="px-8 py-3 text-lg"
-                >
-                  {t("buttons.browse")}
-                </GradientButton>
-                <GradientButton
-                  href={`/${locale}/web3/swap`}
-                  className="px-8 py-3 text-lg"
-                >
-                  {t("buttons.token")}
-                </GradientButton>
-              </div>
-            </div>
-          </div>
-        </Box>
+        <Container className="min-h-[calc(100vh-64px)] flex items-center hero-content opacity-0">
+          <Box className="text-center max-w-3xl mx-auto py-20">
+            <Typography 
+              variant="h2" 
+              className="mb-6 font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400"
+            >
+              {t("description")}
+            </Typography>
+            <Box className="flex gap-4 justify-center">
+              <Button
+                variant="contained"
+                onClick={() => router.push(`/${locale}/web3/course`)}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600"
+              >
+                {t("buttons.browse")}
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => router.push(`/${locale}/web3/swap`)}
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600"
+              >
+                {t("buttons.token")}
+              </Button>
+            </Box>
+          </Box>
+        </Container>
 
         {/* Features Section */}
-        <Box className="relative py-32">
-          <div className="absolute inset-0 bg-gradient-to-b from-black to-transparent" />
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-                {t("features.title")}
-              </h2>
-              <p className="text-xl text-gray-300">
-                {t("features.description")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {[
-                {
-                  icon: "🎓",
-                  title: t("features.learning.title"),
-                  description: t("features.learning.description"),
-                },
-                {
-                  icon: "🏆",
-                  title: t("features.nft.title"),
-                  description: t("features.nft.description"),
-                },
-                {
-                  icon: "💎",
-                  title: t("features.token.title"),
-                  description: t("features.token.description"),
-                },
-              ].map((feature, index) => (
-                <div
-                  key={index}
-                  className="relative group p-8 rounded-3xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10 transform transition-all duration-300 hover:scale-105 hover:bg-white/20"
-                >
-                  <div className="absolute -inset-px bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative">
-                    <div className="text-5xl mb-6">{feature.icon}</div>
-                    <h3 className="text-2xl font-bold mb-4 text-white">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-300">{feature.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <Box className="min-h-screen bg-black/30 features-section flex items-center">
+          <Container className="py-20">
+            <Typography variant="h3" className="text-center mb-12 text-white">
+              {t("features.title")}
+            </Typography>
+            <Grid container spacing={6}>
+              {/* 课程学习 */}
+              <Grid item xs={12} md={4} className="feature-item">
+                <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
+                  <Typography variant="h5" className="mb-4 text-blue-400">
+                    {t("features.learning.title")}
+                  </Typography>
+                  <Typography variant="body1" className="text-gray-300">
+                    {t("features.learning.description")}
+                  </Typography>
+                </Box>
+              </Grid>
+              {/* NFT认证 */}
+              <Grid item xs={12} md={4} className="feature-item">
+                <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
+                  <Typography variant="h5" className="mb-4 text-indigo-400">
+                    {t("features.nft.title")}
+                  </Typography>
+                  <Typography variant="body1" className="text-gray-300">
+                    {t("features.nft.description")}
+                  </Typography>
+                </Box>
+              </Grid>
+              {/* 代币激励 */}
+              <Grid item xs={12} md={4} className="feature-item">
+                <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
+                  <Typography variant="h5" className="mb-4 text-purple-400">
+                    {t("features.token.title")}
+                  </Typography>
+                  <Typography variant="body1" className="text-gray-300">
+                    {t("features.token.description")}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </Container>
         </Box>
 
-        {/* How it Works Section */}
-        <Box className="relative py-32">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-transparent" />
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
-                {t("howItWorks.title")}
-              </h2>
-              <p className="text-xl text-gray-300">
-                {t("howItWorks.description")}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {[
-                {
-                  step: 1,
-                  title: t("howItWorks.step1.title"),
-                  description: t("howItWorks.step1.description"),
-                },
-                {
-                  step: 2,
-                  title: t("howItWorks.step2.title"),
-                  description: t("howItWorks.step2.description"),
-                },
-                {
-                  step: 3,
-                  title: t("howItWorks.step3.title"),
-                  description: t("howItWorks.step3.description"),
-                },
-              ].map((step, index) => (
-                <div
-                  key={index}
-                  className="relative p-8 rounded-3xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-white/10"
-                >
-                  <div className="absolute -left-4 -top-4 w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-3xl font-bold text-white transform -rotate-6">
-                    {step.step}
+        {/* How it works Section */}
+        <Box className="min-h-screen steps-section flex items-center">
+          <Container className="py-20">
+            <Typography variant="h3" className="text-center mb-12 text-white">
+              {t("howItWorks.title")}
+            </Typography>
+            <Typography variant="subtitle1" className="text-center mb-16 text-gray-300">
+              {t("howItWorks.description")}
+            </Typography>
+            <Grid container spacing={6}>
+              {/* Step 1 */}
+              <Grid item xs={12} md={4} className="step-item">
+                <Box className="text-center h-full">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-2xl font-bold">
+                    1
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 mt-6 text-white">
-                    {step.title}
-                  </h3>
-                  <p className="text-gray-300">{step.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+                  <Typography variant="h5" className="mb-4 text-white">
+                    {t("howItWorks.step1.title")}
+                  </Typography>
+                  <Typography variant="body1" className="text-gray-300">
+                    {t("howItWorks.step1.description")}
+                  </Typography>
+                </Box>
+              </Grid>
+              {/* Step 2 */}
+              <Grid item xs={12} md={4} className="step-item">
+                <Box className="text-center h-full">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-2xl font-bold">
+                    2
+                  </div>
+                  <Typography variant="h5" className="mb-4 text-white">
+                    {t("howItWorks.step2.title")}
+                  </Typography>
+                  <Typography variant="body1" className="text-gray-300">
+                    {t("howItWorks.step2.description")}
+                  </Typography>
+                </Box>
+              </Grid>
+              {/* Step 3 */}
+              <Grid item xs={12} md={4} className="step-item">
+                <Box className="text-center h-full">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-2xl font-bold">
+                    3
+                  </div>
+                  <Typography variant="h5" className="mb-4 text-white">
+                    {t("howItWorks.step3.title")}
+                  </Typography>
+                  <Typography variant="body1" className="text-gray-300">
+                    {t("howItWorks.step3.description")}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </Container>
         </Box>
 
         {/* CTA Section */}
-        <Box className="relative py-32">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50" />
-          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">
-              {t("cta.title")}
-            </h2>
-            <GradientButton
-              href={`/${locale}/web3/course`}
-              className="px-12 py-6 text-xl"
-            >
-              {t("cta.button")}
-            </GradientButton>
-          </div>
+        <Box className="min-h-screen bg-black/30 cta-section flex items-center opacity-0">
+          <Container>
+            <Box className="text-center max-w-2xl mx-auto">
+              <Typography variant="h3" className="mb-8 text-white">
+                {t("cta.title")}
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => router.push(`/${locale}/web3/course`)}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 px-8 py-3"
+              >
+                {t("cta.button")}
+              </Button>
+            </Box>
+          </Container>
         </Box>
       </div>
     </Box>
