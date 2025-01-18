@@ -150,7 +150,7 @@ export default function CoursePlayPage() {
         </Box>
 
         {/* 课程信息 */}
-        <Box className="bg-gray-50 rounded-lg p-4 mb-6">
+        <Box className="bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg p-4 mb-6">
           <Typography variant="h6" className="mb-3 font-bold">
             {t("course.info")}
           </Typography>
@@ -183,7 +183,10 @@ export default function CoursePlayPage() {
         </Box>
 
         {courseInfo.completed && metadata?.image && (
-          <Box className="bg-white rounded-lg p-6 border border-blue-100 shadow-sm">
+          <Box className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 
+          ring-1 ring-gray-200/50 dark:ring-gray-700/50 
+          hover:ring-blue-500/30 dark:hover:ring-blue-400/30
+          transition-all duration-300">
             <div className="flex items-start gap-6">
               {/* NFT 图片 */}
               <div className="w-48 h-48 rounded-lg overflow-hidden shadow-md flex-shrink-0">

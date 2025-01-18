@@ -221,7 +221,7 @@ export default function TokenSupplyChart({
               tokenIcon={
                 isETHToMMC
                   ? "https://token-icons.s3.amazonaws.com/eth.png"
-                  : undefined
+                  : "/icon-192x192.png"
               }
             />
 
@@ -243,7 +243,7 @@ export default function TokenSupplyChart({
               tokenIcon={
                 !isETHToMMC
                   ? "https://token-icons.s3.amazonaws.com/eth.png"
-                  : undefined
+                  : "/icon-192x192.png"
               }
             />
 

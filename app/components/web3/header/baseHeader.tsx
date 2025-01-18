@@ -18,13 +18,14 @@ import { themeAtom, setThemeAtom } from "@/app/stores/theme";
 import { injected, useAccount, useConnect, useDisconnect } from "wagmi";
 import { formatAddress } from "@/utils";
 import { useTranslations } from "next-intl";
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
 function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   const t = useTranslations("Header");
   const params = useParams();
-  const locale = params.locale as string || 'zh-cn';
-  console.log('locale',locale)
+  const locale = (params.locale as string) || "zh-cn";
+  console.log("locale", locale);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   useHydrateAtoms([[hasTokenAtom, hasTokenServer]]);
   const [hasToken] = useAtom(hasTokenAtom);
@@ -156,15 +157,16 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
 
   return (
     <div className="">
-      {/* <div className="bg-gradient-to-r from-white via-white to-white/95 dark:from-gray-900/95 dark:via-gray-900/95 dark:to-gray-900/90 backdrop-blur-sm shadow-[0_1px_3px_0_rgb(0,0,0,0.05)] dark:shadow-none bg-[length:200%_200%] animate-gradient"> */}
-      <nav className=" mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <nav className="mx-auto px-4 sm:px-6 lg:px-8 relative bg-white/50 dark:bg-black backdrop-blur-sm">
+        <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-gray-200/50 via-blue-200/50 to-gray-200/50 dark:from-gray-800/50 dark:via-blue-900/50 dark:to-gray-800/50" />
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <GradientButton href={`/${locale}/web3`} className="flex-shrink-0">
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-400 dark:to-indigo-400">
+          <Link href={`/${locale}/web3`} className="flex items-center flex-shrink-0">
+            <img src="/icon-192x192.png" alt="MMC Audio Logo" className="h-8 w-8" />
+            <span className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-400 dark:to-indigo-400">
               MMC Audio
             </span>
-          </GradientButton>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
