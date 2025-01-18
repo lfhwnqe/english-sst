@@ -73,13 +73,12 @@ export default function Web3Page() {
         opacity: 1,
         scale: 1,
         duration: 1.5,
-        stagger: 0.3,
+        stagger: 0.2,
         scrollTrigger: {
           trigger: ".features-section",
-          start: "top 90%",
-          end: "top 40%",
-          scrub: 1.5,
-          toggleActions: "play none none reverse"
+          start: "top 80%",
+          end: "center center",
+          scrub: 1
         }
       });
 
@@ -89,13 +88,12 @@ export default function Web3Page() {
         opacity: 1,
         rotateX: 0,
         duration: 1.5,
-        stagger: 0.4,
+        stagger: 0.3,
         scrollTrigger: {
           trigger: ".steps-section",
-          start: "top 90%",
-          end: "top 40%",
-          scrub: 1.5,
-          toggleActions: "play none none reverse"
+          start: "top 80%",
+          end: "center center",
+          scrub: 1
         }
       });
 
@@ -107,10 +105,9 @@ export default function Web3Page() {
         duration: 1.5,
         scrollTrigger: {
           trigger: ".cta-section",
-          start: "top 90%",
-          end: "top 40%",
-          scrub: 1.5,
-          toggleActions: "play none none reverse"
+          start: "top 80%",
+          end: "center center",
+          scrub: 1
         }
       });
     });
