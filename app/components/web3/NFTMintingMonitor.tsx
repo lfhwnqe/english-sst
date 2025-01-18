@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useWatchContractEvent } from "wagmi";
 import { MMCERC721Coin__factory } from "@/abi/typechain-types";
-import { motion } from "framer-motion";
-import { Typography } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { Award } from "lucide-react";
 
 interface NFTMintingMonitorProps {
@@ -22,10 +23,10 @@ export default function NFTMintingMonitor({
   useWatchContractEvent({
     address: mmcNFTAddress,
     abi: MMCERC721Coin__factory.abi,
-    eventName: "NFTMinted",
+    eventName: 'NFTMinted',
     onLogs(logs) {
       for (const log of logs) {
-        if (log.args && typeof log.args === "object" && "to" in log.args) {
+        if (log.args && typeof log.args === 'object' && 'to' in log.args) {
           const { to } = log.args;
           if (to === address) {
             // 3秒后完成
@@ -55,7 +56,9 @@ export default function NFTMintingMonitor({
           <Typography variant="h5" className="mb-2">
             🎉 正在铸造课程完成认证 NFT
           </Typography>
-          <Typography className="text-gray-600">{courseName}</Typography>
+          <Typography className="text-gray-600">
+            {courseName}
+          </Typography>
         </motion.div>
       </div>
     </>

@@ -29,6 +29,7 @@ import { useAtomValue } from "jotai";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
 import { useRouter } from "next/navigation";
 import { Award } from "lucide-react";
+import ThemeText from "@/app/components/common/ThemeText";
 
 interface Course {
   web2CourseId: string;
@@ -249,23 +250,42 @@ export default function CourseListPage() {
         </Box>
       ) : (
         <>
-          <Typography variant="h4" className="mb-6 font-bold">
+          <ThemeText variant="h4" className="mb-6 font-bold">
             课程列表
-          </Typography>
+          </ThemeText>
 
-          <Typography variant="subtitle1" className="mb-4">
+          <ThemeText variant="subtitle1" className="mb-4" secondary>
             总课程数: {courseCount?.toString() || "0"}
-          </Typography>
+          </ThemeText>
 
           <Grid container spacing={3}>
             {(courses as Course[])?.map((course) => (
               <Grid item xs={12} sm={6} md={4} key={course.web2CourseId}>
                 <Card
-                  className={`h-full transition-all duration-300 cursor-pointer ${
-                    course.completed
-                      ? "relative before:absolute before:inset-0 before:p-[2px] before:bg-gradient-to-r before:from-blue-500 before:via-purple-500 before:to-pink-500 before:rounded-lg before:-z-10 shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:shadow-[0_0_20px_rgba(59,130,246,0.7)]"
-                      : "hover:shadow-lg"
-                  }`}
+                  className={`h-full transition-all duration-300 cursor-pointer relative 
+                    before:absolute before:inset-0 before:p-[2px] before:rounded-lg before:-z-10
+                    backdrop-blur-sm
+                    ${
+                      course.completed
+                        ? `before:bg-gradient-to-r before:from-blue-500 before:via-purple-500 before:to-pink-500
+                           bg-white/95 dark:bg-gray-800/95
+                           shadow-[0_0_15px_rgba(59,130,246,0.3)] dark:shadow-[0_0_15px_rgba(96,165,250,0.2)]
+                           hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] dark:hover:shadow-[0_0_20px_rgba(96,165,250,0.4)]
+                           scale-[1.02] hover:scale-[1.03]`
+                        : course.purchased
+                        ? `before:bg-gradient-to-r before:from-emerald-500 before:via-teal-500 before:to-cyan-500
+                           bg-white/95 dark:bg-gray-800/95
+                           shadow-[0_0_15px_rgba(16,185,129,0.3)] dark:shadow-[0_0_15px_rgba(20,184,166,0.2)]
+                           hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] dark:hover:shadow-[0_0_20px_rgba(20,184,166,0.4)]
+                           scale-[1.01] hover:scale-[1.02]`
+                        : `before:bg-gradient-to-r before:from-rose-600 before:via-fuchsia-600 before:to-indigo-600
+                           bg-white/95 dark:bg-gray-800/95
+                           shadow-[0_0_15px_rgba(225,29,72,0.3)] dark:shadow-[0_0_15px_rgba(192,38,211,0.2)]
+                           hover:shadow-[0_0_20px_rgba(225,29,72,0.5)] dark:hover:shadow-[0_0_20px_rgba(192,38,211,0.4)]
+                           hover:scale-[1.02]`
+                    }
+                    ring-1 ring-gray-200/50 dark:ring-gray-700/50
+                    hover:ring-blue-500/30 dark:hover:ring-blue-400/30`}
                   onClick={(e) => {
                     if ((e.target as HTMLElement).closest("button")) {
                       return;
@@ -343,35 +363,30 @@ export default function CourseListPage() {
                     )}
                   </Box>
                   <CardContent className="p-3">
-                    <Typography
-                      variant="h6"
-                      className="text-base font-bold mb-1 line-clamp-1"
-                    >
+                    <ThemeText variant="h6" className="text-base font-bold mb-1 line-clamp-1">
                       {course.name}
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      className="text-base font-bold mb-1 line-clamp-1"
-                    >
+                    </ThemeText>
+                    
+                    <ThemeText variant="body1" className="mb-1 line-clamp-1" secondary>
                       {courseMetadata[course.web2CourseId]?.description}
-                    </Typography>
+                    </ThemeText>
 
                     {!course.purchased && (
                       <Box className="mt-2">
                         {currentStep === "approve" && (
                           <div className="text-center">
                             <CircularProgress size={20} className="mb-2" />
-                            <Typography className="text-xs text-gray-600">
+                            <ThemeText className="text-xs" secondary>
                               正在授权代币使用权限...
-                            </Typography>
+                            </ThemeText>
                           </div>
                         )}
                         {currentStep === "purchase" && (
                           <div className="text-center">
                             <CircularProgress size={20} className="mb-2" />
-                            <Typography className="text-xs text-gray-600">
+                            <ThemeText className="text-xs" secondary>
                               正在购买课程...
-                            </Typography>
+                            </ThemeText>
                           </div>
                         )}
                       </Box>

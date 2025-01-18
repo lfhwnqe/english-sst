@@ -4,12 +4,12 @@
 
 :root {
   --background: theme('colors.white');
-  --foreground: theme('colors.gray.900');
+  --foreground: theme('colors.black');
 }
 
 .dark {
-  --background: theme('colors.gray.900');
-  --foreground: theme('colors.gray.100');
+  --background: theme('colors.black');
+  --foreground: theme('colors.white');
 }
 
 /* 确保整个应用使用这些变量 */

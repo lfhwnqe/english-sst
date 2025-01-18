@@ -46,6 +46,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   const navigation = [
     { name: "创作中心", href: "/web3/course/add" },
     { name: "我的课程", href: "/web3/course/my" },
+    { name: "兑换中心", href: "/web3/swap" },
   ];
 
   // 认证相关按钮组件
@@ -147,8 +148,9 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   };
 
   return (
-    <div className="bg-gradient-to-r from-white via-white to-white/95 dark:from-gray-900/95 dark:via-gray-900/95 dark:to-gray-900/90 backdrop-blur-sm shadow-[0_1px_3px_0_rgb(0,0,0,0.05)] dark:shadow-none bg-[length:200%_200%] animate-gradient">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    <div className="">
+      {/* <div className="bg-gradient-to-r from-white via-white to-white/95 dark:from-gray-900/95 dark:via-gray-900/95 dark:to-gray-900/90 backdrop-blur-sm shadow-[0_1px_3px_0_rgb(0,0,0,0.05)] dark:shadow-none bg-[length:200%_200%] animate-gradient"> */}
+      <nav className=" mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/web3" className="flex-shrink-0">
@@ -166,12 +168,12 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
             ))}
 
             {/* Theme Toggle */}
-            <GradientButton
+            {/* <GradientButton
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2 rounded-lg"
             >
               {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-            </GradientButton>
+            </GradientButton> */}
 
             {/* Auth Section */}
             {account.status === "connected" ? <UserInfo /> : <AuthButtons />}
