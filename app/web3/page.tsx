@@ -24,6 +24,7 @@ import {
 } from "@/app/stores/web3";
 import { useAtomValue } from "jotai";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
+import { useRouter } from "next/navigation";
 
 interface Course {
   web2CourseId: string;
@@ -53,6 +54,7 @@ export default function CourseListPage() {
   );
 
   const { writeContract } = useWriteContract();
+  const router = useRouter();
 
   // 读取课程列表
   const { data, isLoading } = useReadContracts({
@@ -193,6 +195,14 @@ export default function CourseListPage() {
     }
   };
 
+  const handleCourseClick = (course: Course) => {
+    if (course.purchased) {
+      router.push(`/web3/course/play/${course.web2CourseId}`);
+    } else {
+      showMessage("请先购买课程", "error");
+    }
+  };
+
   return (
     <Box className="max-w-7xl mx-auto p-6">
       <StaticAppHeader />
@@ -213,7 +223,15 @@ export default function CourseListPage() {
           <Grid container spacing={3}>
             {(courses as Course[])?.map((course) => (
               <Grid item xs={12} sm={6} md={4} key={course.web2CourseId}>
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
+                <Card 
+                  className="h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                  onClick={(e) => {
+                    if ((e.target as HTMLElement).closest('button')) {
+                      return;
+                    }
+                    handleCourseClick(course);
+                  }}
+                >
                   <Box
                     sx={{ width: "100%", height: "240px", overflow: "hidden" }}
                   >
