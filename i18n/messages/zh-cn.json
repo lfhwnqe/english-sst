@@ -34,7 +34,7 @@
         "title": "获得认证",
         "description": "获得独特的 NFT 证书，同时赚取平台代币奖励"
       }
-    },  
+    },
     "cta": {
       "title": "准备好开始您的学习之旅了吗？",
       "button": "立即开始"
@@ -94,7 +94,7 @@
   "UserCenter": {
     "myCourses": "我的课程",
     "myNFTs": "我的 NFT",
-    "myAssets": "我的资产"  
+    "myAssets": "我的资产"
   },
   "status": {
     "connectWallet": "请先连接钱包",
@@ -127,5 +127,35 @@
     "browser": {
       "notSupport": "您的浏览器不支持视频播放，请使用 Chrome、Edge、Firefox 或 Safari 浏览器"
     }
+  },
+  "NFTComponent": {
+    "loading": "加载中...",
+    "nft": {
+      "noNFT": "暂无 NFT 证书",
+      "getNFT": "完成课程学习即可获得 NFT 证书"
+    }
+  },
+  "AddCourse": {
+    "title": "添加课程",
+    "loading": "加载中...",
+    "addCourseSuccess": "课程添加成功！",
+    "connectWallet": "请先连接钱包",
+    "onlyOwner": "只有合约 owner 可以添加课程",
+    "invalidPrice": "价格必须是数字，且大于 0",
+    "fillAllFields": "请填写所有字段",
+    "purchaseSuccess": "课程购买成功！",
+    "courseIdExists": "课程 ID 已存在，请更换课程 ID",
+    "addCourseFailed": "课程添加失败，请重试",
+    "web2CourseIdLabel": "Web2 课程 ID",
+    "web2CourseIdPlaceholder": "请输入 Web2 平台的课程 ID",
+    "nameLabel": "课程名称",
+    "namePlaceholder": "请输入课程名称",
+    "priceLabel": "课程价格 (MMC)",
+    "pricePlaceholder": "请输入课程价格",
+    "metadataURI": "元数据 URI",
+    "metadataURIPlaceholder": "请输入课程元数据 URI",
+    "videoURI": "视频 URI",
+    "videoURIPlaceholder": "请输入课程视频 URI",
+    "addCourse": "添加课程"
   }
 }

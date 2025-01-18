@@ -127,5 +127,34 @@
     "browser": {
       "notSupport": "Your browser does not support video playback, please use Chrome, Edge, Firefox, or Safari browser"
     }
+  },
+  "NFTComponent": {
+    "nft": {
+      "noNFT": "No NFT",
+      "getNFT": "Complete course learning to get NFT certificate"
+    }
+  },
+  "AddCourse": {
+    "title": "Add Course",
+    "loading": "Loading...",
+    "addCourseSuccess": "Course added successfully!",
+    "connectWallet": "Please connect wallet first",
+    "onlyOwner": "Only the contract owner can add courses",
+    "invalidPrice": "Price must be a number and greater than 0",
+    "fillAllFields": "Please fill in all fields",
+    "purchaseSuccess": "Course purchase successful!",
+    "courseIdExists": "Course ID already exists, please change the course ID",
+    "addCourseFailed": "Course addition failed, please try again",
+    "web2CourseIdLabel": "Web2 Course ID",
+    "web2CourseIdPlaceholder": "Please enter the course ID of the Web2 platform",
+    "nameLabel": "Course Name",
+    "namePlaceholder": "Please enter the course name",
+    "priceLabel": "Course Price (MMC)",
+    "pricePlaceholder": "Please enter the course price",
+    "metadataURI": "Metadata URI",
+    "metadataURIPlaceholder": "Please enter the course metadata URI",
+    "videoURI": "Video URI",
+    "videoURIPlaceholder": "Please enter the course video URI",
+    "addCourse": "Add Course"
   }
 }

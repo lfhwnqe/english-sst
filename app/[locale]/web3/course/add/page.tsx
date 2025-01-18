@@ -22,7 +22,7 @@ import { courseMarketAddressAtom } from "@/app/stores/web3";
 import { useAtomValue } from "jotai";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
 import AnimatedBackground from "@/app/components/web3/ParticleBackground";
-
+import { useTranslations } from "next-intl";
 // 课程表单类型
 interface CourseForm {
   web2CourseId: string;
@@ -36,6 +36,7 @@ export default function AddCoursePage() {
   const courseMarketAddress = useAtomValue(courseMarketAddressAtom);
   const { address, isConnected } = useAccount();
   const { writeContract, isPending: isWritePending } = useWriteContract();
+  const t = useTranslations("AddCourse");
   const [formData, setFormData] = useState<CourseForm>({
     web2CourseId: "",
     name: "",
@@ -86,26 +87,26 @@ export default function AddCoursePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isConnected) {
-      showMessage("请先连接钱包", "error");
+      showMessage(t("status.connectWallet"), "error");
       return;
     }
 
     // 检查是否是合约 owner
     if (contractOwner !== address) {
-      showMessage("只有合约所有者才能添加课程", "error");
+      showMessage(t("status.onlyOwner"), "error");
       return;
     }
 
     try {
       const price = Number(formData.price);
       if (isNaN(price) || price <= 0) {
-        showMessage("请输入有效的价格", "error");
+        showMessage(t("status.invalidPrice"), "error");
         return;
       }
 
       // 验证所有字段都不为空
       if (!formData.web2CourseId || !formData.name || !formData.metadataURI || !formData.videoURI) {
-        showMessage("请填写所有必填字段", "error");
+        showMessage(t("status.fillAllFields"), "error");
         return;
       }
 
@@ -121,14 +122,13 @@ export default function AddCoursePage() {
           formData.videoURI,
         ],
       });
-      showMessage("交易已发送", "success");
+      showMessage(t("status.purchaseSuccess"), "success");
     } catch (error) {
-      console.error("添加课程错误:", error);
       const errorMessage = (error as Error).message;
       if (errorMessage.includes("Course already exists")) {
-        showMessage("课程 ID 已存在，请使用其他 ID", "error");
+        showMessage(t("status.courseIdExists"), "error");
       } else {
-        showMessage("添加课程失败，请检查输入是否正确", "error");
+        showMessage(t("status.addCourseFailed"), "error");
       }
     }
   };
@@ -150,13 +150,13 @@ export default function AddCoursePage() {
         <Box className="max-w-2xl mx-auto p-6">
           <Paper elevation={3} className="p-8 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
             <Typography variant="h4" className="mb-8 font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
-              添加新课程
+              {t("title")}
             </Typography>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <TextField
                 fullWidth
-                label="Web2 课程 ID"
+                label={t("web2CourseIdLabel")}
                 name="web2CourseId"
                 value={formData.web2CourseId}
                 onChange={handleInputChange}
@@ -164,7 +164,7 @@ export default function AddCoursePage() {
                 variant="outlined"
                 className="bg-white/5"
                 disabled={isLoading}
-                placeholder="请输入 Web2 平台的课程 ID"
+                placeholder={t("web2CourseIdPlaceholder")}
                 InputProps={{
                   className: "text-white",
                 }}
@@ -175,7 +175,7 @@ export default function AddCoursePage() {
 
               <TextField
                 fullWidth
-                label="课程名称"
+                label={t("nameLabel")}
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
@@ -183,7 +183,7 @@ export default function AddCoursePage() {
                 variant="outlined"
                 className="bg-white/5"
                 disabled={isLoading}
-                placeholder="请输入课程名称"
+                placeholder={t("namePlaceholder")}
                 InputProps={{
                   className: "text-white",
                 }}
@@ -194,7 +194,7 @@ export default function AddCoursePage() {
 
               <TextField
                 fullWidth
-                label="课程价格 (MMC)"
+                label={t("priceLabel")}
                 name="price"
                 type="number"
                 value={formData.price}
@@ -204,7 +204,7 @@ export default function AddCoursePage() {
                 variant="outlined"
                 className="bg-white/5"
                 disabled={isLoading}
-                placeholder="请输入课程价格"
+                placeholder={t("pricePlaceholder")}
                 InputProps={{
                   className: "text-white",
                 }}
@@ -215,7 +215,7 @@ export default function AddCoursePage() {
 
               <TextField
                 fullWidth
-                label="元数据 URI"
+                label={t("metadataURI")}
                 name="metadataURI"
                 value={formData.metadataURI}
                 onChange={handleInputChange}
@@ -223,7 +223,7 @@ export default function AddCoursePage() {
                 variant="outlined"
                 className="bg-white/5"
                 disabled={isLoading}
-                placeholder="请输入课程元数据 URI"
+                placeholder={t("metadataURIPlaceholder")}
                 InputProps={{
                   className: "text-white",
                 }}
@@ -234,7 +234,7 @@ export default function AddCoursePage() {
 
               <TextField
                 fullWidth
-                label="视频 URI"
+                label={t("videoURI")}
                 name="videoURI"
                 value={formData.videoURI}
                 onChange={handleInputChange}
@@ -242,7 +242,7 @@ export default function AddCoursePage() {
                 variant="outlined"
                 className="bg-white/5"
                 disabled={isLoading}
-                placeholder="请输入课程视频 URI"
+                placeholder={t("videoURIPlaceholder")}
                 InputProps={{
                   className: "text-white",
                 }}
@@ -261,7 +261,7 @@ export default function AddCoursePage() {
                 {isLoading ? (
                   <CircularProgress size={24} className="text-white" />
                 ) : (
-                  "添加课程"
+                  t("addCourse")
                 )}
               </Button>
             </form>
