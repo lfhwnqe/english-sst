@@ -136,7 +136,12 @@ export default function Web3Page() {
           <Box className="text-center max-w-3xl mx-auto py-20">
             <Typography 
               variant="h2" 
-              className="mb-6 font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400"
+              sx={{ 
+                marginBottom: '1.5rem',
+                backgroundImage: 'linear-gradient(to right, #60A5FA, #818CF8, #A78BFA)',
+                backgroundClip: 'text',
+                color: 'transparent'
+              }}
             >
               {t("description")}
             </Typography>
@@ -162,17 +167,35 @@ export default function Web3Page() {
         {/* Features Section */}
         <Box className="min-h-screen bg-black/30 features-section flex items-center">
           <Container className="py-20">
-            <Typography variant="h3" className="text-center mb-12 text-white">
+            <Typography 
+              variant="h3" 
+              sx={{ 
+                marginBottom: '3rem',
+                color: '#fff',
+                textAlign: 'center'
+              }}
+            >
               {t("features.title")}
             </Typography>
             <Grid container spacing={6}>
               {/* 课程学习 */}
               <Grid item xs={12} md={4} className="feature-item">
                 <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
-                  <Typography variant="h5" className="mb-4 text-blue-400">
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      marginBottom: '1rem',
+                      color: '#60A5FA'
+                    }}
+                  >
                     {t("features.learning.title")}
                   </Typography>
-                  <Typography variant="body1" className="text-gray-300">
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgb(209 213 219)'
+                    }}
+                  >
                     {t("features.learning.description")}
                   </Typography>
                 </Box>
@@ -180,10 +203,21 @@ export default function Web3Page() {
               {/* NFT认证 */}
               <Grid item xs={12} md={4} className="feature-item">
                 <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
-                  <Typography variant="h5" className="mb-4 text-indigo-400">
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      marginBottom: '1rem',
+                      color: '#818CF8'
+                    }}
+                  >
                     {t("features.nft.title")}
                   </Typography>
-                  <Typography variant="body1" className="text-gray-300">
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgb(209 213 219)'
+                    }}
+                  >
                     {t("features.nft.description")}
                   </Typography>
                 </Box>
@@ -191,10 +225,21 @@ export default function Web3Page() {
               {/* 代币激励 */}
               <Grid item xs={12} md={4} className="feature-item">
                 <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
-                  <Typography variant="h5" className="mb-4 text-purple-400">
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      marginBottom: '1rem',
+                      color: '#A78BFA'
+                    }}
+                  >
                     {t("features.token.title")}
                   </Typography>
-                  <Typography variant="body1" className="text-gray-300">
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgb(209 213 219)'
+                    }}
+                  >
                     {t("features.token.description")}
                   </Typography>
                 </Box>
@@ -206,10 +251,24 @@ export default function Web3Page() {
         {/* How it works Section */}
         <Box className="min-h-screen steps-section flex items-center">
           <Container className="py-20">
-            <Typography variant="h3" className="text-center mb-12 text-white">
+            <Typography 
+              variant="h3" 
+              sx={{ 
+                marginBottom: '3rem',
+                color: '#fff',
+                textAlign: 'center'
+              }}
+            >
               {t("howItWorks.title")}
             </Typography>
-            <Typography variant="subtitle1" className="text-center mb-16 text-gray-300">
+            <Typography 
+              variant="subtitle1" 
+              sx={{ 
+                marginBottom: '4rem',
+                color: 'rgb(209 213 219)',
+                textAlign: 'center'
+              }}
+            >
               {t("howItWorks.description")}
             </Typography>
             <Grid container spacing={6}>
@@ -219,10 +278,21 @@ export default function Web3Page() {
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-2xl font-bold">
                     1
                   </div>
-                  <Typography variant="h5" className="mb-4 text-white">
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      marginBottom: '1rem',
+                      color: '#fff'
+                    }}
+                  >
                     {t("howItWorks.step1.title")}
                   </Typography>
-                  <Typography variant="body1" className="text-gray-300">
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgb(209 213 219)'
+                    }}
+                  >
                     {t("howItWorks.step1.description")}
                   </Typography>
                 </Box>
@@ -233,10 +303,21 @@ export default function Web3Page() {
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-2xl font-bold">
                     2
                   </div>
-                  <Typography variant="h5" className="mb-4 text-white">
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      marginBottom: '1rem',
+                      color: '#fff'
+                    }}
+                  >
                     {t("howItWorks.step2.title")}
                   </Typography>
-                  <Typography variant="body1" className="text-gray-300">
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgb(209 213 219)'
+                    }}
+                  >
                     {t("howItWorks.step2.description")}
                   </Typography>
                 </Box>
@@ -247,10 +328,21 @@ export default function Web3Page() {
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-2xl font-bold">
                     3
                   </div>
-                  <Typography variant="h5" className="mb-4 text-white">
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      marginBottom: '1rem',
+                      color: '#fff'
+                    }}
+                  >
                     {t("howItWorks.step3.title")}
                   </Typography>
-                  <Typography variant="body1" className="text-gray-300">
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      color: 'rgb(209 213 219)'
+                    }}
+                  >
                     {t("howItWorks.step3.description")}
                   </Typography>
                 </Box>
@@ -263,7 +355,14 @@ export default function Web3Page() {
         <Box className="min-h-screen bg-black/30 cta-section flex items-center opacity-0">
           <Container>
             <Box className="text-center max-w-2xl mx-auto">
-              <Typography variant="h3" className="mb-8 text-white">
+              <Typography 
+                variant="h3" 
+                sx={{ 
+                  marginBottom: '2rem',
+                  color: '#fff',
+                  textAlign: 'center'
+                }}
+              >
                 {t("cta.title")}
               </Typography>
               <Button
