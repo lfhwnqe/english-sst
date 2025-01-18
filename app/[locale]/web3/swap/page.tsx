@@ -1,12 +1,13 @@
 "use client";
 
-import TokenSupplyChart from "@/app/components/web3/TokenSupplyChart";
+import TokenSupplyChart from "./TokenSupplyChart";
 import { useReadContract } from "wagmi";
 import { MMCToken__factory } from "@/abi/typechain-types";
 import { useAtomValue } from "jotai";
 import { mmcTokenAddressAtom } from "@/app/stores/web3";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
 import { Box, Typography } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 export default function SwapPage() {
   const mmcTokenAddress = useAtomValue(mmcTokenAddressAtom);
@@ -16,6 +17,8 @@ export default function SwapPage() {
     abi: MMCToken__factory.abi,
     functionName: "totalSupply",
   });
+
+  const t = useTranslations("SwapPage");
 
   return (
     <Box>
@@ -31,7 +34,7 @@ export default function SwapPage() {
           variant="h4"
           className="text-center mb-12 font-bold bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent"
         >
-          代币兑换
+          {t("title")}
         </Typography>
 
         {/* 兑换组件 */}

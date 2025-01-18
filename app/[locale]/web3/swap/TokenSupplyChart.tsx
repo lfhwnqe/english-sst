@@ -10,11 +10,12 @@ import {
 import { MMCToken__factory } from "@/abi/typechain-types";
 import { useAtomValue } from "jotai";
 import { mmcTokenAddressAtom } from "@/app/stores/web3";
-import GradientButton from "../common/GradientButton";
+import GradientButton from "../../../components/common/GradientButton";
 import { useState } from "react";
-import TokenInput from "./TokenInput";
+import TokenInput from "../../../components/web3/TokenInput";
 import { ArrowUpDown } from "lucide-react";
-import ThemeAlert from "../common/ThemeAlert";
+import ThemeAlert from "../../../components/common/ThemeAlert";
+import { useTranslations } from "next-intl";
 
 interface TokenSupplyChartProps {
   totalSupply: string;
@@ -23,6 +24,7 @@ interface TokenSupplyChartProps {
 export default function TokenSupplyChart({
   totalSupply,
 }: TokenSupplyChartProps) {
+  const t = useTranslations("SwapPage");
   const mmcTokenAddress = useAtomValue(mmcTokenAddressAtom);
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
@@ -61,7 +63,7 @@ export default function TokenSupplyChart({
         setIsPending(false);
         setAlert({
           open: true,
-          message: "兑换成功！",
+          message: t("swapSuccess"),
           severity: "success",
         });
         setInputAmount("");
@@ -80,7 +82,7 @@ export default function TokenSupplyChart({
         setIsPending(false);
         setAlert({
           open: true,
-          message: "兑换成功！",
+          message: t("swapSuccess"),
           severity: "success",
         });
         setInputAmount("");
@@ -100,7 +102,7 @@ export default function TokenSupplyChart({
       setIsPending(true);
       setAlert({
         open: true,
-        message: "请在钱包中确认交易...",
+        message: t("swapPending"),
         severity: "success",
       });
 
@@ -124,7 +126,7 @@ export default function TokenSupplyChart({
       if (hash) {
         setAlert({
           open: true,
-          message: "交易已发送，等待确认...",
+          message: t("swapPending"),
           severity: "success",
         });
       }
@@ -140,13 +142,13 @@ export default function TokenSupplyChart({
       ) {
         setAlert({
           open: true,
-          message: "您取消了交易",
+          message: t("swapCancel"),
           severity: "error",
         });
       } else {
         setAlert({
           open: true,
-          message: "兑换失败，请重试",
+          message: t("swapFailed"),
           severity: "error",
         });
       }
@@ -171,7 +173,7 @@ export default function TokenSupplyChart({
             {/* 总供应量 */}
             <div>
               <Typography className="text-sm text-gray-500 dark:text-gray-400">
-                MMC Token 总供应量
+                {t("totalSupply", { amount: totalSupply })}
               </Typography>
               <Typography
                 variant="h4"
@@ -180,14 +182,14 @@ export default function TokenSupplyChart({
                 {Number(totalSupply).toLocaleString()} MMC
               </Typography>
               <Typography className="text-xs text-gray-500 dark:text-gray-400">
-                固定供应量，不会增发
+                {t("fixedSupply")}
               </Typography>
             </div>
 
             {/* 用户余额 */}
             <div>
               <Typography className="text-sm text-gray-500 dark:text-gray-400">
-                我的 MMC 余额
+                {t("myBalance")}
               </Typography>
               <Typography
                 variant="h5"
@@ -207,7 +209,7 @@ export default function TokenSupplyChart({
           transition-all duration-300"
         >
           <Typography className="text-sm text-gray-500 dark:text-gray-400">
-            {isETHToMMC ? "ETH 兑换 MMC" : "MMC 兑换 ETH"}
+            {isETHToMMC ? t("ethToMMC") : t("mmcToEth")}
           </Typography>
 
           <div className="flex flex-col gap-4 mt-4">
@@ -254,10 +256,10 @@ export default function TokenSupplyChart({
               {isPending ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                  处理中...
+                  {t("swapPending")}
                 </div>
               ) : (
-                "兑换"
+                t("swap")
               )}
             </GradientButton>
           </div>

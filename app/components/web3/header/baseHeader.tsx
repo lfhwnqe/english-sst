@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
 import { useTheme } from "next-themes";
 import {
   Menu as MenuIcon,
@@ -18,8 +17,14 @@ import { useAtom } from "jotai";
 import { themeAtom, setThemeAtom } from "@/app/stores/theme";
 import { injected, useAccount, useConnect, useDisconnect } from "wagmi";
 import { formatAddress } from "@/utils";
+import { useTranslations } from "next-intl";
+import { useParams } from 'next/navigation';
 
 function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
+  const t = useTranslations("Header");
+  const params = useParams();
+  const locale = params.locale as string || 'zh-cn';
+  console.log('locale',locale)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   useHydrateAtoms([[hasTokenAtom, hasTokenServer]]);
   const [hasToken] = useAtom(hasTokenAtom);
@@ -44,15 +49,17 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   };
 
   const navigation = [
-    { name: "创作中心", href: "/web3/course/add" },
-    { name: "我的课程", href: "/web3/course/my" },
-    { name: "兑换中心", href: "/web3/swap" },
+    { name: t("menu.courses"), href: `/${locale}/web3/course/add` },
+    { name: t("menu.swap"), href: `/${locale}/web3/swap` },
+    { name: t("menu.myNFTs"), href: `/${locale}/web3/course/my` },
   ];
 
   // 认证相关按钮组件
   const AuthButtons = () => (
     <div className="flex items-center space-x-2">
-      <GradientButton onClick={handleLogin}>登录</GradientButton>
+      <GradientButton onClick={handleLogin}>
+        {t("wallet.connect")}
+      </GradientButton>
     </div>
   );
 
@@ -126,7 +133,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
             <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center space-x-2">
                 <Wallet size={16} />
-                <span>钱包地址</span>
+                <span>{t("wallet.address")}</span>
               </div>
               <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 font-mono">
                 {account.address}
@@ -139,7 +146,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
               className="w-full px-4 py-2 text-sm text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2"
             >
               <LogOut size={16} />
-              <span>断开连接</span>
+              <span>{t("wallet.disconnect")}</span>
             </button>
           </div>
         </div>
@@ -153,11 +160,11 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
       <nav className=" mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/web3" className="flex-shrink-0">
+          <GradientButton href={`/${locale}/web3`} className="flex-shrink-0">
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-400 dark:to-indigo-400">
               MMC Audio
             </span>
-          </Link>
+          </GradientButton>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
@@ -221,10 +228,10 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
             </div>
 
             {/* Theme and Auth */}
-            <div className="p-4 flex flex-col space-y-2">
+            {/* <div className="p-4 flex flex-col space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  主题切换
+                  {t("theme.switch")}
                 </span>
                 <GradientButton
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -236,7 +243,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
               <div className="flex justify-end">
                 {hasToken ? <UserInfo /> : <AuthButtons />}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </nav>

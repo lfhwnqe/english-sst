@@ -1,0 +1,85 @@
+{
+  "HomePage": {
+    "title": "你好!",
+    "about": "去关于页面"
+  },
+  "Header": {
+    "menu": {
+      "courses": "添加课程",
+      "swap": "兑换",
+      "myNFTs": "我的 NFT"
+    },
+    "wallet": {
+      "connect": "连接钱包",
+      "disconnect": "断开连接",
+      "copy": "复制地址",
+      "copied": "已复制!",
+      "balance": "余额: {amount} MMC",
+      "address": "钱包地址"
+    }
+  },
+  "SwapPage": {
+    "title": "兑换",
+    "totalSupply": "总供应量: {amount} MMC",
+    "fixedSupply": "固定供应量，不会增发",
+    "myBalance": "我的 MMC 余额",
+    "ethToMMC": "ETH 兑换 MMC",
+    "mmcToEth": "MMC 兑换 ETH",
+    "swap": "兑换",
+    "swapPending": "处理中...",
+    "swapCancel": "您取消了交易",
+    "swapFailed": "兑换失败，请重试"
+  },
+  "CourseList": {
+    "title": "课程列表",
+    "totalCount": "总课程数: {count}",
+    "loading": "加载中...",
+    "status": {
+      "connectWallet": "请先连接钱包",
+      "insufficientBalance": "MMC 代币余额不足",
+      "authorizing": "正在授权代币使用权限...",
+      "authorizationCanceled": "授权已取消",
+      "authorizationSent": "授权请求已发送，请在钱包中确认",
+      "purchasing": "正在购买课程...",
+      "purchaseCanceled": "购买已取消",
+      "purchaseSent": "购买请求已发送，请在钱包中确认",
+      "purchaseSuccess": "课程购买成功！"
+    },
+    "nft": {
+      "completed": "课程完成认证 NFT",
+      "congratulations": "恭喜完成 {courseName} 课程！"
+    }
+  },
+  "status": {
+    "connectWallet": "请先连接钱包",
+    "insufficientBalance": "MMC 代币余额不足",
+    "authorizing": "正在授权代币使用权限...",
+    "authorizationCanceled": "授权已取消",
+    "authorizationSent": "授权请求已发送，请在钱包中确认",
+    "purchasing": "正在购买课程...",
+    "purchaseCanceled": "购买已取消",
+    "purchaseSent": "购买请求已发送，请在钱包中确认",
+    "purchaseSuccess": "课程购买成功！"
+  },
+  "CoursePlay": {
+    "courseInfo": "课程信息",
+    "course": {
+      "description": "课程简介",
+      "info": "课程信息",
+      "id": "课程ID",
+      "price": "价格",
+      "creator": "创建者",
+      "status": "状态",
+      "completed": "已完成",
+      "learning": "学习中"
+    },
+    "nft": {
+      "id": "NFT ID",
+      "completed": "课程完成认证 NFT",
+      "congratulations": "恭喜完成 {courseName} 课程！"
+    },
+    "browser": {
+      "notSupport": "您的浏览器不支持视频播放，请使用 Chrome、Edge、Firefox 或 Safari 浏览器"
+    }
+  }
+}

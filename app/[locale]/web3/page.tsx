@@ -7,7 +7,7 @@ import {
   useWriteContract,
   useWatchContractEvent,
 } from "wagmi";
-import {useTranslations} from 'next-intl';
+import { useTranslations } from "next-intl";
 
 import {
   CourseMarket__factory,
@@ -15,7 +15,6 @@ import {
 } from "@/abi/typechain-types";
 import {
   Box,
-  Typography,
   Card,
   CardContent,
   Grid,
@@ -29,7 +28,7 @@ import {
 } from "@/app/stores/web3";
 import { useAtomValue } from "jotai";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Award } from "lucide-react";
 import ThemeText from "@/app/components/common/ThemeText";
 
@@ -62,10 +61,11 @@ export default function CourseListPage() {
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
     "success"
   );
-  const t = useTranslations('HomePage');
-
+  const t = useTranslations("CourseList");
 
   const { writeContract } = useWriteContract();
+  const params = useParams();
+  const locale = params.locale as string || 'zh-cn';
   const router = useRouter();
 
   // 读取课程列表
@@ -150,9 +150,6 @@ export default function CourseListPage() {
       fetchAllMetadata();
     }
   }, [courses]);
-  useEffect(() => {
-    console.log("courseMetadata:", courseMetadata);
-  }, [courseMetadata]);
 
   const { balance, allowance } = useMemo(
     () => ({
@@ -183,7 +180,7 @@ export default function CourseListPage() {
         if (log.args && typeof log.args === "object" && "buyer" in log.args) {
           const { buyer } = log.args;
           if (buyer === address) {
-            showMessage("课程购买成功！", "success");
+            showMessage(t("status.purchaseSuccess"), "success");
             setCurrentStep("none");
             // 刷新课程列表
             refetch();
@@ -197,17 +194,17 @@ export default function CourseListPage() {
   // 修改处理函数
   const handleCourseClick = async (course: Course) => {
     if (!isConnected) {
-      showMessage("请先连接钱包", "error");
+      showMessage(t("status.connectWallet"), "error");
       return;
     }
 
     if (course.purchased) {
-      router.push(`/web3/course/play/${course.web2CourseId}`);
+      router.push(`/${locale}/web3/course/play/${course.web2CourseId}`);
       return;
     }
 
     if (balance < course.price) {
-      showMessage("MMC 代币余额不足", "error");
+      showMessage(t("status.insufficientBalance"), "error");
       return;
     }
 
@@ -222,9 +219,9 @@ export default function CourseListPage() {
             functionName: "approve",
             args: [courseMarketAddress as `0x${string}`, course.price],
           });
-          showMessage("授权请求已发送，请在钱包中确认", "success");
+          showMessage(t("status.authorizationSent"), "success");
         } catch {
-          showMessage("授权已取消", "error");
+          showMessage(t("status.authorizationCanceled"), "error");
           setCurrentStep("none");
         }
         return;
@@ -238,9 +235,9 @@ export default function CourseListPage() {
         functionName: "purchaseCourse",
         args: [course.web2CourseId],
       });
-      showMessage("购买请求已发送，请在钱包中确认", "success");
+      showMessage(t("status.purchaseSent"), "success");
     } catch {
-      showMessage("购买已取消", "error");
+      showMessage(t("status.purchaseCanceled"), "error");
       setCurrentStep("none");
     }
   };
@@ -251,16 +248,16 @@ export default function CourseListPage() {
       {isLoading ? (
         <Box className="flex justify-center items-center min-h-[400px]">
           <CircularProgress />
+          <ThemeText>{t("loading")}</ThemeText>
         </Box>
       ) : (
         <>
           <ThemeText variant="h4" className="mb-6 font-bold">
-            {/* 课程列表 */}
-            {t('title')}
+            {t("title")}
           </ThemeText>
 
           <ThemeText variant="subtitle1" className="mb-4" secondary>
-            总课程数: {courseCount?.toString() || "0"}
+            {t("totalCount", { count: courseCount?.toString() || "0" })}
           </ThemeText>
 
           <Grid container spacing={3}>
@@ -278,12 +275,12 @@ export default function CourseListPage() {
                            hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] dark:hover:shadow-[0_0_20px_rgba(96,165,250,0.4)]
                            scale-[1.02] hover:scale-[1.03]`
                         : course.purchased
-                        ? `before:bg-gradient-to-r before:from-emerald-500 before:via-teal-500 before:to-cyan-500
+                          ? `before:bg-gradient-to-r before:from-emerald-500 before:via-teal-500 before:to-cyan-500
                            bg-white/95 dark:bg-gray-800/95
                            shadow-[0_0_15px_rgba(16,185,129,0.3)] dark:shadow-[0_0_15px_rgba(20,184,166,0.2)]
                            hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] dark:hover:shadow-[0_0_20px_rgba(20,184,166,0.4)]
                            scale-[1.01] hover:scale-[1.02]`
-                        : `before:bg-gradient-to-r before:from-rose-600 before:via-fuchsia-600 before:to-indigo-600
+                          : `before:bg-gradient-to-r before:from-rose-600 before:via-fuchsia-600 before:to-indigo-600
                            bg-white/95 dark:bg-gray-800/95
                            shadow-[0_0_15px_rgba(225,29,72,0.3)] dark:shadow-[0_0_15px_rgba(192,38,211,0.2)]
                            hover:shadow-[0_0_20px_rgba(225,29,72,0.5)] dark:hover:shadow-[0_0_20px_rgba(192,38,211,0.4)]
@@ -353,10 +350,12 @@ export default function CourseListPage() {
                             {/* NFT 信息 */}
                             <div className="flex-1">
                               <div className="font-medium text-blue-600 mb-1">
-                                🎉 课程完成认证 NFT
+                                🎉 {t("nft.completed")}
                               </div>
                               <div className="text-gray-600 mb-1 line-clamp-2">
-                                恭喜完成 {course.name} 课程！
+                                {t("nft.congratulations", {
+                                  courseName: course.name,
+                                })}
                               </div>
                               <div className="text-gray-500">
                                 #{course.web2CourseId}
@@ -368,11 +367,18 @@ export default function CourseListPage() {
                     )}
                   </Box>
                   <CardContent className="p-3">
-                    <ThemeText variant="h6" className="text-base font-bold mb-1 line-clamp-1">
+                    <ThemeText
+                      variant="h6"
+                      className="text-base font-bold mb-1 line-clamp-1"
+                    >
                       {course.name}
                     </ThemeText>
-                    
-                    <ThemeText variant="body1" className="mb-1 line-clamp-1" secondary>
+
+                    <ThemeText
+                      variant="body1"
+                      className="mb-1 line-clamp-1"
+                      secondary
+                    >
                       {courseMetadata[course.web2CourseId]?.description}
                     </ThemeText>
 
@@ -382,7 +388,7 @@ export default function CourseListPage() {
                           <div className="text-center">
                             <CircularProgress size={20} className="mb-2" />
                             <ThemeText className="text-xs" secondary>
-                              正在授权代币使用权限...
+                              {t("status.authorizing")}
                             </ThemeText>
                           </div>
                         )}
@@ -390,7 +396,7 @@ export default function CourseListPage() {
                           <div className="text-center">
                             <CircularProgress size={20} className="mb-2" />
                             <ThemeText className="text-xs" secondary>
-                              正在购买课程...
+                              {t("status.purchasing")}
                             </ThemeText>
                           </div>
                         )}

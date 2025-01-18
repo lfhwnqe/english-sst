@@ -5,6 +5,10 @@
 //   runtimeCaching: require("./workbox-config.js"),
 //   disable: process.env.NODE_ENV === "development",
 // });
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin();
+
 const isProduction = process.env.NODE_ENV === "production";
 console.log("🌹isProduction", isProduction);
 console.log("🌹isProduction:", isProduction);
@@ -56,5 +60,7 @@ const nextConfig = withPWA({
     ];
   },
 });
+module.exports = withNextIntl(nextConfig);
 
-module.exports = nextConfig;
+
+// module.exports = nextConfig;

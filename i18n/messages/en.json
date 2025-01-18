@@ -1,0 +1,85 @@
+{
+  "HomePage": {
+    "title": "Hello world!",
+    "about": "Go to the about page"
+  },
+  "Header": {
+    "menu": {
+      "courses": "Add Courses",
+      "swap": "Swap",
+      "myNFTs": "My NFTs"
+    },
+    "wallet": {
+      "connect": "Connect Wallet",
+      "disconnect": "Disconnect",
+      "copy": "Copy Address",
+      "copied": "Copied!",
+      "balance": "Balance: {amount} MMC",
+      "address": "Wallet Address"
+    }
+  },
+  "SwapPage": {
+    "title": "Swap",
+    "totalSupply": "Total Supply: {amount} MMC",
+    "fixedSupply": "Fixed Supply, will not increase",
+    "myBalance": "My MMC Balance",
+    "ethToMMC": "ETH to MMC",
+    "mmcToEth": "MMC to ETH",
+    "swap": "Swap",
+    "swapPending": "Processing...",
+    "swapCancel": "You canceled the transaction",
+    "swapFailed": "Swap failed, please try again"
+  },
+  "CourseList": {
+    "title": "Course List",
+    "totalCount": "Total Courses: {count}",
+    "loading": "Loading...",
+    "status": {
+      "connectWallet": "Please connect wallet first",
+      "insufficientBalance": "Insufficient MMC token balance",
+      "authorizing": "Authorizing token usage...",
+      "authorizationCanceled": "Authorization canceled",
+      "authorizationSent": "Authorization request sent, please confirm in wallet",
+      "purchasing": "Purchasing course...",
+      "purchaseCanceled": "Purchase canceled",
+      "purchaseSent": "Purchase request sent, please confirm in wallet",
+      "purchaseSuccess": "Course purchased successfully!"
+    },
+    "nft": {
+      "completed": "Course Completion NFT",
+      "congratulations": "Congratulations on completing {courseName}!"
+    }
+  },
+  "status": {
+    "connectWallet": "Please connect wallet first",
+    "insufficientBalance": "Insufficient MMC token balance",
+    "authorizing": "Authorizing token usage...",
+    "authorizationCanceled": "Authorization canceled",
+    "authorizationSent": "Authorization request sent, please confirm in wallet",
+    "purchasing": "Purchasing course...",
+    "purchaseCanceled": "Purchase canceled",
+    "purchaseSent": "Purchase request sent, please confirm in wallet",
+    "purchaseSuccess": "Course purchased successfully!"
+  },
+  "CoursePlay": {
+    "courseInfo": "Course Info",
+    "course": {
+      "description": "Course Description",
+      "info": "Course Info",
+      "id": "Course ID",
+      "price": "Price",
+      "creator": "Creator",
+      "status": "Status",
+      "completed": "Completed",
+      "learning": "Learning"
+    },
+    "nft": {
+      "id": "NFT ID",
+      "completed": "Course Completion NFT",
+      "congratulations": "Congratulations on completing {courseName}!"
+    },
+    "browser": {
+      "notSupport": "Your browser does not support video playback, please use Chrome, Edge, Firefox, or Safari browser"
+    }
+  }
+}
