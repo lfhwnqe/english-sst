@@ -13,8 +13,10 @@ import { useAtomValue } from "jotai";
 import {
   courseMarketAddressAtom,
   mockOracleAddressAtom,
+  mmcNFTAddressAtom,
 } from "@/app/stores/web3";
 import { Award } from "lucide-react";
+import NFTMintingMonitor from "@/app/components/web3/NFTMintingMonitor";
 
 interface CourseMetadata {
   name: string;
@@ -29,6 +31,7 @@ export default function CoursePlayPage() {
   const { address } = useAccount();
   const [metadata, setMetadata] = useState<CourseMetadata | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isNFTMinting, setIsNFTMinting] = useState(false);
 
   // 从合约读取课程信息
   const { data: courseData } = useReadContract({
@@ -45,6 +48,7 @@ export default function CoursePlayPage() {
 
   const mockOracleAddress = useAtomValue(mockOracleAddressAtom);
   const { writeContract } = useWriteContract();
+  const mmcNFTAddress = useAtomValue(mmcNFTAddressAtom);
 
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -74,16 +78,17 @@ export default function CoursePlayPage() {
   // 在组件内修改处理函数
   const handleVideoComplete = async () => {
     if (!courseInfo?.completed) {
+      setIsNFTMinting(true);
       try {
         await writeContract({
           address: mockOracleAddress as `0x${string}`,
           abi: MockOracle__factory.abi,
           functionName: "notifyCourseCompletion",
-          args: [address as `0x${string}`, courseId as `0x${string}`],
+          args: [address as `0x${string}`, courseId],
         });
-        console.log("已通知预言机完成课程");
       } catch (error) {
         console.error("通知预言机失败:", error);
+        setIsNFTMinting(false);
       }
     }
   };
@@ -207,6 +212,19 @@ export default function CoursePlayPage() {
           </Box>
         )}
       </Box>
+
+      {/* 只在首次完成课程时显示 NFT 铸造监听组件 */}
+      {!courseInfo.completed && isNFTMinting && (
+        <NFTMintingMonitor
+          address={address as `0x${string}`}
+          mmcNFTAddress={mmcNFTAddress as `0x${string}`}
+          courseName={courseInfo.name}
+          onComplete={() => {
+            setIsNFTMinting(false);
+            window.location.reload();
+          }}
+        />
+      )}
     </Box>
   );
 }
