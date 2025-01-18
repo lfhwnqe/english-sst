@@ -4,3 +4,4 @@
 export type { CourseMarket } from "./CourseMarket";
 export type { MMCERC721Coin } from "./MMCERC721Coin";
 export type { MMCToken } from "./MMCToken";
+export type { MockOracle } from "./MockOracle";

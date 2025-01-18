@@ -4,3 +4,4 @@
 export { CourseMarket__factory } from "./CourseMarket__factory";
 export { MMCERC721Coin__factory } from "./MMCERC721Coin__factory";
 export { MMCToken__factory } from "./MMCToken__factory";
+export { MockOracle__factory } from "./MockOracle__factory";

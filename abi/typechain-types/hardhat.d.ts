@@ -101,6 +101,10 @@ declare module "hardhat/types/runtime" {
       name: "MMCToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MMCToken__factory>;
+    getContractFactory(
+      name: "MockOracle",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockOracle__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -212,6 +216,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.MMCToken>;
+    getContractAt(
+      name: "MockOracle",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockOracle>;
 
     deployContract(
       name: "Ownable",
@@ -301,6 +310,10 @@ declare module "hardhat/types/runtime" {
       name: "MMCToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MMCToken>;
+    deployContract(
+      name: "MockOracle",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockOracle>;
 
     deployContract(
       name: "Ownable",
@@ -412,6 +425,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MMCToken>;
+    deployContract(
+      name: "MockOracle",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockOracle>;
 
     // default types
     getContractFactory(

@@ -50,3 +50,5 @@ export type { MMCERC721Coin } from "./contracts/MMCERC721Coin";
 export { MMCERC721Coin__factory } from "./factories/contracts/MMCERC721Coin__factory";
 export type { MMCToken } from "./contracts/MMCToken";
 export { MMCToken__factory } from "./factories/contracts/MMCToken__factory";
+export type { MockOracle } from "./contracts/MockOracle";
+export { MockOracle__factory } from "./factories/contracts/MockOracle__factory";

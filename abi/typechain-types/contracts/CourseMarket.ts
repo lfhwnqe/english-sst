@@ -31,6 +31,7 @@ export declare namespace CourseMarket {
     isActive: boolean;
     creator: AddressLike;
     purchased: boolean;
+    completed: boolean;
     metadataURI: string;
     videoURI: string;
   };
@@ -42,6 +43,7 @@ export declare namespace CourseMarket {
     isActive: boolean,
     creator: string,
     purchased: boolean,
+    completed: boolean,
     metadataURI: string,
     videoURI: string
   ] & {
@@ -51,6 +53,7 @@ export declare namespace CourseMarket {
     isActive: boolean;
     creator: string;
     purchased: boolean;
+    completed: boolean;
     metadataURI: string;
     videoURI: string;
   };
@@ -89,6 +92,7 @@ export interface CourseMarketInterface extends Interface {
     nameOrSignature:
       | "addCourse"
       | "completeCourse"
+      | "completedCourses"
       | "courseCount"
       | "courses"
       | "getCoursesByPage"
@@ -122,6 +126,10 @@ export interface CourseMarketInterface extends Interface {
   encodeFunctionData(
     functionFragment: "completeCourse",
     values: [AddressLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "completedCourses",
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "courseCount",
@@ -183,6 +191,10 @@ export interface CourseMarketInterface extends Interface {
   decodeFunctionResult(functionFragment: "addCourse", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "completeCourse",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "completedCourses",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -355,6 +367,12 @@ export interface CourseMarket extends BaseContract {
     "nonpayable"
   >;
 
+  completedCourses: TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [boolean],
+    "view"
+  >;
+
   courseCount: TypedContractMethod<[], [bigint], "view">;
 
   courses: TypedContractMethod<
@@ -463,6 +481,13 @@ export interface CourseMarket extends BaseContract {
     [student: AddressLike, web2CourseId: string],
     [void],
     "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "completedCourses"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [boolean],
+    "view"
   >;
   getFunction(
     nameOrSignature: "courseCount"
