@@ -29,6 +29,7 @@ export interface MMCERC721CoinInterface extends Interface {
       | "approve"
       | "balanceOf"
       | "getApproved"
+      | "getUserNFTsByPage"
       | "isApprovedForAll"
       | "minters"
       | "name"
@@ -73,6 +74,10 @@ export interface MMCERC721CoinInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserNFTsByPage",
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -146,6 +151,10 @@ export interface MMCERC721CoinInterface extends Interface {
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserNFTsByPage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -385,6 +394,12 @@ export interface MMCERC721Coin extends BaseContract {
 
   getApproved: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
+  getUserNFTsByPage: TypedContractMethod<
+    [owner: AddressLike, page: BigNumberish, pageSize: BigNumberish],
+    [[bigint[], string[]] & { tokenIds: bigint[]; tokenURIs: string[] }],
+    "view"
+  >;
+
   isApprovedForAll: TypedContractMethod<
     [owner: AddressLike, operator: AddressLike],
     [boolean],
@@ -485,6 +500,13 @@ export interface MMCERC721Coin extends BaseContract {
   getFunction(
     nameOrSignature: "getApproved"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "getUserNFTsByPage"
+  ): TypedContractMethod<
+    [owner: AddressLike, page: BigNumberish, pageSize: BigNumberish],
+    [[bigint[], string[]] & { tokenIds: bigint[]; tokenURIs: string[] }],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "isApprovedForAll"
   ): TypedContractMethod<

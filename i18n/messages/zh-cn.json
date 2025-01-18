@@ -48,7 +48,7 @@
     "menu": {
       "addCourses": "添加课程",
       "swap": "兑换",
-      "myNFTs": "我的 NFT"
+      "userCenter": "用户中心"
     },
     "wallet": {
       "connect": "连接钱包",
@@ -90,6 +90,11 @@
       "completed": "课程完成认证 NFT",
       "congratulations": "恭喜完成 {courseName} 课程！"
     }
+  },
+  "UserCenter": {
+    "myCourses": "我的课程",
+    "myNFTs": "我的 NFT",
+    "myAssets": "我的资产"  
   },
   "status": {
     "connectWallet": "请先连接钱包",

@@ -106,16 +106,15 @@ export default function TokenSupplyChart({
         severity: "success",
       });
 
-      let hash;
       if (isETHToMMC) {
-        hash = await writeContract({
+        await writeContract({
           address: mmcTokenAddress as `0x${string}`,
           abi: MMCToken__factory.abi,
           functionName: "buyWithETH",
           value: BigInt(Number(inputAmount) * 1e18),
         });
       } else {
-        hash = await writeContract({
+        await writeContract({
           address: mmcTokenAddress as `0x${string}`,
           abi: MMCToken__factory.abi,
           functionName: "sellTokens",
@@ -123,13 +122,6 @@ export default function TokenSupplyChart({
         });
       }
       // 如果有 hash，说明用户已确认交易
-      if (hash) {
-        setAlert({
-          open: true,
-          message: t("swapPending"),
-          severity: "success",
-        });
-      }
     } catch (error: unknown) {
       console.error("兑换失败:", error);
       setIsPending(false);
@@ -138,7 +130,7 @@ export default function TokenSupplyChart({
       const err = error as Error;
       if (
         err.message?.includes("User rejected") ||
-        (error as any).code === 4001
+        (error as unknown as { code: number }).code === 4001
       ) {
         setAlert({
           open: true,

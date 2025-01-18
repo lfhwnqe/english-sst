@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Box } from "@mui/material";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
-import ThemeText from "@/app/components/common/ThemeText";
 import GradientButton from "@/app/components/common/GradientButton";
 import { useParams } from "next/navigation";
 import AnimatedBackground from "@/app/components/web3/ParticleBackground";

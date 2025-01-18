@@ -1,111 +1,89 @@
 "use client";
 
-import { useMemo } from "react";
-import { useAccount, useReadContracts } from "wagmi";
-import { CourseMarket__factory } from "@/abi/typechain-types";
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Chip,
-  CircularProgress,
-} from "@mui/material";
-import { courseMarketAddressAtom } from "@/app/stores/web3";
-import { useAtomValue } from "jotai";
+import { useState, useRef, useEffect } from "react";
+import { Box, Typography } from "@mui/material";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
+import AnimatedBackground from "@/app/components/web3/ParticleBackground";
+import { Book, Medal } from "lucide-react";
+import CourseList from "@/app/components/web3/CourseList";
+import { useTranslations } from "next-intl";
+import NFTList from "@/app/components/web3/NFTList";
 
-interface Course {
-  web2CourseId: string;
-  name: string;
-  price: bigint;
-  creator: string;
-  isActive: boolean;
+interface TabOption {
+  id: number;
+  label: string;
+  icon: React.ReactNode;
 }
 
-export default function CourseListPage() {
-  const courseMarketAddress = useAtomValue(courseMarketAddressAtom);
-  const { address } = useAccount();
+export default function MyAssetsPage() {
+  const t = useTranslations("UserCenter");
+  const [activeTab, setActiveTab] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // 读取课程列表
-  const { data, isLoading } = useReadContracts({
-    contracts: [
-      {
-        address: courseMarketAddress as `0x${string}`,
-        abi: CourseMarket__factory.abi,
-        functionName: "getUserPurchasedCourses",
-        args: [address as `0x${string}`],
-      },
-    ],
-  });
+  const tabs: TabOption[] = [
+    { id: 0, label: t("myCourses"), icon: <Book className="w-5 h-5" /> },
+    { id: 1, label: t("myNFTs"), icon: <Medal className="w-5 h-5" /> },
+  ];
 
-  const { courseCount, courses } = useMemo(() => {
-    const [, courseDetails] =
-      data?.[0]?.status === "success" ? data[0].result : [];
-    if (data?.[0]?.status === "success") {
-      return {
-        courseCount: courseDetails?.length || 0,
-        courses: courseDetails || [],
-      };
-    }
-    return {
-      courseCount: 0,
-      courses: [],
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const scrolled = window.scrollY;
+      containerRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
     };
-  }, [data]);
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <Box className="max-w-7xl mx-auto p-6">
-      <StaticAppHeader />
-      {isLoading ? (
-        <Box className="flex justify-center items-center min-h-[400px]">
-          <CircularProgress />
+    <Box className="relative min-h-screen">
+      {/* 动态背景 */}
+      <div className="fixed inset-0 bg-gradient-to-b from-black via-gray-900 to-blue-900">
+        <div ref={containerRef} className="w-full h-full">
+          <AnimatedBackground />
+        </div>
+      </div>
+
+      {/* 内容 */}
+      <div className="relative">
+        <StaticAppHeader />
+        <Box className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex gap-12">
+            {/* 左侧 Tab */}
+            <div className="w-48 shrink-0">
+              <Typography variant="h5" className="mb-6 font-bold text-white">
+                {t("myAssets")}
+              </Typography>
+              <div className="space-y-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200
+                      ${activeTab === tab.id 
+                        ? 'bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-white border border-blue-500/30' 
+                        : 'text-white/60 hover:text-white hover:bg-white/5'
+                      }`}
+                  >
+                    {tab.icon}
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 右侧内容 */}
+            <div className="flex-1 min-w-0">
+              {activeTab === 0 ? (
+                <CourseList showPurchaseButton={false} onlyPurchased={true} />
+              ) : (
+                <NFTList />
+              )}
+            </div>
+          </div>
         </Box>
-      ) : (
-        <>
-          <Typography variant="h4" className="mb-6 font-bold">
-            我的课程
-          </Typography>
-
-          <Typography variant="subtitle1" className="mb-4">
-            总课程数: {courseCount?.toString() || "0"}
-          </Typography>
-
-          <Grid container spacing={3}>
-            {(courses as Course[])?.map((course) => (
-              <Grid item xs={12} sm={6} md={4} key={course.web2CourseId}>
-                <Card className="h-full">
-                  <CardContent>
-                    <Typography variant="h6" className="mb-2">
-                      {course.name}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      className="mb-2"
-                    >
-                      课程ID: {course.web2CourseId}
-                    </Typography>
-
-                    <Typography variant="h6" color="primary" className="mb-2">
-                      {Number(course.price).toString()} MMC
-                    </Typography>
-
-                    <Box className="flex gap-2 mt-4">
-                      <Chip label={"已购买"} color="success" />
-                      {course.creator === address && (
-                        <Chip label="我创建的" color="primary" />
-                      )}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </>
-      )}
+      </div>
     </Box>
   );
 }

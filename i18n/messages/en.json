@@ -48,7 +48,7 @@
     "menu": {
       "addCourses": "Add Courses",
       "swap": "Swap",
-      "myNFTs": "My NFTs"
+      "userCenter": "User Center"
     },
     "wallet": {
       "connect": "Connect Wallet",
@@ -90,6 +90,11 @@
       "completed": "Course Completion NFT",
       "congratulations": "Congratulations on completing {courseName}!"
     }
+  },
+  "UserCenter": {
+    "myCourses": "My Courses",
+    "myNFTs": "My NFTs",
+    "myAssets": "My Assets"
   },
   "status": {
     "connectWallet": "Please connect wallet first",

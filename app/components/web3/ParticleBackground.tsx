@@ -110,7 +110,7 @@ export default function AnimatedBackground() {
     // 清理函数
     return () => {
       particles.forEach(p => p.element.remove());
-      cancelAnimationFrame(animate as any);
+      cancelAnimationFrame(animate as unknown as number);
     };
   }, []);
 

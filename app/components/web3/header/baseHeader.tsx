@@ -1,10 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { useTheme } from "next-themes";
 import {
   Menu as MenuIcon,
-  Sun,
-  Moon,
   User,
   LogOut,
   ChevronDown,
@@ -13,8 +10,6 @@ import {
 import GradientButton from "@/components/common/GradientButton";
 import { useHydrateAtoms } from "jotai/utils";
 import { hasTokenAtom } from "@/app/stores/cookie";
-import { useAtom } from "jotai";
-import { themeAtom, setThemeAtom } from "@/app/stores/theme";
 import { injected, useAccount, useConnect, useDisconnect } from "wagmi";
 import { formatAddress } from "@/utils";
 import { useTranslations } from "next-intl";
@@ -25,25 +20,11 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   const t = useTranslations("Header");
   const params = useParams();
   const locale = (params.locale as string) || "zh-cn";
-  console.log("locale", locale);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   useHydrateAtoms([[hasTokenAtom, hasTokenServer]]);
-  const [hasToken] = useAtom(hasTokenAtom);
-  const [theme] = useAtom(themeAtom);
-  const [, setThemeInAtom] = useAtom(setThemeAtom);
-  const { setTheme: setThemeNext } = useTheme();
-
-  const setTheme = (newTheme: "light" | "dark") => {
-    setThemeNext(newTheme);
-    setThemeInAtom(newTheme);
-  };
   const account = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
-
-  // useEffect(() => {
-  //   console.log(account)
-  // }, [account])
 
   const handleLogin = async () => {
     connect({ connector: injected() });
@@ -52,7 +33,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   const navigation = [
     { name: t("menu.addCourses"), href: `/${locale}/web3/course/add` },
     { name: t("menu.swap"), href: `/${locale}/web3/swap` },
-    { name: t("menu.myNFTs"), href: `/${locale}/web3/course/my` },
+    { name: t("menu.userCenter"), href: `/${locale}/web3/course/my` },
   ];
 
   // 认证相关按钮组件
@@ -161,8 +142,15 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
         <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-gray-200/50 via-blue-200/50 to-gray-200/50 dark:from-gray-800/50 dark:via-blue-900/50 dark:to-gray-800/50" />
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={`/${locale}/web3`} className="flex items-center flex-shrink-0">
-            <img src="/icon-192x192.png" alt="MMC Audio Logo" className="h-8 w-8" />
+          <Link
+            href={`/${locale}/web3`}
+            className="flex items-center flex-shrink-0"
+          >
+            <img
+              src="/icon-192x192.png"
+              alt="MMC Audio Logo"
+              className="h-8 w-8"
+            />
             <span className="ml-3 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-400 dark:to-indigo-400">
               MMC Audio
             </span>
