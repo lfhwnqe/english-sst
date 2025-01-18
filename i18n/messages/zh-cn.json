@@ -1,11 +1,52 @@
 {
   "HomePage": {
     "title": "你好!",
-    "about": "去关于页面"
+    "about": "去关于页面",
+    "description": "基于区块链技术的音频学习平台，为每个完成课程的学习者颁发独特的 NFT 证书",
+    "features": {
+      "title": "探索 MMC Audio Web3 的独特优势",
+      "description": "基于区块链技术的音频学习平台，为每个完成课程的学习者颁发独特的 NFT 证书",
+      "learning": {
+        "title": "课程学习",
+        "description": "丰富的音频课程资源，让学习更加灵活有趣"
+      },
+      "nft": {
+        "title": "NFT 认证",
+        "description": "完成课程后获得独特的 NFT 证书，永久记录您的学习成就"
+      },
+      "token": {
+        "title": "代币激励",
+        "description": "使用 MMC 代币购买课程，参与平台生态建设"
+      }
+    },
+    "howItWorks": {
+      "title": "使用流程",
+      "description": "简单三步，开启您的学习之旅",
+      "step1": {
+        "title": "选择课程",
+        "description": "浏览我们丰富的课程库，选择适合您的学习内容"
+      },
+      "step2": {
+        "title": "完成学习",
+        "description": "按照自己的节奏学习，完成课程内容和测试"
+      },
+      "step3": {
+        "title": "获得认证",
+        "description": "获得独特的 NFT 证书，同时赚取平台代币奖励"
+      }
+    },  
+    "cta": {
+      "title": "准备好开始您的学习之旅了吗？",
+      "button": "立即开始"
+    },
+    "buttons": {
+      "browse": "浏览课程",
+      "token": "获取代币"
+    }
   },
   "Header": {
     "menu": {
-      "courses": "添加课程",
+      "addCourses": "添加课程",
       "swap": "兑换",
       "myNFTs": "我的 NFT"
     },

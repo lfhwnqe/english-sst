@@ -1,11 +1,52 @@
 {
   "HomePage": {
     "title": "Hello world!",
-    "about": "Go to the about page"
+    "about": "Go to the about page",
+    "description": "A blockchain-based audio learning platform, awarding unique NFT certificates to learners who complete courses",
+    "features": {
+      "title": "Explore the Unique Advantages of MMC Audio Web3",
+      "description": "A blockchain-based audio learning platform, awarding unique NFT certificates to learners who complete courses",
+      "learning": {
+        "title": "Course Learning",
+        "description": "Rich audio course resources, making learning more flexible and interesting"
+      },
+      "nft": {
+        "title": "NFT Certification",
+        "description": "Obtain a unique NFT certificate after completing a course, permanently recording your learning achievements"
+      },
+      "token": {
+        "title": "Token Incentive",
+        "description": "Use MMC tokens to purchase courses and participate in platform ecosystem construction"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "description": "Simple three steps to start your learning journey",
+      "step1": {
+        "title": "Choose a Course",
+        "description": "Browse our rich course library and select the content that suits you"
+      },
+      "step2": {
+        "title": "Complete Learning",
+        "description": "Learn at your own pace, complete course content and tests"
+      },
+      "step3": {
+        "title": "Get Certified",
+        "description": "Obtain a unique NFT certificate, while earning platform token rewards"
+      }
+    },
+    "cta": {
+      "title": "Ready to start your learning journey?",
+      "button": "Get Started"
+    },
+    "buttons": {
+      "browse": "Browse Courses",
+      "token": "Get Tokens"
+    }
   },
   "Header": {
     "menu": {
-      "courses": "Add Courses",
+      "addCourses": "Add Courses",
       "swap": "Swap",
       "myNFTs": "My NFTs"
     },

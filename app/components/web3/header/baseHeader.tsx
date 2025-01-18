@@ -50,7 +50,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   };
 
   const navigation = [
-    { name: t("menu.courses"), href: `/${locale}/web3/course/add` },
+    { name: t("menu.addCourses"), href: `/${locale}/web3/course/add` },
     { name: t("menu.swap"), href: `/${locale}/web3/swap` },
     { name: t("menu.myNFTs"), href: `/${locale}/web3/course/my` },
   ];
