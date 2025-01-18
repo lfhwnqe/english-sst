@@ -3,18 +3,13 @@
 import { useEffect, useState } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { MMCERC721Coin__factory } from "@/abi/typechain-types";
-import {
-  Box,
-  Card,
-  CardContent,
-  Grid,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Card, CardContent, Grid } from "@mui/material";
 import { mmcNFTAddressAtom } from "@/app/stores/web3";
 import { useAtomValue } from "jotai";
 import { Award } from "lucide-react";
 import ThemeText from "@/app/components/common/ThemeText";
 import { useTranslations } from "next-intl";
+import Web3Loading from "../common/Web3Loading";
 
 interface NFTMetadata {
   name: string;
@@ -28,11 +23,12 @@ interface NFTMetadata {
 
 export default function NFTList() {
   const mmcNFTAddress = useAtomValue(mmcNFTAddressAtom);
+
   const { address } = useAccount();
   const [nftMetadata, setNFTMetadata] = useState<{
     [key: string]: NFTMetadata;
   }>({});
-  const t = useTranslations("UserCenter");
+  const t = useTranslations("NFTComponent");
 
   // 读取用户的 NFT
   const { data: nftData, isLoading } = useReadContract({
@@ -45,7 +41,7 @@ export default function NFTList() {
   useEffect(() => {
     const fetchAllMetadata = async () => {
       if (!nftData || !nftData[1]) return;
-      
+
       const metadata: { [key: string]: NFTMetadata } = {};
       await Promise.all(
         nftData[1].map(async (tokenURI: string, index: number) => {
@@ -69,8 +65,7 @@ export default function NFTList() {
   if (isLoading) {
     return (
       <Box className="flex justify-center items-center min-h-[400px]">
-        <CircularProgress />
-        <ThemeText>{t("loading")}</ThemeText>
+        <Web3Loading />
       </Box>
     );
   }
@@ -79,11 +74,9 @@ export default function NFTList() {
     return (
       <Box className="text-center py-12">
         <ThemeText variant="h6" className="mb-2 text-white">
-          暂无 NFT 证书
+          {t("nft.noNFT")}
         </ThemeText>
-        <ThemeText className="text-gray-400">
-          完成课程学习即可获得 NFT 证书
-        </ThemeText>
+        <ThemeText className="text-gray-400">{t("nft.getNFT")}</ThemeText>
       </Box>
     );
   }
@@ -96,14 +89,16 @@ export default function NFTList() {
 
         return (
           <Grid item xs={12} sm={6} md={4} key={nftData[0][index].toString()}>
-            <Card className="h-full transition-all duration-300 relative 
+            <Card
+              className="h-full transition-all duration-300 relative 
               before:absolute before:inset-0 before:p-[2px] before:rounded-lg before:-z-10
               before:bg-gradient-to-r before:from-blue-500 before:via-purple-500 before:to-pink-500
               bg-white/5 backdrop-blur-sm
               shadow-[0_0_15px_rgba(59,130,246,0.3)]
               hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]
               scale-[1.02] hover:scale-[1.03]
-              ring-1 ring-white/10 hover:ring-blue-500/30">
+              ring-1 ring-white/10 hover:ring-blue-500/30"
+            >
               <Box
                 sx={{
                   width: "100%",
@@ -156,8 +151,8 @@ export default function NFTList() {
               </CardContent>
             </Card>
           </Grid>
-        )
+        );
       })}
     </Grid>
   );
-} 
+}

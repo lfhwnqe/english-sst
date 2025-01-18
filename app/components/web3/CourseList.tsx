@@ -1,8 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useAccount, useReadContracts, useWriteContract, useWatchContractEvent } from "wagmi";
-import { CourseMarket__factory, MMCToken__factory } from "@/abi/typechain-types";
+import {
+  useAccount,
+  useReadContracts,
+  useWriteContract,
+  useWatchContractEvent,
+} from "wagmi";
+import {
+  CourseMarket__factory,
+  MMCToken__factory,
+} from "@/abi/typechain-types";
 import {
   Box,
   Card,
@@ -12,12 +20,16 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { courseMarketAddressAtom, mmcTokenAddressAtom } from "@/app/stores/web3";
+import {
+  courseMarketAddressAtom,
+  mmcTokenAddressAtom,
+} from "@/app/stores/web3";
 import { useAtomValue } from "jotai";
 import { useParams, useRouter } from "next/navigation";
 import { Award } from "lucide-react";
 import ThemeText from "@/app/components/common/ThemeText";
 import { useTranslations } from "next-intl";
+import Web3Loading from "../common/Web3Loading";
 
 interface Course {
   web2CourseId: string;
@@ -43,18 +55,23 @@ interface CourseListProps {
   onlyPurchased?: boolean;
 }
 
-export default function CourseList({ showPurchaseButton = true, onlyPurchased = false }: CourseListProps) {
+export default function CourseList({
+  showPurchaseButton = true,
+  onlyPurchased = false,
+}: CourseListProps) {
   const courseMarketAddress = useAtomValue(courseMarketAddressAtom);
   const mmcTokenAddress = useAtomValue(mmcTokenAddressAtom);
   const { address, isConnected } = useAccount();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
   const t = useTranslations("CourseList");
 
   const { writeContract } = useWriteContract();
   const params = useParams();
-  const locale = params.locale as string || 'zh-cn';
+  const locale = (params.locale as string) || "zh-cn";
   const router = useRouter();
 
   // 读取课程列表
@@ -63,8 +80,10 @@ export default function CourseList({ showPurchaseButton = true, onlyPurchased = 
       {
         address: courseMarketAddress as `0x${string}`,
         abi: CourseMarket__factory.abi,
-        functionName: onlyPurchased ? "getUserPurchasedCourses" : "getCoursesByPage",
-        args: onlyPurchased 
+        functionName: onlyPurchased
+          ? "getUserPurchasedCourses"
+          : "getCoursesByPage",
+        args: onlyPurchased
           ? [address as `0x${string}`]
           : [
               address
@@ -79,25 +98,26 @@ export default function CourseList({ showPurchaseButton = true, onlyPurchased = 
 
   // 读取代币余额和授权额度
   const { data: tokenData } = useReadContracts({
-    contracts: address && showPurchaseButton
-      ? [
-          {
-            address: mmcTokenAddress as `0x${string}`,
-            abi: MMCToken__factory.abi,
-            functionName: "balanceOf",
-            args: [address as `0x${string}`],
-          },
-          {
-            address: mmcTokenAddress as `0x${string}`,
-            abi: MMCToken__factory.abi,
-            functionName: "allowance",
-            args: [
-              address as `0x${string}`,
-              courseMarketAddress as `0x${string}`,
-            ],
-          },
-        ]
-      : [],
+    contracts:
+      address && showPurchaseButton
+        ? [
+            {
+              address: mmcTokenAddress as `0x${string}`,
+              abi: MMCToken__factory.abi,
+              functionName: "balanceOf",
+              args: [address as `0x${string}`],
+            },
+            {
+              address: mmcTokenAddress as `0x${string}`,
+              abi: MMCToken__factory.abi,
+              functionName: "allowance",
+              args: [
+                address as `0x${string}`,
+                courseMarketAddress as `0x${string}`,
+              ],
+            },
+          ]
+        : [],
   });
 
   const { courseCount, courses } = useMemo(() => {
@@ -188,7 +208,7 @@ export default function CourseList({ showPurchaseButton = true, onlyPurchased = 
 
   const handleCourseClick = async (course: Course) => {
     if (!showPurchaseButton) return;
-    
+
     if (!isConnected) {
       showMessage(t("status.connectWallet"), "error");
       return;
@@ -239,8 +259,7 @@ export default function CourseList({ showPurchaseButton = true, onlyPurchased = 
   if (isLoading) {
     return (
       <Box className="flex justify-center items-center min-h-[400px]">
-        <CircularProgress />
-        <ThemeText>{t("loading")}</ThemeText>
+        <Web3Loading />
       </Box>
     );
   }
@@ -315,12 +334,14 @@ export default function CourseList({ showPurchaseButton = true, onlyPurchased = 
                       className="w-6 h-6 text-blue-500 relative z-10"
                       strokeWidth={2.5}
                     />
-                    <div className="absolute right-0 top-full mt-2 w-[280px] opacity-0 invisible 
+                    <div
+                      className="absolute right-0 top-full mt-2 w-[280px] opacity-0 invisible 
                       group-hover:opacity-100 group-hover:visible transition-all duration-200 
                       bg-white/90 backdrop-blur-sm text-gray-800 text-xs rounded-lg 
                       shadow-lg border border-gray-100 z-20 p-3"
                     >
-                      <div className="absolute -top-1 right-2 w-2 h-2 bg-white/90 rotate-45 
+                      <div
+                        className="absolute -top-1 right-2 w-2 h-2 bg-white/90 rotate-45 
                         border-l border-t border-gray-100"
                       ></div>
 
@@ -407,4 +428,4 @@ export default function CourseList({ showPurchaseButton = true, onlyPurchased = 
       </Snackbar>
     </>
   );
-} 
+}
