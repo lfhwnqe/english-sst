@@ -4,7 +4,6 @@ import {
   Menu as MenuIcon,
   User,
   LogOut,
-  ChevronDown,
   Wallet,
 } from "lucide-react";
 import GradientButton from "@/components/common/GradientButton";
