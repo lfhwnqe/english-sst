@@ -38,9 +38,9 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
 
   // 认证相关按钮组件
   const AuthButtons = () => (
-    <div className="flex items-center space-x-2">
-      <GradientButton onClick={handleLogin}>
-        {t("wallet.connect")}
+    <div className="w-[140px] flex items-center justify-end">
+      <GradientButton onClick={handleLogin} className="px-4 py-1.5 w-full">
+        <span className="text-sm whitespace-nowrap">{t("wallet.connect")}</span>
       </GradientButton>
     </div>
   );
@@ -77,61 +77,45 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
     };
 
     return (
-      <div className="relative" ref={dropdownRef}>
+      <div className="w-[140px] flex justify-end relative" ref={dropdownRef}>
         <GradientButton
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 rounded-lg flex items-center group"
+          className="px-3 py-1.5 rounded-lg flex items-center justify-end w-full"
         >
-          <span className="flex items-center space-x-2">
-            <User size={20} />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="flex items-center whitespace-nowrap">
+            <User size={16} className="mr-1.5" />
+            <span className="text-sm">
               {formatAddress(account.address || "", 4)}
             </span>
-            <ChevronDown
-              size={16}
-              className={`transition-transform duration-200 ${
-                isOpen ? "rotate-180" : ""
-              }`}
-            />
           </span>
         </GradientButton>
 
         {/* 下拉菜单 */}
-        <div
-          className={`
-            absolute right-0 mt-2  rounded-lg 
-            bg-white dark:bg-gray-800 
-            shadow-lg ring-1 ring-black ring-opacity-5 
-            transition-all duration-200 ease-in-out
-            ${
-              isOpen
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-2 pointer-events-none"
-            }
-          `}
-        >
-          <div className="py-1">
-            {/* 钱包信息 */}
-            <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center space-x-2">
-                <Wallet size={16} />
-                <span>{t("wallet.address")}</span>
+        {isOpen && (
+          <div className="absolute right-0 top-full mt-1 w-[180px] rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+            <div className="py-1">
+              {/* 钱包信息 */}
+              <div className="px-3 py-2 text-sm text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700">
+                <div className="flex items-center">
+                  <Wallet size={14} className="mr-1.5" />
+                  <span className="text-xs">{t("wallet.address")}</span>
+                </div>
+                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 font-mono break-all">
+                  {account.address}
+                </div>
               </div>
-              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 font-mono">
-                {account.address}
-              </div>
-            </div>
 
-            {/* 退出按钮 */}
-            <button
-              onClick={handleLogout}
-              className="w-full px-4 py-2 text-sm text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2"
-            >
-              <LogOut size={16} />
-              <span>{t("wallet.disconnect")}</span>
-            </button>
+              {/* 退出按钮 */}
+              <button
+                onClick={handleLogout}
+                className="w-full px-3 py-1.5 text-sm text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
+              >
+                <LogOut size={14} className="mr-1.5" />
+                <span className="text-xs">{t("wallet.disconnect")}</span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   };
@@ -140,11 +124,11 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
     <div className="">
       <nav className="mx-auto px-4 sm:px-6 lg:px-8 relative bg-white/50 dark:bg-black backdrop-blur-sm">
         <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-gray-200/50 via-blue-200/50 to-gray-200/50 dark:from-gray-800/50 dark:via-blue-900/50 dark:to-gray-800/50" />
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center h-16">
           {/* Logo */}
           <Link
             href={`/${locale}/web3`}
-            className="flex items-center flex-shrink-0"
+            className="flex items-center flex-shrink-0 mr-6"
           >
             <img
               src="/icon-192x192.png"
@@ -156,28 +140,27 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Desktop Navigation - 移到左边 */}
+          <div className="hidden md:flex items-center space-x-2 flex-1">
             {navigation.map((item) => (
-              <GradientButton key={item.name} href={item.href} prefetch>
-                {item.name}
+              <GradientButton 
+                key={item.name} 
+                href={item.href} 
+                prefetch
+                className="px-3 py-1.5"
+              >
+                <span className="text-sm whitespace-nowrap">{item.name}</span>
               </GradientButton>
             ))}
+          </div>
 
-            {/* Theme Toggle */}
-            {/* <GradientButton
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-lg"
-            >
-              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-            </GradientButton> */}
-
-            {/* Auth Section */}
+          {/* Auth Section - 保持在右边 */}
+          <div className="w-[140px] flex justify-end transition-all duration-300">
             {account.status === "connected" ? <UserInfo /> : <AuthButtons />}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden ml-2">
             <GradientButton
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 rounded-lg"
@@ -216,29 +199,11 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
                 </GradientButton>
               ))}
             </div>
-
-            {/* Theme and Auth */}
-            {/* <div className="p-4 flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {t("theme.switch")}
-                </span>
-                <GradientButton
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="p-2 rounded-lg"
-                >
-                  {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-                </GradientButton>
-              </div>
-              <div className="flex justify-end">
-                {hasToken ? <UserInfo /> : <AuthButtons />}
-              </div>
-            </div> */}
           </div>
         </div>
       </nav>
     </div>
   );
 }
-
 export default BaseHeader;
+
