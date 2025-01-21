@@ -71,6 +71,7 @@ interface PurchaseDialogProps {
   courseMetadata: { [key: string]: CourseMetadata };
   locale: string;
   router: ReturnType<typeof useRouter>;
+  currentStep: TransactionStep;
 }
 
 function PurchaseDialog({
@@ -83,6 +84,7 @@ function PurchaseDialog({
   courseMetadata,
   locale,
   router,
+  currentStep,
 }: PurchaseDialogProps) {
   const t = useTranslations("CourseList");
 
@@ -90,6 +92,7 @@ function PurchaseDialog({
 
   const hasInsufficientBalance = balance < course.price;
   const needsApproval = allowance < course.price;
+  const isLoading = currentStep === "approve" || currentStep === "purchase";
 
   return (
     <Dialog
@@ -105,7 +108,12 @@ function PurchaseDialog({
       <DialogTitle className="border-b border-gray-200/50 dark:border-gray-700/50 text-gray-900 dark:text-gray-100">
         {t("purchase.confirmTitle")}
       </DialogTitle>
-      <DialogContent className="mt-4">
+      <DialogContent className="mt-4 relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/50 dark:bg-gray-800/50 backdrop-blur-[1px] flex items-center justify-center z-10">
+            <CircularProgress size={32} />
+          </div>
+        )}
         <div className="flex gap-4 mb-4">
           <img
             src={
@@ -419,7 +427,43 @@ export default function CourseList({
     if (!selectedCourse) return;
 
     try {
-      // 直接进入购买流程
+      // 如果需要授权，先进行授权
+      if (allowance < selectedCourse.price) {
+        try {
+          setPendingApproval(true);
+          setCurrentStep("approve");
+          // 授权额度设置为课程价格
+          const approveAmount = selectedCourse.price;
+          
+          const result = await writeContractAsync({
+            address: mmcTokenAddress as `0x${string}`,
+            abi: MMCToken__factory.abi,
+            functionName: "approve",
+            args: [courseMarketAddress as `0x${string}`, approveAmount],
+          });
+
+          if (result) {
+            showMessage(t("status.authorizationSent"), "success");
+            console.log("Approval submitted:", result);
+          }
+        } catch (err) {
+          setPendingApproval(false);
+          const errorMessage = err instanceof Error ? err.message : String(err);
+          console.error("Authorization error details:", err);
+          
+          if (errorMessage.includes("User rejected the request")) {
+            showMessage(t("status.userRejected"), "error");
+          } else if (errorMessage.includes("reverted")) {
+            showMessage(t("status.authorizationFailed"), "error");
+          } else {
+            showMessage(t("status.authorizationCanceled"), "error");
+          }
+          setCurrentStep("none");
+        }
+        return;
+      }
+
+      // 已有授权，直接购买
       setCurrentStep("purchase");
       const result = await writeContractAsync({
         address: courseMarketAddress as `0x${string}`,
@@ -434,49 +478,18 @@ export default function CourseList({
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      // 如果是 ERC20InsufficientAllowance 错误，说明需要授权
-      if (errorMessage.includes("ERC20InsufficientAllowance")) {
-        try {
-          setPendingApproval(true);
-          setCurrentStep("approve");
-          const approveAmount = selectedCourse.price;
-          
-          const approveResult = await writeContractAsync({
-            address: mmcTokenAddress as `0x${string}`,
-            abi: MMCToken__factory.abi,
-            functionName: "approve",
-            args: [courseMarketAddress as `0x${string}`, approveAmount],
-          });
-
-          if (approveResult) {
-            showMessage(t("status.authorizationSent"), "success");
-            console.log("Approval submitted:", approveResult);
-          }
-        } catch (approveErr) {
-          setPendingApproval(false);
-          const approveErrorMessage = approveErr instanceof Error ? approveErr.message : String(approveErr);
-          if (approveErrorMessage.includes("User rejected the request")) {
-            showMessage(t("status.userRejected"), "error");
-          } else {
-            showMessage(t("status.authorizationCanceled"), "error");
-          }
-          console.error("Approval failed:", approveErr);
-          setCurrentStep("none");
-          setPurchaseDialogOpen(false);
-          setSelectedCourse(null);
-        }
-      } else if (errorMessage.includes("User rejected the request")) {
+      console.error("Purchase error details:", err);
+      
+      if (errorMessage.includes("User rejected the request")) {
         showMessage(t("status.userRejected"), "error");
-        setCurrentStep("none");
-        setPurchaseDialogOpen(false);
-        setSelectedCourse(null);
+      } else if (errorMessage.includes("reverted")) {
+        showMessage(t("status.purchaseContractError"), "error");
       } else {
         showMessage(t("status.purchaseCanceled"), "error");
-        console.error("Transaction failed:", err);
-        setCurrentStep("none");
-        setPurchaseDialogOpen(false);
-        setSelectedCourse(null);
       }
+      setCurrentStep("none");
+      setPurchaseDialogOpen(false);
+      setSelectedCourse(null);
     }
   };
 
@@ -652,6 +665,7 @@ export default function CourseList({
         courseMetadata={courseMetadata}
         locale={locale}
         router={router}
+        currentStep={currentStep}
       />
 
       <Snackbar
