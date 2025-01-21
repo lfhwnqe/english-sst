@@ -1,128 +1,53 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
 import AnimatedBackground from "@/app/components/web3/ParticleBackground";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import './web3.css'; // 我们将在下一步创建这个文件
 
 export default function Web3Page() {
   const t = useTranslations("HomePage");
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // 确保页面初始位置在顶部
     window.scrollTo(0, 0);
 
-    // 背景视差效果
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      const scrolled = window.scrollY;
-      containerRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
-    };
+    // 创建 Intersection Observer
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+            observer.unobserve(entry.target); // 动画只触发一次
+          }
+        });
+      },
+      {
+        threshold: 0.1, // 当元素10%可见时触发
+        rootMargin: '50px' // 提前50px触发
+      }
+    );
 
-    window.addEventListener('scroll', handleScroll);
-
-    // 创建动画
-    const context = gsap.context(() => {
-      // 设置初始状态
-      gsap.set(".hero-content", {
-        opacity: 0,
-        y: 50
-      });
-
-      gsap.set(".feature-item", {
-        opacity: 0,
-        y: 100,
-        scale: 0.8
-      });
-
-      gsap.set(".step-item", {
-        opacity: 0,
-        y: 100,
-        rotateX: 45
-      });
-
-      gsap.set(".cta-section", {
-        opacity: 0,
-        y: 100,
-        scale: 0.9
-      });
-
-      // Hero 区域动画
-      gsap.to(".hero-content", {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        ease: "power2.out",
-        delay: 0.2
-      });
-
-      // Features 区域动画
-      gsap.to(".feature-item", {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 1.5,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: ".features-section",
-          start: "top 80%",
-          end: "center center",
-          scrub: 1
-        }
-      });
-
-      // How it works 区域动画
-      gsap.to(".step-item", {
-        y: 0,
-        opacity: 1,
-        rotateX: 0,
-        duration: 1.5,
-        stagger: 0.3,
-        scrollTrigger: {
-          trigger: ".steps-section",
-          start: "top 80%",
-          end: "center center",
-          scrub: 1
-        }
-      });
-
-      // CTA 区域动画
-      gsap.to(".cta-section", {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 1.5,
-        scrollTrigger: {
-          trigger: ".cta-section",
-          start: "top 80%",
-          end: "center center",
-          scrub: 1
-        }
-      });
+    // 观察所有需要动画的元素
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+      observer.observe(el);
     });
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      context.revert();
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
     <Box className="relative min-h-screen overflow-x-hidden">
       {/* 背景 */}
       <div className="fixed inset-0 bg-gradient-to-b from-black via-gray-900 to-blue-900">
-        <div ref={containerRef} className="w-full h-full">
+        <div className="w-full h-full">
           <AnimatedBackground />
         </div>
       </div>
@@ -132,8 +57,8 @@ export default function Web3Page() {
         <StaticAppHeader />
 
         {/* Hero Section */}
-        <Container className="min-h-[calc(100vh-64px)] flex items-center hero-content opacity-0">
-          <Box className="text-center max-w-3xl mx-auto py-20">
+        <Container className="min-h-[calc(100vh-64px)] flex items-center">
+          <Box className="text-center max-w-3xl mx-auto py-20 animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out">
             <Typography 
               variant="h2" 
               sx={{ 
@@ -165,7 +90,7 @@ export default function Web3Page() {
         </Container>
 
         {/* Features Section */}
-        <Box className="min-h-screen bg-black/30 features-section flex items-center">
+        <Box className="min-h-screen bg-black/30 flex items-center">
           <Container className="py-20">
             <Typography 
               variant="h3" 
@@ -174,13 +99,14 @@ export default function Web3Page() {
                 color: '#fff',
                 textAlign: 'center'
               }}
+              className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out"
             >
               {t("features.title")}
             </Typography>
             <Grid container spacing={6}>
               {/* 课程学习 */}
-              <Grid item xs={12} md={4} className="feature-item">
-                <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
+              <Grid item xs={12} md={4}>
+                <Box className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out delay-100 p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
                   <Typography 
                     variant="h5" 
                     sx={{ 
@@ -201,8 +127,8 @@ export default function Web3Page() {
                 </Box>
               </Grid>
               {/* NFT认证 */}
-              <Grid item xs={12} md={4} className="feature-item">
-                <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
+              <Grid item xs={12} md={4}>
+                <Box className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out delay-200 p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
                   <Typography 
                     variant="h5" 
                     sx={{ 
@@ -223,8 +149,8 @@ export default function Web3Page() {
                 </Box>
               </Grid>
               {/* 代币激励 */}
-              <Grid item xs={12} md={4} className="feature-item">
-                <Box className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
+              <Grid item xs={12} md={4}>
+                <Box className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out delay-300 p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all h-full">
                   <Typography 
                     variant="h5" 
                     sx={{ 
@@ -249,7 +175,7 @@ export default function Web3Page() {
         </Box>
 
         {/* How it works Section */}
-        <Box className="min-h-screen steps-section flex items-center">
+        <Box className="min-h-screen flex items-center">
           <Container className="py-20">
             <Typography 
               variant="h3" 
@@ -258,6 +184,7 @@ export default function Web3Page() {
                 color: '#fff',
                 textAlign: 'center'
               }}
+              className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out"
             >
               {t("howItWorks.title")}
             </Typography>
@@ -268,13 +195,14 @@ export default function Web3Page() {
                 color: 'rgb(209 213 219)',
                 textAlign: 'center'
               }}
+              className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out delay-100"
             >
               {t("howItWorks.description")}
             </Typography>
             <Grid container spacing={6}>
               {/* Step 1 */}
-              <Grid item xs={12} md={4} className="step-item">
-                <Box className="text-center h-full">
+              <Grid item xs={12} md={4}>
+                <Box className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out delay-100 text-center h-full">
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-2xl font-bold">
                     1
                   </div>
@@ -298,8 +226,8 @@ export default function Web3Page() {
                 </Box>
               </Grid>
               {/* Step 2 */}
-              <Grid item xs={12} md={4} className="step-item">
-                <Box className="text-center h-full">
+              <Grid item xs={12} md={4}>
+                <Box className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out delay-200 text-center h-full">
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-2xl font-bold">
                     2
                   </div>
@@ -323,8 +251,8 @@ export default function Web3Page() {
                 </Box>
               </Grid>
               {/* Step 3 */}
-              <Grid item xs={12} md={4} className="step-item">
-                <Box className="text-center h-full">
+              <Grid item xs={12} md={4}>
+                <Box className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out delay-300 text-center h-full">
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-2xl font-bold">
                     3
                   </div>
@@ -352,9 +280,9 @@ export default function Web3Page() {
         </Box>
 
         {/* CTA Section */}
-        <Box className="min-h-screen bg-black/30 cta-section flex items-center opacity-0">
+        <Box className="min-h-screen bg-black/30 flex items-center">
           <Container>
-            <Box className="text-center max-w-2xl mx-auto">
+            <Box className="animate-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out text-center max-w-2xl mx-auto">
               <Typography 
                 variant="h3" 
                 sx={{ 
