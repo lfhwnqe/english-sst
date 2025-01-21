@@ -48,6 +48,7 @@
     "menu": {
       "addCourses": "添加课程",
       "swap": "兑换",
+      "course": "课程",
       "userCenter": "用户中心"
     },
     "wallet": {
@@ -57,7 +58,8 @@
       "copied": "已复制!",
       "balance": "余额: {amount} MMC",
       "address": "钱包地址"
-    }
+    },
+    "language": "语言"
   },
   "SwapPage": {
     "title": "兑换",
@@ -69,7 +71,8 @@
     "swap": "兑换",
     "swapPending": "处理中...",
     "swapCancel": "您取消了交易",
-    "swapFailed": "兑换失败，请重试"
+    "swapFailed": "兑换失败，请重试",
+    "swapSuccess": "兑换成功！"
   },
   "CourseList": {
     "title": "课程列表",
@@ -84,11 +87,25 @@
       "purchasing": "正在购买课程...",
       "purchaseCanceled": "购买已取消",
       "purchaseSent": "购买请求已发送，请在钱包中确认",
-      "purchaseSuccess": "课程购买成功！"
+      "purchaseSuccess": "课程购买成功！",
+      "authorizationSuccess": "授权成功，正在购买课程...",
+      "userRejected": "用户拒绝了交易请求"
     },
     "nft": {
       "completed": "课程完成认证 NFT",
       "congratulations": "恭喜完成 {courseName} 课程！"
+    },
+    "purchase": {
+      "confirmTitle": "购买课程确认",
+      "confirmDescription": "请确认购买课程信息",
+      "confirmButton": "确认购买",
+      "insufficientBalance": "MMC 代币余额不足，请先兑换 MMC",
+      "getMMC": "兑换 MMC",
+      "needsApproval": "需要授权代币使用权限",
+      "readyToPurchase": "准备购买课程",
+      "cancel": "取消",
+      "approve": "授权",
+      "confirm": "确认购买"
     }
   },
   "UserCenter": {

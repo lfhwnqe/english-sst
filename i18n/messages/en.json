@@ -48,6 +48,7 @@
     "menu": {
       "addCourses": "Add Courses",
       "swap": "Swap",
+      "course": "Course",
       "userCenter": "User Center"
     },
     "wallet": {
@@ -57,7 +58,8 @@
       "copied": "Copied!",
       "balance": "Balance: {amount} MMC",
       "address": "Wallet Address"
-    }
+    },
+    "language": "Language"
   },
   "SwapPage": {
     "title": "Swap",
@@ -69,7 +71,8 @@
     "swap": "Swap",
     "swapPending": "Processing...",
     "swapCancel": "You canceled the transaction",
-    "swapFailed": "Swap failed, please try again"
+    "swapFailed": "Swap failed, please try again",
+    "swapSuccess": "Swap successful!"
   },
   "CourseList": {
     "title": "Course List",
@@ -84,11 +87,25 @@
       "purchasing": "Purchasing course...",
       "purchaseCanceled": "Purchase canceled",
       "purchaseSent": "Purchase request sent, please confirm in wallet",
-      "purchaseSuccess": "Course purchased successfully!"
+      "purchaseSuccess": "Course purchased successfully!",
+      "authorizationSuccess": "Authorization successful, purchasing course...",
+      "userRejected": "User rejected the request"
     },
     "nft": {
       "completed": "Course Completion NFT",
       "congratulations": "Congratulations on completing {courseName}!"
+    },
+    "purchase": {
+      "confirmTitle": "Purchase Course Confirmation",
+      "confirmDescription": "Please confirm the purchase course information",
+      "confirmButton": "Confirm Purchase",
+      "insufficientBalance": "MMC token balance is insufficient, please exchange MMC first",
+      "getMMC": "Exchange MMC",
+      "needsApproval": "Needs to authorize token usage",
+      "readyToPurchase": "Ready to purchase course",
+      "cancel": "Cancel",
+      "approve": "Authorize",
+      "confirm": "Confirm Purchase"
     }
   },
   "UserCenter": {

@@ -19,6 +19,12 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
 } from "@mui/material";
 import {
   courseMarketAddressAtom,
@@ -55,6 +61,147 @@ interface CourseListProps {
   onlyPurchased?: boolean;
 }
 
+interface PurchaseDialogProps {
+  open: boolean;
+  course: Course | null;
+  onClose: () => void;
+  onConfirm: () => void;
+  balance: bigint;
+  allowance: bigint;
+  courseMetadata: { [key: string]: CourseMetadata };
+  locale: string;
+  router: ReturnType<typeof useRouter>;
+}
+
+function PurchaseDialog({
+  open,
+  course,
+  onClose,
+  onConfirm,
+  balance,
+  allowance,
+  courseMetadata,
+  locale,
+  router,
+}: PurchaseDialogProps) {
+  const t = useTranslations("CourseList");
+
+  if (!course) return null;
+
+  const hasInsufficientBalance = balance < course.price;
+  const needsApproval = allowance < course.price;
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        className:
+          "bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50",
+      }}
+    >
+      <DialogTitle className="border-b border-gray-200/50 dark:border-gray-700/50 text-gray-900 dark:text-gray-100">
+        {t("purchase.confirmTitle")}
+      </DialogTitle>
+      <DialogContent className="mt-4">
+        <div className="flex gap-4 mb-4">
+          <img
+            src={
+              courseMetadata[course.web2CourseId]?.image || "/icon-512x512.png"
+            }
+            alt={course.name}
+            className="w-24 h-24 rounded-lg object-cover border border-gray-200/50 dark:border-gray-700/50"
+          />
+          <div>
+            <Typography
+              variant="h6"
+              className="mb-1 text-gray-900 dark:text-gray-100"
+            >
+              {course.name}
+            </Typography>
+            <Typography
+              variant="body2"
+              className="mb-2 text-gray-600 dark:text-gray-400"
+            >
+              {courseMetadata[course.web2CourseId]?.description}
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              className="text-blue-500 dark:text-blue-400"
+            >
+              {course.price.toString()} MMC
+            </Typography>
+          </div>
+        </div>
+
+        {hasInsufficientBalance && (
+          <Alert
+            severity="error"
+            className="mb-4 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800/50"
+          >
+            <div className="flex flex-col gap-2">
+              <div>{t("purchase.insufficientBalance")}</div>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => {
+                  router.push(`/${locale}/web3/swap`);
+                }}
+                className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 self-start"
+              >
+                {t("purchase.getMMC")}
+              </Button>
+            </div>
+          </Alert>
+        )}
+
+        {!hasInsufficientBalance && needsApproval && (
+          <Alert
+            severity="info"
+            className="mb-4 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800/50"
+          >
+            {t("purchase.needsApproval")}
+          </Alert>
+        )}
+
+        {!hasInsufficientBalance && !needsApproval && (
+          <Alert
+            severity="info"
+            className="mb-4 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800/50"
+          >
+            {t("purchase.readyToPurchase")}
+          </Alert>
+        )}
+      </DialogContent>
+      <DialogActions className="border-t border-gray-200/50 dark:border-gray-700/50 p-4">
+        <Button
+          onClick={onClose}
+          className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          {t("purchase.cancel")}
+        </Button>
+        <Button
+          onClick={onConfirm}
+          variant="contained"
+          disabled={hasInsufficientBalance}
+          className={`
+            ${
+              needsApproval
+                ? "bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
+                : "bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-700"
+            }
+            disabled:bg-gray-400 dark:disabled:bg-gray-600
+          `}
+        >
+          {needsApproval ? t("purchase.approve") : t("purchase.confirm")}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
 export default function CourseList({
   showPurchaseButton = true,
   onlyPurchased = false,
@@ -69,7 +216,7 @@ export default function CourseList({
   );
   const t = useTranslations("CourseList");
 
-  const { writeContract } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
   const params = useParams();
   const locale = (params.locale as string) || "zh-cn";
   const router = useRouter();
@@ -97,7 +244,7 @@ export default function CourseList({
   });
 
   // 读取代币余额和授权额度
-  const { data: tokenData } = useReadContracts({
+  const { data: tokenData, refetch: refetchTokenData } = useReadContracts({
     contracts:
       address && showPurchaseButton
         ? [
@@ -186,7 +333,11 @@ export default function CourseList({
   };
 
   const [currentStep, setCurrentStep] = useState<TransactionStep>("none");
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
+  const [pendingApproval, setPendingApproval] = useState(false);
 
+  // 监听购买事件
   useWatchContractEvent({
     address: courseMarketAddress as `0x${string}`,
     abi: CourseMarket__factory.abi,
@@ -195,12 +346,40 @@ export default function CourseList({
       for (const log of logs) {
         if (log.args && typeof log.args === "object" && "buyer" in log.args) {
           const { buyer } = log.args;
-          if (buyer === address) {
+          if (buyer === address && currentStep === "purchase") {
             showMessage(t("status.purchaseSuccess"), "success");
             setCurrentStep("none");
+            setPurchaseDialogOpen(false);
             refetch();
             break;
           }
+        }
+      }
+    },
+  });
+
+  // 监听授权事件
+  useWatchContractEvent({
+    address: mmcTokenAddress as `0x${string}`,
+    abi: MMCToken__factory.abi,
+    eventName: "Approval",
+    onLogs(logs) {
+      for (const log of logs) {
+        if (
+          pendingApproval &&
+          log.args && 
+          typeof log.args === "object" && 
+          "owner" in log.args && 
+          "spender" in log.args &&
+          log.args.owner === address &&
+          log.args.spender === courseMarketAddress
+        ) {
+          setPendingApproval(false);
+          showMessage(t("status.authorizationSuccess"), "success");
+          // 授权成功后重新获取授权额度
+          refetchTokenData();
+          setCurrentStep("none");
+          break;
         }
       }
     },
@@ -219,40 +398,67 @@ export default function CourseList({
       return;
     }
 
+    // 检查余额
     if (balance < course.price) {
       showMessage(t("status.insufficientBalance"), "error");
       return;
     }
 
-    try {
-      if (allowance < course.price) {
-        setCurrentStep("approve");
-        try {
-          await writeContract({
-            address: mmcTokenAddress as `0x${string}`,
-            abi: MMCToken__factory.abi,
-            functionName: "approve",
-            args: [courseMarketAddress as `0x${string}`, course.price],
-          });
-          showMessage(t("status.authorizationSent"), "success");
-        } catch {
-          showMessage(t("status.authorizationCanceled"), "error");
-          setCurrentStep("none");
-        }
-        return;
-      }
+    // 直接打开购买确认对话框
+    setSelectedCourse(course);
+    setPurchaseDialogOpen(true);
+  };
 
-      setCurrentStep("purchase");
-      await writeContract({
-        address: courseMarketAddress as `0x${string}`,
-        abi: CourseMarket__factory.abi,
-        functionName: "purchaseCourse",
-        args: [course.web2CourseId],
-      });
-      showMessage(t("status.purchaseSent"), "success");
-    } catch {
-      showMessage(t("status.purchaseCanceled"), "error");
+  // 处理确认按钮点击
+  const handlePurchaseConfirm = async () => {
+    if (!selectedCourse) return;
+
+    try {
+      // 如果需要授权，先进行授权
+      if (allowance < selectedCourse.price) {
+        setPendingApproval(true);
+        setCurrentStep("approve");
+        // 授权额度设置为课程价格
+        const approveAmount = selectedCourse.price;
+        
+        const result = await writeContractAsync({
+          address: mmcTokenAddress as `0x${string}`,
+          abi: MMCToken__factory.abi,
+          functionName: "approve",
+          args: [courseMarketAddress as `0x${string}`, approveAmount],
+        });
+
+        if (result) {
+          showMessage(t("status.authorizationSent"), "success");
+          console.log("Approval submitted:", result);
+        }
+      } else {
+        // 已有授权，直接购买
+        setCurrentStep("purchase");
+        const result = await writeContractAsync({
+          address: courseMarketAddress as `0x${string}`,
+          abi: CourseMarket__factory.abi,
+          functionName: "purchaseCourse",
+          args: [selectedCourse.web2CourseId],
+        });
+
+        if (result) {
+          showMessage(t("status.purchaseSent"), "success");
+          console.log("Transaction submitted:", result);
+        }
+      }
+    } catch (err) {
+      setPendingApproval(false);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (errorMessage.includes("User rejected the request")) {
+        showMessage(t("status.userRejected"), "error");
+      } else {
+        showMessage(t("status.authorizationCanceled"), "error");
+      }
+      console.error("Transaction failed:", err);
       setCurrentStep("none");
+      setPurchaseDialogOpen(false);
+      setSelectedCourse(null);
     }
   };
 
@@ -413,6 +619,22 @@ export default function CourseList({
           </Grid>
         ))}
       </Grid>
+
+      <PurchaseDialog
+        open={purchaseDialogOpen}
+        course={selectedCourse}
+        onClose={() => {
+          setPurchaseDialogOpen(false);
+          setSelectedCourse(null);
+          setCurrentStep("none");
+        }}
+        onConfirm={handlePurchaseConfirm}
+        balance={balance}
+        allowance={allowance}
+        courseMetadata={courseMetadata}
+        locale={locale}
+        router={router}
+      />
 
       <Snackbar
         open={openSnackbar}
