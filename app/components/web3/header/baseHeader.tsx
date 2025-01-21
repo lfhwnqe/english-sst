@@ -5,6 +5,8 @@ import {
   User,
   LogOut,
   Wallet,
+  Globe,
+  ChevronDown,
 } from "lucide-react";
 import GradientButton from "@/components/common/GradientButton";
 import { useHydrateAtoms } from "jotai/utils";
@@ -14,12 +16,14 @@ import { formatAddress } from "@/utils";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   const t = useTranslations("Header");
   const params = useParams();
   const locale = (params.locale as string) || "zh-cn";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
   useHydrateAtoms([[hasTokenAtom, hasTokenServer]]);
   const account = useAccount();
   const { connect } = useConnect();
@@ -30,14 +34,35 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   };
 
   const navigation = [
-    { name: t("menu.addCourses"), href: `/${locale}/web3/course/add` },
+    // { name: t("menu.addCourses"), href: `/${locale}/web3/course/add` },
     { name: t("menu.swap"), href: `/${locale}/web3/swap` },
+    { name: t("menu.course"), href: `/${locale}/web3/course` },
     { name: t("menu.userCenter"), href: `/${locale}/web3/course/my` },
   ];
 
+  // 语言选项
+  const languages = [
+    { code: 'zh-cn', name: '简体中文' },
+    { code: 'en', name: 'English' }
+  ];
+
+  // 处理语言切换
+  const handleLanguageChange = (langCode: string) => {
+    // 获取当前完整路径
+    const pathname = window.location.pathname;
+    // 将当前路径按 '/' 分割
+    const pathSegments = pathname.split('/');
+    // 替换 locale 部分（第一个段）
+    pathSegments[1] = langCode;
+    // 重新组合路径
+    const newPath = pathSegments.join('/');
+    // 导航到新路径
+    router.push(newPath);
+  };
+
   // 认证相关按钮组件
   const AuthButtons = () => (
-    <div className="w-[140px] flex items-center justify-end">
+    <div className="w-[160px] flex items-center justify-end">
       <GradientButton onClick={handleLogin} className="px-4 py-1.5 w-full">
         <span className="text-sm whitespace-nowrap">{t("wallet.connect")}</span>
       </GradientButton>
@@ -47,6 +72,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   // 用户信息组件
   const UserInfo = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // 点击外部关闭下拉菜单
@@ -57,6 +83,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
           !dropdownRef.current.contains(event.target as Node)
         ) {
           setIsOpen(false);
+          setIsLangMenuOpen(false);
         }
       };
 
@@ -66,9 +93,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
     }, []);
 
     const handleLogout = async () => {
-      // 处理登出逻辑
       try {
-        // 断开钱包连接等操作
         disconnect();
       } catch (error) {
         console.error("Logout error:", error);
@@ -76,13 +101,13 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
     };
 
     return (
-      <div className="w-[140px] flex justify-end relative" ref={dropdownRef}>
+      <div className="w-[160px] flex justify-end relative" ref={dropdownRef}>
         <GradientButton
           onClick={() => setIsOpen(!isOpen)}
-          className="px-3 py-1.5 rounded-lg flex items-center justify-end w-full"
+          className="px-4 py-1.5 rounded-lg flex items-center justify-end w-full"
         >
           <span className="flex items-center whitespace-nowrap">
-            <User size={16} className="mr-1.5" />
+            <User size={16} className="mr-2" />
             <span className="text-sm">
               {formatAddress(account.address || "", 4)}
             </span>
@@ -90,31 +115,91 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
         </GradientButton>
 
         {/* 下拉菜单 */}
-        {isOpen && (
-          <div className="absolute right-0 top-full mt-1 w-[180px] rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-            <div className="py-1">
-              {/* 钱包信息 */}
-              <div className="px-3 py-2 text-sm text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700">
-                <div className="flex items-center">
-                  <Wallet size={14} className="mr-1.5" />
-                  <span className="text-xs">{t("wallet.address")}</span>
-                </div>
-                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 font-mono break-all">
-                  {account.address}
-                </div>
+        <div className={`
+          absolute right-0 top-full mt-1 min-w-[320px] max-w-[400px] w-max 
+          rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 z-50
+          transform transition-all duration-200 ease-out origin-top
+          ${isOpen 
+            ? 'opacity-100 translate-y-0 scale-100' 
+            : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
+          }
+        `}>
+          <div className="py-1">
+            {/* 钱包信息 */}
+            <div className="px-3 py-2 text-sm text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center">
+                <Wallet size={14} className="mr-1.5 flex-shrink-0" />
+                <span className="text-xs">{t("wallet.address")}</span>
               </div>
-
-              {/* 退出按钮 */}
-              <button
-                onClick={handleLogout}
-                className="w-full px-3 py-1.5 text-sm text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
-              >
-                <LogOut size={14} className="mr-1.5" />
-                <span className="text-xs">{t("wallet.disconnect")}</span>
-              </button>
+              <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 font-mono break-all">
+                {account.address}
+              </div>
             </div>
+
+            {/* 用户中心 */}
+            <Link
+              href={`/${locale}/web3/course/my`}
+              className="w-full px-3 py-1.5 text-sm text-left text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center"
+            >
+              <User size={14} className="mr-1.5 flex-shrink-0" />
+              <span className="text-xs">{t("menu.userCenter")}</span>
+            </Link>
+
+            {/* 语言切换 */}
+            <div className="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-200 border-t border-gray-100 dark:border-gray-700">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="w-full flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 rounded py-1.5"
+              >
+                <div className="flex items-center px-3">
+                  <Globe size={14} className="mr-1.5 flex-shrink-0" />
+                  <span className="text-xs">{t("language")}</span>
+                </div>
+                <div className="flex items-center px-3">
+                  <span className="text-xs mr-1">
+                    {languages.find(lang => lang.code === locale)?.name}
+                  </span>
+                  <ChevronDown 
+                    size={14} 
+                    className={`transform transition-transform duration-200 ${
+                      isLangMenuOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </div>
+              </button>
+              
+              {/* 语言选项下拉菜单 */}
+              <div className={`
+                mt-1 overflow-hidden transition-all duration-200
+                ${isLangMenuOpen ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}
+              `}>
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      handleLanguageChange(lang.code);
+                      setIsLangMenuOpen(false);
+                    }}
+                    className={`w-full px-3 py-1.5 text-xs text-left rounded hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                      locale === lang.code ? 'bg-gray-50 dark:bg-gray-700' : ''
+                    }`}
+                  >
+                    {lang.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 退出按钮 */}
+            <button
+              onClick={handleLogout}
+              className="w-full px-3 py-1.5 text-sm text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center border-t border-gray-100 dark:border-gray-700"
+            >
+              <LogOut size={14} className="mr-1.5 flex-shrink-0" />
+              <span className="text-xs">{t("wallet.disconnect")}</span>
+            </button>
           </div>
-        )}
+        </div>
       </div>
     );
   };
@@ -141,7 +226,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
 
           {/* Desktop Navigation - 移到左边 */}
           <div className="hidden md:flex items-center space-x-2 flex-1">
-            {navigation.map((item) => (
+            {navigation.filter(item => item.name !== t("menu.userCenter")).map((item) => (
               <GradientButton 
                 key={item.name} 
                 href={item.href} 
@@ -153,9 +238,11 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
             ))}
           </div>
 
-          {/* Auth Section - 保持在右边 */}
-          <div className="w-[140px] flex justify-end transition-all duration-300">
-            {account.status === "connected" ? <UserInfo /> : <AuthButtons />}
+          {/* Auth Section */}
+          <div className="flex items-center">
+            <div className="w-[160px] flex justify-end transition-all duration-300">
+              {account.status === "connected" ? <UserInfo /> : <AuthButtons />}
+            </div>
           </div>
 
           {/* Mobile menu button */}
