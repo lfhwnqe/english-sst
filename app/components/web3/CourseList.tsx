@@ -344,9 +344,20 @@ export default function CourseList({
     eventName: "CoursePurchased",
     onLogs(logs) {
       for (const log of logs) {
-        if (log.args && typeof log.args === "object" && "buyer" in log.args) {
-          const { buyer } = log.args;
-          if (buyer === address && currentStep === "purchase") {
+        if (
+          log.args &&
+          typeof log.args === "object" &&
+          "buyer" in log.args &&
+          "courseId" in log.args
+        ) {
+          const { buyer, web2CourseId } = log.args;
+          // 检查是否是当前选中课程的购买事件
+          if (
+            buyer === address &&
+            currentStep === "purchase" &&
+            selectedCourse &&
+            web2CourseId === selectedCourse.web2CourseId
+          ) {
             showMessage(t("status.purchaseSuccess"), "success");
             setCurrentStep("none");
             setPurchaseDialogOpen(false);
@@ -367,9 +378,9 @@ export default function CourseList({
       for (const log of logs) {
         if (
           pendingApproval &&
-          log.args && 
-          typeof log.args === "object" && 
-          "owner" in log.args && 
+          log.args &&
+          typeof log.args === "object" &&
+          "owner" in log.args &&
           "spender" in log.args &&
           log.args.owner === address &&
           log.args.spender === courseMarketAddress
@@ -408,51 +419,64 @@ export default function CourseList({
     if (!selectedCourse) return;
 
     try {
-      // 如果需要授权，先进行授权
-      if (allowance < selectedCourse.price) {
-        setPendingApproval(true);
-        setCurrentStep("approve");
-        // 授权额度设置为课程价格
-        const approveAmount = selectedCourse.price;
-        
-        const result = await writeContractAsync({
-          address: mmcTokenAddress as `0x${string}`,
-          abi: MMCToken__factory.abi,
-          functionName: "approve",
-          args: [courseMarketAddress as `0x${string}`, approveAmount],
-        });
+      // 直接进入购买流程
+      setCurrentStep("purchase");
+      const result = await writeContractAsync({
+        address: courseMarketAddress as `0x${string}`,
+        abi: CourseMarket__factory.abi,
+        functionName: "purchaseCourse",
+        args: [selectedCourse.web2CourseId],
+      });
 
-        if (result) {
-          showMessage(t("status.authorizationSent"), "success");
-          console.log("Approval submitted:", result);
-        }
-      } else {
-        // 已有授权，直接购买
-        setCurrentStep("purchase");
-        const result = await writeContractAsync({
-          address: courseMarketAddress as `0x${string}`,
-          abi: CourseMarket__factory.abi,
-          functionName: "purchaseCourse",
-          args: [selectedCourse.web2CourseId],
-        });
-
-        if (result) {
-          showMessage(t("status.purchaseSent"), "success");
-          console.log("Transaction submitted:", result);
-        }
+      if (result) {
+        showMessage(t("status.purchaseSent"), "success");
+        console.log("Transaction submitted:", result);
       }
     } catch (err) {
-      setPendingApproval(false);
       const errorMessage = err instanceof Error ? err.message : String(err);
-      if (errorMessage.includes("User rejected the request")) {
+      // 如果是 ERC20InsufficientAllowance 错误，说明需要授权
+      if (errorMessage.includes("ERC20InsufficientAllowance")) {
+        try {
+          setPendingApproval(true);
+          setCurrentStep("approve");
+          const approveAmount = selectedCourse.price;
+          
+          const approveResult = await writeContractAsync({
+            address: mmcTokenAddress as `0x${string}`,
+            abi: MMCToken__factory.abi,
+            functionName: "approve",
+            args: [courseMarketAddress as `0x${string}`, approveAmount],
+          });
+
+          if (approveResult) {
+            showMessage(t("status.authorizationSent"), "success");
+            console.log("Approval submitted:", approveResult);
+          }
+        } catch (approveErr) {
+          setPendingApproval(false);
+          const approveErrorMessage = approveErr instanceof Error ? approveErr.message : String(approveErr);
+          if (approveErrorMessage.includes("User rejected the request")) {
+            showMessage(t("status.userRejected"), "error");
+          } else {
+            showMessage(t("status.authorizationCanceled"), "error");
+          }
+          console.error("Approval failed:", approveErr);
+          setCurrentStep("none");
+          setPurchaseDialogOpen(false);
+          setSelectedCourse(null);
+        }
+      } else if (errorMessage.includes("User rejected the request")) {
         showMessage(t("status.userRejected"), "error");
+        setCurrentStep("none");
+        setPurchaseDialogOpen(false);
+        setSelectedCourse(null);
       } else {
-        showMessage(t("status.authorizationCanceled"), "error");
+        showMessage(t("status.purchaseCanceled"), "error");
+        console.error("Transaction failed:", err);
+        setCurrentStep("none");
+        setPurchaseDialogOpen(false);
+        setSelectedCourse(null);
       }
-      console.error("Transaction failed:", err);
-      setCurrentStep("none");
-      setPurchaseDialogOpen(false);
-      setSelectedCourse(null);
     }
   };
 
