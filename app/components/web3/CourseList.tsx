@@ -398,13 +398,7 @@ export default function CourseList({
       return;
     }
 
-    // 检查余额
-    if (balance < course.price) {
-      showMessage(t("status.insufficientBalance"), "error");
-      return;
-    }
-
-    // 直接打开购买确认对话框
+    // 直接打开购买确认对话框，不管余额是否足够
     setSelectedCourse(course);
     setPurchaseDialogOpen(true);
   };
