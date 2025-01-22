@@ -11,7 +11,7 @@ import { MMCToken__factory } from "@/abi/typechain-types";
 import { useAtomValue } from "jotai";
 import { mmcTokenAddressAtom } from "@/app/stores/web3";
 import GradientButton from "../../../components/common/GradientButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TokenInput from "../../../components/web3/TokenInput";
 import { ArrowUpDown } from "lucide-react";
 import ThemeAlert from "../../../components/common/ThemeAlert";
@@ -31,6 +31,7 @@ export default function TokenSupplyChart({
   const [isETHToMMC, setIsETHToMMC] = useState(true);
   const [inputAmount, setInputAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const [pendingTxHash, setPendingTxHash] = useState<string | null>(null);
   const [alert, setAlert] = useState<{
     open: boolean;
     message: string;
@@ -41,15 +42,12 @@ export default function TokenSupplyChart({
     severity: "success",
   });
 
-  // 读取用户 MMC 余额
-  const { data: balance = "0" } = useReadContract({
+  // 读取用户余额
+  const { data: balance = "0", refetch: refetchBalance } = useReadContract({
     address: mmcTokenAddress as `0x${string}`,
     abi: MMCToken__factory.abi,
     functionName: "balanceOf",
-    args: [address as `0x${string}`],
-    query: {
-      enabled: !!address,
-    },
+    args: address ? [address as `0x${string}`] : undefined,
   });
 
   // 监听 TokensSold 事件
@@ -58,15 +56,23 @@ export default function TokenSupplyChart({
     abi: MMCToken__factory.abi,
     eventName: "TokensSold",
     onLogs(logs) {
-      const success = logs.some((log) => log.args.seller === address);
-      if (success) {
-        setIsPending(false);
-        setAlert({
-          open: true,
-          message: t("swapSuccess"),
-          severity: "success",
-        });
-        setInputAmount("");
+      for (const log of logs) {
+        // 只处理当前待处理的交易
+        if (!isPending) continue;
+
+        if (log.args && log.args.seller === address) {
+          // 交易已确认，直接更新状态
+          refetchBalance();
+          setIsPending(false);
+          setPendingTxHash(null);
+          setAlert({
+            open: true,
+            message: t("swapSuccess"),
+            severity: "success",
+          });
+          setInputAmount("");
+          break;
+        }
       }
     },
   });
@@ -77,15 +83,23 @@ export default function TokenSupplyChart({
     abi: MMCToken__factory.abi,
     eventName: "TokensPurchased",
     onLogs(logs) {
-      const success = logs.some((log) => log.args.buyer === address);
-      if (success) {
-        setIsPending(false);
-        setAlert({
-          open: true,
-          message: t("swapSuccess"),
-          severity: "success",
-        });
-        setInputAmount("");
+      for (const log of logs) {
+        // 只处理当前待处理的交易
+        if (!isPending) continue;
+
+        if (log.args && log.args.buyer === address) {
+          // 交易已确认，直接更新状态
+          refetchBalance();
+          setIsPending(false);
+          setPendingTxHash(null);
+          setAlert({
+            open: true,
+            message: t("swapSuccess"),
+            severity: "success",
+          });
+          setInputAmount("");
+          break;
+        }
       }
     },
   });
@@ -98,7 +112,6 @@ export default function TokenSupplyChart({
     if (!inputAmount || Number(inputAmount) <= 0) return;
 
     try {
-      // 先设置等待状态
       setIsPending(true);
       setAlert({
         open: true,
@@ -106,27 +119,30 @@ export default function TokenSupplyChart({
         severity: "success",
       });
 
+      let tx;
       if (isETHToMMC) {
-        await writeContract({
+        tx = await writeContract({
           address: mmcTokenAddress as `0x${string}`,
           abi: MMCToken__factory.abi,
           functionName: "buyWithETH",
           value: BigInt(Number(inputAmount) * 1e18),
         });
       } else {
-        await writeContract({
+        tx = await writeContract({
           address: mmcTokenAddress as `0x${string}`,
           abi: MMCToken__factory.abi,
           functionName: "sellTokens",
           args: [BigInt(Number(inputAmount))],
         });
       }
-      // 如果有 hash，说明用户已确认交易
+      console.log("🌹tx:", tx);
+      // 保存交易哈希
+      setPendingTxHash(tx);
     } catch (error: unknown) {
       console.error("兑换失败:", error);
       setIsPending(false);
+      setPendingTxHash(null);
 
-      // 处理用户拒绝交易的情况
       const err = error as Error;
       if (
         err.message?.includes("User rejected") ||
@@ -144,7 +160,6 @@ export default function TokenSupplyChart({
           severity: "error",
         });
       }
-      // 重置输入
       setInputAmount("");
     }
   };
