@@ -11,7 +11,7 @@ import { MMCToken__factory } from "@/abi/typechain-types";
 import { useAtomValue } from "jotai";
 import { mmcTokenAddressAtom } from "@/app/stores/web3";
 import GradientButton from "../../../components/common/GradientButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TokenInput from "../../../components/web3/TokenInput";
 import { ArrowUpDown } from "lucide-react";
 import ThemeAlert from "../../../components/common/ThemeAlert";
@@ -31,7 +31,6 @@ export default function TokenSupplyChart({
   const [isETHToMMC, setIsETHToMMC] = useState(true);
   const [inputAmount, setInputAmount] = useState("");
   const [isPending, setIsPending] = useState(false);
-  const [pendingTxHash, setPendingTxHash] = useState<string | null>(null);
   const [alert, setAlert] = useState<{
     open: boolean;
     message: string;
@@ -64,7 +63,6 @@ export default function TokenSupplyChart({
           // 交易已确认，直接更新状态
           refetchBalance();
           setIsPending(false);
-          setPendingTxHash(null);
           setAlert({
             open: true,
             message: t("swapSuccess"),
@@ -91,7 +89,6 @@ export default function TokenSupplyChart({
           // 交易已确认，直接更新状态
           refetchBalance();
           setIsPending(false);
-          setPendingTxHash(null);
           setAlert({
             open: true,
             message: t("swapSuccess"),
@@ -119,29 +116,24 @@ export default function TokenSupplyChart({
         severity: "success",
       });
 
-      let tx;
       if (isETHToMMC) {
-        tx = await writeContract({
+        await writeContract({
           address: mmcTokenAddress as `0x${string}`,
           abi: MMCToken__factory.abi,
           functionName: "buyWithETH",
           value: BigInt(Number(inputAmount) * 1e18),
         });
       } else {
-        tx = await writeContract({
+        await writeContract({
           address: mmcTokenAddress as `0x${string}`,
           abi: MMCToken__factory.abi,
           functionName: "sellTokens",
           args: [BigInt(Number(inputAmount))],
         });
       }
-      console.log("🌹tx:", tx);
-      // 保存交易哈希
-      setPendingTxHash(tx);
     } catch (error: unknown) {
       console.error("兑换失败:", error);
       setIsPending(false);
-      setPendingTxHash(null);
 
       const err = error as Error;
       if (

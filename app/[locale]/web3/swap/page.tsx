@@ -8,13 +8,11 @@ import { mmcTokenAddressAtom } from "@/app/stores/web3";
 import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
 import { Box, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import AnimatedBackground from "@/app/components/web3/ParticleBackground";
 
 export default function SwapPage() {
   const mmcTokenAddress = useAtomValue(mmcTokenAddressAtom);
-  const [lastEventTimestamp, setLastEventTimestamp] = useState<number>(0);
-
   const { data: totalSupply = "0", refetch: refetchTotalSupply } = useReadContract({
     address: mmcTokenAddress as `0x${string}`,
     abi: MMCToken__factory.abi,
@@ -26,17 +24,9 @@ export default function SwapPage() {
     address: mmcTokenAddress as `0x${string}`,
     abi: MMCToken__factory.abi,
     eventName: "Transfer",
-    onLogs(logs) {
-      for (const log of logs) {
-        // 检查事件时间戳，避免处理旧事件
-        if (log.blockTimestamp <= lastEventTimestamp) {
-          continue;
-        }
-
-        setLastEventTimestamp(log.blockTimestamp);
-        // 刷新总供应量和用户余额
-        refetchTotalSupply();
-      }
+    onLogs() {
+      // 刷新总供应量
+      refetchTotalSupply();
     },
   });
 
