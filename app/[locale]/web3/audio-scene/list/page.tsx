@@ -122,8 +122,16 @@ export default function AudioSceneList() {
         {loading ? (
           <ListSkeleton />
         ) : scenes.length === 0 ? (
-          <div className="text-foreground/60 text-center py-12 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
-            暂无场景，点击右下角添加新场景
+          <div className="text-foreground/60 text-center py-12 bg-white/50 dark:bg-gray-800/50 rounded-lg backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 cursor-pointer">
+            <div className="flex flex-col items-center">
+              <Link
+                href={`/${locale}/web3/audio-scene/create`}
+                className="flex flex-col items-center hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                <Plus className="w-12 h-12 mb-4 text-gray-400" />
+                <span>暂无场景，点击添加新场景</span>
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
