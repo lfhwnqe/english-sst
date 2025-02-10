@@ -36,6 +36,7 @@ import { Award } from "lucide-react";
 import ThemeText from "@/app/components/common/ThemeText";
 import { useTranslations } from "next-intl";
 import Web3Loading from "../common/Web3Loading";
+import CelebrationAnimation from "../animations/CelebrationAnimation";
 
 interface Course {
   web2CourseId: string;
@@ -344,6 +345,7 @@ export default function CourseList({
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [pendingApproval, setPendingApproval] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   // 监听购买事件
   useWatchContractEvent({
@@ -352,26 +354,31 @@ export default function CourseList({
     eventName: "CoursePurchased",
     onLogs(logs) {
       for (const log of logs) {
-        if (
-          log.args &&
-          typeof log.args === "object" &&
-          "buyer" in log.args &&
-          "courseId" in log.args
-        ) {
-          const { buyer, web2CourseId } = log.args;
-          // 检查是否是当前选中课程的购买事件
-          if (
-            buyer === address &&
-            currentStep === "purchase" &&
-            selectedCourse &&
-            web2CourseId === selectedCourse.web2CourseId
-          ) {
-            showMessage(t("status.purchaseSuccess"), "success");
-            setCurrentStep("none");
-            setPurchaseDialogOpen(false);
-            refetch();
-            break;
-          }
+        if (!log.args || typeof log.args !== "object" || !("buyer" in log.args) || !("courseId" in log.args)) continue;
+
+        const { buyer, courseId } = log.args;
+        // 检查是否是当前选中课程的购买事件
+        if (buyer === address && 
+            currentStep === "purchase" && 
+            selectedCourse && 
+            courseId?.toString() === selectedCourse.web2CourseId) {
+          // 先重置所有状态
+          setCurrentStep("none");
+          setPurchaseDialogOpen(false);
+          setSelectedCourse(null);
+          
+          // 显示成功消息和庆祝动画
+          showMessage(t("status.purchaseSuccess"), "success");
+          setShowCelebration(true);
+          
+          // 3秒后隐藏动画
+          setTimeout(() => {
+            setShowCelebration(false);
+          }, 3000);
+          
+          // 刷新课程列表
+          refetch();
+          break;
         }
       }
     },
@@ -432,8 +439,8 @@ export default function CourseList({
         try {
           setPendingApproval(true);
           setCurrentStep("approve");
-          // 授权额度设置为课程价格
-          const approveAmount = selectedCourse.price;
+          // 授权额度设置为课程价格的1000倍，避免频繁授权
+          const approveAmount = selectedCourse.price * BigInt(1000);
           
           const result = await writeContractAsync({
             address: mmcTokenAddress as `0x${string}`,
@@ -680,6 +687,8 @@ export default function CourseList({
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {showCelebration && <CelebrationAnimation />}
     </>
   );
 }

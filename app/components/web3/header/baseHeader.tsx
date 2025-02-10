@@ -38,6 +38,7 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
     { name: t("menu.swap"), href: `/${locale}/web3/swap` },
     { name: t("menu.course"), href: `/${locale}/web3/course` },
     { name: t("menu.userCenter"), href: `/${locale}/web3/course/my` },
+    { name: t("menu.ai"), href: `/${locale}/web3/audio-scene/list` },
   ];
 
   // 语言选项

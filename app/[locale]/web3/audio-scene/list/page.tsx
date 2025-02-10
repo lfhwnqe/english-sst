@@ -12,7 +12,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 import Link from "next/link";
-import StaticAppHeader from "@/app/components/common/header/staticAppHeader";
+import StaticAppHeader from "@/app/components/web3/header/staticAppHeader";
+import { useParams } from "next/navigation";
 
 interface AudioSceneListItem {
   sceneId: string;
@@ -35,21 +36,16 @@ export default function AudioSceneList() {
   const [openDialog, setOpenDialog] = useState(false);
   const [sceneToDelete, setSceneToDelete] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const params = useParams();
+  const locale = (params.locale as string) || "zh-cn";
 
   const fetchScenes = async (page: number) => {
     try {
       setLoading(true);
-      console.log("Fetching scenes:", {
-        url: `/audio-scene?page=${page}&pageSize=${pageSize}`,
-        page,
-        pageSize,
-      });
 
       const response = await fetchApi(
         `/audio-scene?page=${page}&pageSize=${pageSize}`
       );
-
-      console.log("Fetch scenes response:", response);
 
       if (response.success) {
         setScenes(response.data.items);
@@ -159,7 +155,7 @@ export default function AudioSceneList() {
                 <div
                   onClick={() =>
                     !isEditMode &&
-                    (window.location.href = `/audio-scene/play?sceneId=${scene.sceneId}`)
+                    (window.location.href = `/${locale}/web3/audio-scene/play?sceneId=${scene.sceneId}`)
                   }
                   className={`relative z-10 ${!isEditMode ? "cursor-pointer" : ""}`}
                 >
@@ -179,7 +175,7 @@ export default function AudioSceneList() {
 
             {isEditMode && (
               <Link
-                href="/audio-scene/create"
+                href={`/${locale}/web3/audio-scene/create`}
                 className="fixed bottom-8 right-8 p-3.5 bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-600 dark:to-indigo-600 text-white rounded-xl hover:shadow-xl hover:shadow-blue-500/25 hover:scale-105 transition-all duration-300"
               >
                 <Plus className="w-6 h-6" />

@@ -49,7 +49,8 @@
       "addCourses": "Add Courses",
       "swap": "Swap",
       "course": "Course",
-      "userCenter": "User Center"
+      "userCenter": "User Center",
+      "ai": "MMC AI"
     },
     "wallet": {
       "connect": "Connect Wallet",
@@ -173,5 +174,10 @@
     "videoURI": "Video URI",
     "videoURIPlaceholder": "Please enter the course video URI",
     "addCourse": "Add Course"
+  },
+  "AIPage": {
+    "title": "MMC AI Assistant",
+    "inputPlaceholder": "Type your message here...",
+    "error": "Sorry, something went wrong. Please try again later."
   }
 }

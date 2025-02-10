@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import AudioPlayer from "./h5AudioPlayer";
-import RelativeAppHeader from "./header/relativeAppHeader";
+import RelativeAppHeader from "@/app/components/web3/header/relativeAppHeader";
 
 interface Props {
   audioUrl: string;

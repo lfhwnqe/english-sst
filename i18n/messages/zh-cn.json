@@ -47,9 +47,10 @@
   "Header": {
     "menu": {
       "addCourses": "添加课程",
-      "swap": "兑换",
+      "swap": "代币兑换",
       "course": "课程",
-      "userCenter": "用户中心"
+      "userCenter": "个人中心",
+      "ai": "MMC AI"
     },
     "wallet": {
       "connect": "连接钱包",
@@ -174,5 +175,10 @@
     "videoURI": "视频 URI",
     "videoURIPlaceholder": "请输入课程视频 URI",
     "addCourse": "添加课程"
+  },
+  "AIPage": {
+    "title": "MMC AI 助手",
+    "inputPlaceholder": "输入您的问题...",
+    "error": "抱歉，出现了一些问题。请稍后再试。"
   }
 }
