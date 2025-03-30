@@ -34,7 +34,40 @@ export default function ImageUploadPage() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cloudfrontDomain = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN;
+ const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
 
+  // 鉴权逻辑：检查用户是否已经登录
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        setAuthChecking(true);
+        const response = await fetch('/api/auth/user-info');
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('User authenticated:', data);
+          setIsAuthenticated(true);
+        } else {
+          console.log('User not authenticated, redirecting to login page');
+          // 保存当前URL，以便登录后重定向回来
+          if (typeof window !== 'undefined') {
+            const currentPath = window.location.pathname;
+            window.localStorage.setItem('redirectAfterLogin', currentPath);
+            // 使用window.location.href进行跳转，而不是router.push
+            window.location.href = '/auth/login';
+          }
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+        setError('鉴权检查失败');
+      } finally {
+        setAuthChecking(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
   // 清除复制状态的计时器
   useEffect(() => {
     if (copiedIndex !== null) {
