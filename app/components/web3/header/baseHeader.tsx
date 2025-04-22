@@ -18,6 +18,13 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// 导航项接口
+interface NavigationItem {
+  name: string;
+  href: string;
+  highlight?: boolean;
+}
+
 function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
   const t = useTranslations("Header");
   const params = useParams();
@@ -33,12 +40,13 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
     connect({ connector: injected() });
   };
 
-  const navigation = [
+  const navigation: NavigationItem[] = [
     // { name: t("menu.addCourses"), href: `/${locale}/web3/course/add` },
     { name: t("menu.swap"), href: `/${locale}/web3/swap` },
     { name: t("menu.course"), href: `/${locale}/web3/course` },
     { name: t("menu.userCenter"), href: `/${locale}/web3/course/my` },
     { name: t("menu.ai"), href: `/${locale}/web3/audio-scene/list` },
+    { name: "威科夫AI", href: `/${locale}/web3/ai-center`, highlight: true },
   ];
 
   // 语言选项
@@ -232,9 +240,22 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
                 key={item.name} 
                 href={item.href} 
                 prefetch
-                className="px-3 py-1.5"
+                className={`px-3 py-1.5 ${
+                  item.highlight 
+                    ? 'bg-gradient-to-r from-blue-500/10 to-indigo-500/10 hover:from-blue-500/20 hover:to-indigo-500/20 dark:from-blue-500/20 dark:to-indigo-500/20 dark:hover:from-blue-500/30 dark:hover:to-indigo-500/30 text-blue-700 dark:text-blue-300'
+                    : ''
+                }`}
               >
-                <span className="text-sm whitespace-nowrap">{item.name}</span>
+                <span className={`text-sm whitespace-nowrap ${item.highlight ? 'font-medium' : ''}`}>
+                  {item.name}
+                  {item.highlight && (
+                    <span className="ml-1 inline-flex items-center justify-center bg-blue-500/20 dark:bg-blue-400/20 rounded-full w-4 h-4 text-blue-600 dark:text-blue-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-2.5 w-2.5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      </svg>
+                    </span>
+                  )}
+                </span>
               </GradientButton>
             ))}
           </div>
@@ -280,9 +301,18 @@ function BaseHeader({ hasTokenServer }: { hasTokenServer: boolean }) {
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className={`w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                    item.highlight ? 'bg-gradient-to-r from-blue-500/5 to-indigo-500/5 dark:from-blue-500/10 dark:to-indigo-500/10' : ''
+                  }`}
                 >
-                  {item.name}
+                  <div className="flex items-center">
+                    <span className={item.highlight ? 'font-medium text-blue-700 dark:text-blue-300' : ''}>{item.name}</span>
+                    {item.highlight && (
+                      <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300">
+                        新
+                      </span>
+                    )}
+                  </div>
                 </GradientButton>
               ))}
             </div>

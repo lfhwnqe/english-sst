@@ -1,5 +1,6 @@
 import GradientButton from "@/app/components/common/GradientButton";
 import StaticAppHeader from "@/app/components/common/header/staticAppHeader";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -110,6 +111,18 @@ export default function Home() {
           >
             免费注册
           </GradientButton>
+        </div>
+      </section>
+
+      {/* Testing Links */}
+      <section className="px-4 py-8 text-center">
+        <div className="max-w-4xl mx-auto">
+          <h3 className="text-xl font-semibold mb-4">开发测试链接</h3>
+          <div className="flex justify-center gap-4">
+            <Link href="/openrouter-test" className="text-blue-500 hover:text-blue-700 underline">
+              OpenRouter 配置测试
+            </Link>
+          </div>
         </div>
       </section>
     </div>
