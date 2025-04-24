@@ -175,6 +175,20 @@ export default function AICenter() {
       color: "from-indigo-500 to-purple-500",
     },
     {
+      title: "故事生成",
+      description: "使用AI生成有趣的互动故事，适合各年龄段",
+      icon: <Sparkles className="w-8 h-8 text-rose-500" />,
+      path: `/${locale}/storytelling`,
+      color: "from-rose-500 to-pink-500",
+    },
+    {
+      title: "AI故事聊天",
+      description: "与AI进行交互式故事创作和对话",
+      icon: <BrainCircuit className="w-8 h-8 text-amber-500" />,
+      path: `/${locale}/storytelling-chat`,
+      color: "from-amber-500 to-orange-500",
+    },
+    {
       title: "OpenRouter 配置测试",
       description: "测试OpenRouter API连接配置是否正常",
       icon: <Settings className="w-8 h-8 text-green-500" />,
