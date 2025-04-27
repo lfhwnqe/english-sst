@@ -189,6 +189,13 @@ export default function AICenter() {
       color: "from-amber-500 to-orange-500",
     },
     {
+      title: "RAG知识库测试",
+      description: "测试知识库的文档上传、搜索和删除功能",
+      icon: <Zap className="w-8 h-8 text-emerald-500" />,
+      path: `/${locale}/rag-test`,
+      color: "from-emerald-500 to-green-500",
+    },
+    {
       title: "OpenRouter 配置测试",
       description: "测试OpenRouter API连接配置是否正常",
       icon: <Settings className="w-8 h-8 text-green-500" />,

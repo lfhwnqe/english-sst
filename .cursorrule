@@ -1,0 +1,34 @@
+# sst-english 项目规范
+
+## 项目概述
+sst-english 是一个基于 Next.js 开发的英语学习前端应用，提供用户界面，支持多语言，包括中英文切换功能。项目集成了 Web3 功能，使用户能够进行 NFT 相关操作。
+
+## 核心功能
+- **用户认证**: 支持注册、登录、登出功能
+- **英语学习**: 提供音频课程播放、学习进度记录
+- **AI 互动**: 集成了 AI 功能，如 storytelling 讲故事功能
+- **Web3 集成**: 支持 NFT、加密货币等 Web3 功能
+- **多语言支持**: 支持中英文界面切换
+
+## 技术栈
+- **框架**: Next.js
+- **语言**: TypeScript
+- **样式**: Tailwind CSS
+- **状态管理**: React Context API, React Hooks
+- **国际化**: i18n
+
+## 目录结构
+- `app/`: Next.js App Router 目录结构
+  - `api/`: API 路由
+  - `components/`: 可复用组件
+  - `[locale]/`: 多语言路由
+  - `auth/`: 认证相关页面
+
+## 开发规范
+1. **组件命名**: 使用 PascalCase 命名组件文件
+2. **API 路由**: 使用 Next.js App Router 的 API 路由结构
+3. **样式规范**: 优先使用 Tailwind CSS 类名
+4. **状态管理**: 小型状态使用 React Hooks，全局状态使用 Context API
+5. **多语言文本**: 所有用户可见文本需添加国际化支持
+6. **API 请求**: 使用标准 fetch API 或专用工具函数如 fetchStreamResponse
+7. **错误处理**: 所有 API 请求需包含错误处理逻辑 
