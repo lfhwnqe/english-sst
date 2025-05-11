@@ -1,9 +1,11 @@
+import { handleLambdaResponse } from './index';
+
 interface FetchOptions extends RequestInit {
   needAuth?: boolean;
 }
 
 export async function fetchApi(endpoint: string, options: FetchOptions = {}) {
-  const { needAuth = true, ...fetchOptions } = options;
+  const { /* needAuth = true, */ ...fetchOptions } = options;
   
   // 确保所有请求都通过 Next.js API 路由
   const apiEndpoint = endpoint.startsWith('/api/') ? endpoint : `/api${endpoint}`;
@@ -39,5 +41,7 @@ export async function fetchApi(endpoint: string, options: FetchOptions = {}) {
     throw new Error(error.message || 'An error occurred');
   }
 
-  return response.json();
+  // 获取响应JSON并处理可能的Lambda格式
+  const data = await response.json();
+  return handleLambdaResponse(data);
 } 

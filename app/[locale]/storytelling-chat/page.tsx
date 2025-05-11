@@ -47,10 +47,13 @@ export default function StorytellingChatPage() {
   const [isReady, setIsReady] = useState(false);
   const [topic, setTopic] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [testResult, setTestResult] = useState<string>("");
+  const [isTestLoading, setIsTestLoading] = useState(false);
   
   // 使用AI SDK的useChat钩子
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/ai/storytelling',
+    api: 'http://localhost:3001/ai/stream/storytelling',
+    // api: '/api/ai/storytelling',
     id: 'storytelling',
     onFinish: () => {
       console.log('聊天完成');
@@ -96,6 +99,88 @@ export default function StorytellingChatPage() {
       }
     }
   }, [isReady, messages.length, topic]);
+
+  // 测试直接调用Lambda接口
+  const testLambdaEndpoint = async () => {
+    setIsTestLoading(true);
+    setTestResult("");
+    try {
+      console.log('开始测试Lambda直接调用...');
+      
+      const prompt = "讲一个小白兔的简短故事";
+      console.log(`使用提示词: ${prompt}`);
+      
+      // 直接请求Lambda URL
+      console.log('正在直接请求Lambda端点...');
+      const response = await fetch('https://5lm5ugd5ygbnnd3zcrhcl3i3sa0fdunu.lambda-url.us-east-1.on.aws/ai/stream/storytelling', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'text/event-stream'
+        },
+        body: JSON.stringify({ prompt })
+      });
+      
+      console.log(`响应状态: ${response.status} ${response.statusText}`);
+      console.log('响应头:');
+      const headers: Record<string, string> = {};
+      Array.from(response.headers.entries()).forEach(([key, value]) => {
+        console.log(`  ${key}: ${value}`);
+        headers[key] = value;
+      });
+      
+      // 处理流式响应
+      if (response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        console.log('开始读取流...');
+        let buffer = '';
+        let resultText = `状态: ${response.status} ${response.statusText}\n\n`;
+        resultText += `头信息:\n${JSON.stringify(headers, null, 2)}\n\n`;
+        resultText += `正在获取数据...\n`;
+        setTestResult(resultText);
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          
+          if (done) {
+            console.log('流读取完成');
+            resultText += `\n流读取完成`;
+            setTestResult(resultText);
+            break;
+          }
+          
+          // 解码二进制数据为文本
+          const chunk = decoder.decode(value, { stream: true });
+          console.log('接收到数据块:', chunk);
+          buffer += chunk;
+          
+          resultText += `\n接收到数据: ${chunk}`;
+          setTestResult(resultText);
+        }
+        
+        console.log('完整响应数据:', buffer);
+        
+        // 尝试解析为JSON
+        try {
+          const json = JSON.parse(buffer);
+          console.log('解析为JSON:', json);
+          resultText += `\n\n解析为JSON:\n${JSON.stringify(json, null, 2)}`;
+          setTestResult(resultText);
+        } catch (e) {
+          console.error('响应不是有效的JSON:', e);
+          resultText += `\n\n响应不是有效的JSON: ${e instanceof Error ? e.message : String(e)}`;
+          setTestResult(resultText);
+        }
+      }
+    } catch (error) {
+      console.error('测试出错:', error);
+      setTestResult(`测试出错: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsTestLoading(false);
+    }
+  };
 
   return (
     <Box className="relative min-h-screen">
@@ -230,8 +315,40 @@ export default function StorytellingChatPage() {
               </>
             )}
             
+            {/* Lambda测试区域 */}
             <Box sx={{ mt: 4, pt: 2, borderTop: 1, borderColor: "divider" }}>
-              <Typography variant="body2" sx={{ color: "text.secondary", textAlign: "center" }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>Lambda接口测试</Typography>
+              
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={testLambdaEndpoint}
+                  disabled={isTestLoading}
+                  startIcon={isTestLoading ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {isTestLoading ? '测试中...' : '测试Lambda直接调用'}
+                </Button>
+              </Box>
+              
+              {testResult && (
+                <Paper 
+                  elevation={1}
+                  sx={{ 
+                    p: 2, 
+                    maxHeight: '300px', 
+                    overflow: 'auto',
+                    whiteSpace: 'pre-wrap',
+                    fontFamily: 'monospace',
+                    fontSize: '12px',
+                    bgcolor: 'grey.100'
+                  }}
+                >
+                  {testResult}
+                </Paper>
+              )}
+              
+              <Typography variant="body2" sx={{ color: "text.secondary", textAlign: "center", mt: 2 }}>
                 本页面使用AI SDK与后端Storytelling Agent交互
               </Typography>
             </Box>
@@ -250,34 +367,8 @@ export default function StorytellingChatPage() {
                   href="/rag-test"
                   className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600"
                 >
-                  打开RAG测试工具
+                  前往RAG测试页面
                 </Button>
-                
-                <Button
-                  variant="outlined"
-                  component="a"
-                  href="https://github.com/mastralab/mastra"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  了解Mastra框架
-                </Button>
-              </Box>
-              
-              <Box sx={{ bgcolor: 'grey.100', p: 3, borderRadius: 2 }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                  RAG功能介绍
-                </Typography>
-                <Typography variant="body2" component="ul" sx={{ ml: 2 }}>
-                  <li>上传文档到知识库</li>
-                  <li>基于知识库内容进行搜索</li>
-                  <li>删除知识库中的文档</li>
-                  <li>结合AI大模型生成更准确的回答</li>
-                </Typography>
-                
-                <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
-                  本项目使用Amazon Bedrock提供文档向量化能力，Upstash Vector存储向量数据，通过Mastra框架集成到后端。
-                </Typography>
               </Box>
             </Box>
           </TabPanel>

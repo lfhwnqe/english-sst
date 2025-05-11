@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>故事生成API测试</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #story {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      padding: 15px;
+      min-height: 100px;
+      background-color: #f9f9f9;
+      white-space: pre-wrap;
+    }
+    #logs {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      padding: 15px;
+      height: 200px;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>故事生成API测试</h1>
+  
+  <textarea id="prompt" placeholder="请输入故事提示，例如：讲一个小兔子的故事">讲一个简短的关于小白兔进入森林冒险的故事</textarea>
+  
+  <div>
+    <button id="generate">生成故事</button>
+    <button id="clear">清空</button>
+  </div>
+  
+  <h2>故事内容：</h2>
+  <div id="story"></div>
+  
+  <h2>日志：</h2>
+  <div id="logs"></div>
+  
+  <script>
+    const promptTextarea = document.getElementById('prompt');
+    const storyElement = document.getElementById('story');
+    const logsElement = document.getElementById('logs');
+    const generateButton = document.getElementById('generate');
+    const clearButton = document.getElementById('clear');
+    
+    // 记录日志
+    function log(message) {
+      const logEntry = document.createElement('div');
+      
+      if (typeof message === 'object') {
+        logEntry.textContent = JSON.stringify(message, null, 2);
+      } else {
+        logEntry.textContent = message;
+      }
+      
+      logsElement.appendChild(logEntry);
+      logsElement.scrollTop = logsElement.scrollHeight;
+      console.log(message);
+    }
+    
+    // 清空内容
+    clearButton.addEventListener('click', () => {
+      storyElement.textContent = '';
+      logsElement.innerHTML = '';
+    });
+    
+    // 生成故事
+    generateButton.addEventListener('click', async () => {
+      const prompt = promptTextarea.value.trim();
+      
+      if (!prompt) {
+        log('错误：请输入故事提示');
+        return;
+      }
+      
+      try {
+        storyElement.textContent = '正在生成故事...';
+        log(`开始请求，提示：${prompt}`);
+        
+        // 调用本地的API路由
+        const response = await fetch('/api/ai/storytelling', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        
+        log(`响应状态：${response.status} ${response.statusText}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`API错误: ${errorData.error || response.statusText}`);
+        }
+        
+        // 检查内容类型
+        const contentType = response.headers.get('Content-Type');
+        log(`响应内容类型：${contentType}`);
+        
+        if (contentType && contentType.includes('text/event-stream')) {
+          // 处理流式响应
+          log('收到流式响应，开始处理...');
+          
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let storyText = '';
+          
+          while (true) {
+            const { value, done } = await reader.read();
+            
+            if (done) {
+              log('流读取完成');
+              break;
+            }
+            
+            // 解码二进制数据
+            const chunk = decoder.decode(value, { stream: true });
+            log(`接收到数据块：${chunk.length} 字节`);
+            
+            // 处理SSE格式的数据
+            const lines = chunk.split('\n\n');
+            
+            for (const line of lines) {
+              if (!line.trim()) continue;
+              
+              if (line.startsWith('data: ')) {
+                const data = line.substring(6); // 移除 "data: " 前缀
+                
+                // 检查是否是结束信号
+                if (data === '[DONE]') {
+                  log('收到结束信号');
+                  continue;
+                }
+                
+                try {
+                  // 解析JSON数据
+                  const parsedData = JSON.parse(data);
+                  log('解析到数据：', parsedData);
+                  
+                  if (parsedData.content !== undefined) {
+                    storyText += parsedData.content;
+                    storyElement.textContent = storyText;
+                  } else if (parsedData.error) {
+                    throw new Error(`流错误: ${parsedData.error}`);
+                  }
+                } catch (jsonError) {
+                  log(`解析JSON失败: ${jsonError.message}, 原始数据: ${data}`);
+                }
+              }
+            }
+          }
+        } else {
+          // 处理非流式响应
+          log('收到非流式响应，直接处理...');
+          const data = await response.json();
+          log('响应数据：', data);
+          
+          if (data.error) {
+            throw new Error(data.error);
+          }
+          
+          storyElement.textContent = data.story || data.content || JSON.stringify(data);
+        }
+      } catch (error) {
+        log(`错误：${error.message}`);
+        storyElement.textContent = `生成故事时出错: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html> 

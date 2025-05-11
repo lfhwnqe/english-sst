@@ -89,3 +89,31 @@ export function formatAddress(address: string, chars: number = 3): string {
     throw new AddressFormatError("Unexpected error formatting address");
   }
 }
+
+/**
+ * 处理Lambda Function URL响应，解析可能的嵌套JSON
+ * 在启用RESPONSE_STREAM模式的Lambda返回中，所有响应都会被包装成特定格式
+ * 
+ * @param data - 从API获取的响应数据
+ * @returns 解析后的数据
+ */
+export function handleLambdaResponse<T>(data: unknown): T | unknown {
+  // 检查是否是Lambda Function URL包装的响应格式
+  if (data && 
+      typeof data === 'object' && 
+      'statusCode' in data && 
+      'body' in data && 
+      typeof data.body === 'string') {
+    try {
+      // 尝试解析body字符串
+      return JSON.parse(data.body) as T;
+    } catch (e) {
+      console.warn('无法解析Lambda响应body:', e);
+      // 如果无法解析，返回原始响应
+      return data;
+    }
+  }
+  
+  // 如果不是Lambda格式，直接返回
+  return data;
+}

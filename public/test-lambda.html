@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lambda流式接口测试</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .logs {
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      padding: 15px;
+      height: 400px;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+    }
+    .log-entry {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Lambda流式接口测试</h1>
+  
+  <textarea id="prompt" placeholder="请输入提示词，例如：讲一个小兔子的故事">讲一个简短的小兔子故事</textarea>
+  
+  <div>
+    <button id="fetch-default">默认调用</button>
+    <button id="fetch-with-headers">添加自定义headers调用</button>
+    <button id="fetch-direct-stream">直接流处理调用</button>
+    <button id="clear-logs">清空日志</button>
+  </div>
+  
+  <div class="logs" id="logs"></div>
+  
+  <script>
+    // Lambda URL
+    const LAMBDA_URL = 'https://5lm5ugd5ygbnnd3zcrhcl3i3sa0fdunu.lambda-url.us-east-1.on.aws/ai/stream/storytelling';
+    
+    // 获取DOM元素
+    const promptTextarea = document.getElementById('prompt');
+    const logsContainer = document.getElementById('logs');
+    const fetchDefaultButton = document.getElementById('fetch-default');
+    const fetchWithHeadersButton = document.getElementById('fetch-with-headers');
+    const fetchDirectStreamButton = document.getElementById('fetch-direct-stream');
+    const clearLogsButton = document.getElementById('clear-logs');
+    
+    // 添加日志函数
+    function log(message, isError = false) {
+      console.log(message);
+      const logEntry = document.createElement('div');
+      logEntry.className = 'log-entry';
+      logEntry.style.color = isError ? 'red' : 'black';
+      
+      // 如果是对象，转为JSON字符串
+      if (typeof message === 'object') {
+        logEntry.textContent = JSON.stringify(message, null, 2);
+      } else {
+        logEntry.textContent = message;
+      }
+      
+      logsContainer.appendChild(logEntry);
+      logsContainer.scrollTop = logsContainer.scrollHeight;
+    }
+    
+    // 默认调用Lambda
+    fetchDefaultButton.addEventListener('click', async () => {
+      try {
+        log('默认调用Lambda...');
+        const prompt = promptTextarea.value.trim();
+        if (!prompt) {
+          log('请输入提示词', true);
+          return;
+        }
+        
+        log(`发送请求: ${prompt}`);
+        
+        // 发送请求
+        const response = await fetch(LAMBDA_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        
+        log(`响应状态: ${response.status} ${response.statusText}`);
+        log('响应头:');
+        for (const [key, value] of response.headers.entries()) {
+          log(`  ${key}: ${value}`);
+        }
+        
+        // 读取响应
+        const text = await response.text();
+        log('响应内容:');
+        log(text);
+        
+        // 尝试解析JSON
+        try {
+          const json = JSON.parse(text);
+          log('解析为JSON:');
+          log(json);
+        } catch (e) {
+          log('响应不是有效的JSON', true);
+        }
+      } catch (error) {
+        log(`错误: ${error.message}`, true);
+      }
+    });
+    
+    // 添加自定义headers调用Lambda
+    fetchWithHeadersButton.addEventListener('click', async () => {
+      try {
+        log('添加自定义headers调用Lambda...');
+        const prompt = promptTextarea.value.trim();
+        if (!prompt) {
+          log('请输入提示词', true);
+          return;
+        }
+        
+        log(`发送请求: ${prompt}`);
+        
+        // 发送请求
+        const response = await fetch(LAMBDA_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream',
+            'X-Custom-Header': 'test-value'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        
+        log(`响应状态: ${response.status} ${response.statusText}`);
+        log('响应头:');
+        for (const [key, value] of response.headers.entries()) {
+          log(`  ${key}: ${value}`);
+        }
+        
+        // 读取响应
+        const text = await response.text();
+        log('响应内容:');
+        log(text);
+        
+        // 尝试解析JSON
+        try {
+          const json = JSON.parse(text);
+          log('解析为JSON:');
+          log(json);
+        } catch (e) {
+          log('响应不是有效的JSON', true);
+        }
+      } catch (error) {
+        log(`错误: ${error.message}`, true);
+      }
+    });
+    
+    // 直接流处理调用
+    fetchDirectStreamButton.addEventListener('click', async () => {
+      try {
+        log('直接流处理调用Lambda...');
+        const prompt = promptTextarea.value.trim();
+        if (!prompt) {
+          log('请输入提示词', true);
+          return;
+        }
+        
+        log(`发送请求: ${prompt}`);
+        
+        // 发送请求
+        const response = await fetch(LAMBDA_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        
+        log(`响应状态: ${response.status} ${response.statusText}`);
+        log('响应头:');
+        for (const [key, value] of response.headers.entries()) {
+          log(`  ${key}: ${value}`);
+        }
+        
+        // 处理流式响应
+        if (response.body) {
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          
+          log('开始读取流...');
+          let buffer = '';
+          
+          while (true) {
+            const { done, value } = await reader.read();
+            
+            if (done) {
+              log('流读取完成');
+              break;
+            }
+            
+            // 解码二进制数据为文本
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
+            
+            // 尝试处理SSE格式数据
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            
+            for (const line of lines) {
+              if (line.trim()) {
+                log(`流数据: ${line}`);
+              }
+            }
+          }
+        } else {
+          log('响应没有body', true);
+        }
+      } catch (error) {
+        log(`错误: ${error.message}`, true);
+      }
+    });
+    
+    // 清空日志
+    clearLogsButton.addEventListener('click', () => {
+      logsContainer.innerHTML = '';
+    });
+  </script>
+</body>
+</html> 

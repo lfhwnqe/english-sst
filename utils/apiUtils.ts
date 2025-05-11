@@ -1,11 +1,12 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { handleLambdaResponse } from './index';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
 
 interface ServerFetchOptions {
   method?: string;
-  body?: any;
+  body?: Record<string, unknown>;
   searchParams?: Record<string, string>;
 }
 
@@ -41,6 +42,8 @@ export async function apiRequest(endpoint: string, options: ServerFetchOptions =
     );
   }
 
-  const data = await response.json();
-  return NextResponse.json(data);
+  const rawData = await response.json();
+  // 处理Lambda Function URL响应格式
+  const processedData = handleLambdaResponse(rawData);
+  return NextResponse.json(processedData);
 } 
